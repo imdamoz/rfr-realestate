@@ -8,6 +8,7 @@
 <body>
 <x-dc>
 <helmet>
+  <script src="rfr-data.js"></script>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&amp;display=swap">
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&amp;display=swap">
@@ -21,8 +22,12 @@
     @media (prefers-reduced-motion: reduce) { [data-rv] { animation: none !important; opacity: 1 !important; transform: none !important; } }
     input::placeholder, textarea::placeholder { color: rgba(243,239,231,.34); }
     select option { background: #F3EFE7; }
+    .m-only { display: none !important; }
+    select option { background: #F3EFE7; color: #071A2B; }
+    input::placeholder { color: rgba(7,26,43,.4); }
     @media (max-width: 960px) {
       .m-hide { display: none !important; }
+      .m-only { display: flex !important; }
       .m-col { grid-template-columns: 1fr !important; }
       .m-col2 { grid-template-columns: 1fr !important; }
       .m-span12 { grid-column: 1 / -1 !important; }
@@ -38,14 +43,18 @@
 
 <header style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 84px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(20px, 3.4vw, 64px); background: rgba(243,239,231,.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(7,26,43,.12); color: #071A2B;">
   <a href="RFR%20Website%20v5.dc.html" data-h="1" style="display: flex; align-items: center;"><img src="brand/logo/rfr-navy.png" alt="RFR — Real Estate &amp; Advisory" style="height: 44px; display: block;"></a>
-  <nav class="m-hide" style="display: flex; gap: 36px; font-size: 12.5px; font-weight: 500; letter-spacing: .05em; white-space: nowrap;">
+  <nav class="m-hide" style="display: flex; gap: 28px; font-size: 12.5px; font-weight: 500; letter-spacing: .05em; white-space: nowrap;">
     <a href="RFR%20Website%20v5.dc.html" data-h="1">Home</a>
     <a href="rfr-listings.dc.html" data-h="1">Listings</a>
     <a href="rfr-offplan.dc.html" data-h="1">Off-Plan</a>
+    <a href="rfr-areas.dc.html" data-h="1">Areas</a>
     <a href="rfr-services.dc.html" data-h="1" style="border-bottom: 1px solid #B08D4F; padding-bottom: 4px;">Services</a>
     <a href="rfr-about.dc.html" data-h="1">About</a>
+  <a href="rfr-market.dc.html" data-h="1">Market Note</a>
   </nav>
   <div style="display: flex; align-items: center; gap: clamp(14px, 2vw, 28px);">
+  <select id="cur-sel" aria-label="Currency" style="all: unset; cursor: pointer; color: inherit; font-size: 11px; letter-spacing: .16em; font-weight: 500; padding: 8px 0; border-bottom: 1px solid currentColor;"><option value="AED">AED</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select>
+  <a href="rfr-listings.dc.html" data-h="1" class="m-hide" style="display: inline-flex; align-items: center; gap: 8px; color: inherit; font-size: 11px; letter-spacing: .18em; font-weight: 500;">SHORTLIST<span id="sl-count" style="display: none; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; border: 1px solid currentColor; font-size: 10px; letter-spacing: 0;"></span></a>
   <button id="menu-btn" style="all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; color: inherit; font-family: 'Satoshi', sans-serif; font-size: 12px; letter-spacing: .2em; font-weight: 500; padding: 8px 0;">MENU<span style="display: inline-flex; flex-direction: column; gap: 4px;"><span style="width: 18px; height: 1.5px; background: currentColor;"></span><span style="width: 18px; height: 1.5px; background: currentColor;"></span></span></button>
   <a href="RFR%20Website%20v5.dc.html#contact" data-h="1" style="display: flex; align-items: baseline; gap: 9px; font-size: 12.5px; font-weight: 500; white-space: nowrap;">
     <span style="border-bottom: 1px solid rgba(7,26,43,.4); padding-bottom: 3px;">Speak to Richard</span>
@@ -60,13 +69,15 @@
     <button id="menu-x" style="all: unset; cursor: pointer; color: #F3EFE7; font-family: 'Satoshi', sans-serif; font-size: 12px; letter-spacing: .22em; font-weight: 500; padding: 10px 0;">CLOSE ✕</button>
   </div>
   <div class="m-col" style="display: grid; grid-template-columns: 1.25fr .75fr; gap: clamp(28px, 4vw, 60px); padding: clamp(28px, 5vh, 60px) clamp(20px, 3.4vw, 64px) 60px; box-sizing: border-box; min-height: calc(100svh - 84px); align-items: stretch;">
-    <nav style="display: flex; flex-direction: column; justify-content: center; gap: clamp(4px, 1.2vh, 14px);">
-      <a href="RFR%20Website%20v5.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">01</span>Home</a>
-      <a href="rfr-listings.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">02</span>Listings</a>
-      <a href="rfr-offplan.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">03</span>Off-Plan</a>
-      <a href="rfr-services.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">04</span>Services</a>
-      <a href="rfr-about.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">05</span>About</a>
-      <a href="RFR%20Website%20v5.dc.html#contact" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">06</span>Contact</a>
+    <nav style="display: flex; flex-direction: column; justify-content: center; gap: clamp(2px, 1vh, 10px);">
+      <a href="RFR%20Website%20v5.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">01</span>Home</a>
+      <a href="rfr-listings.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">02</span>Listings</a>
+      <a href="rfr-offplan.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">03</span>Off-Plan</a>
+      <a href="rfr-areas.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">04</span>Areas</a>
+      <a href="rfr-services.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">05</span>Services</a>
+      <a href="rfr-about.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">06</span>About</a>
+      <a href="rfr-market.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">07</span>Market Note</a>
+      <a href="RFR%20Website%20v5.dc.html#contact" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">08</span>Contact</a>
     </nav>
     <div class="m-hide" style="border-left: 1px solid rgba(210,183,125,.22); padding-left: clamp(24px, 3vw, 48px); display: flex; flex-direction: column; justify-content: flex-end; gap: 13px;">
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width: 11px; height: 15px; margin-bottom: 10px;"><path d="M50 0 C55 32 68 45 100 50 C68 55 55 68 50 100 C45 68 32 55 0 50 C32 45 45 32 50 0 Z" fill="#D2B77D"></path></svg>
@@ -339,6 +350,7 @@
         </div>
         <h2 style="margin: 22px 0 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 3.4vw, 54px); line-height: 1.06;">Ready to make your <em style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #D2B77D;">next move?</em></h2>
         <p style="margin: 22px 0 0; max-width: 40ch; font-size: 15px; line-height: 1.8; color: rgba(243,239,231,.66);">Tell us which desk you need and we will come back with the next step — not a brochure.</p>
+        <div style="margin-top: 22px; padding: 16px 0; border-top: 1px solid rgba(210,183,125,.24); border-bottom: 1px solid rgba(210,183,125,.24);"><div style="font-size: 9.5px; letter-spacing: .22em; color: #D2B77D; font-weight: 500;">FEES, PLAINLY</div><div style="margin-top: 8px; font-size: 13.5px; line-height: 1.7; color: rgba(243,239,231,.72);">Management from 5% of annual rent · Sales 2% · Leasing 5% (+ VAT). Quoted in writing before any engagement — nothing hidden in the service charge.</div></div>
         <div style="margin-top: 34px;">
           <a href="tel:+971585015885" data-h="1" style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid rgba(210,183,125,.24);"><span style="font-size: 10px; letter-spacing: .22em; color: rgba(243,239,231,.5);">CALL</span><span style="font-size: 15px;">+971 58 501 5885</span></a>
           <a href="https://wa.me/971585015885" target="_blank" rel="noopener" data-h="1" style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid rgba(210,183,125,.24);"><span style="font-size: 10px; letter-spacing: .22em; color: rgba(243,239,231,.5);">WHATSAPP</span><span style="font-size: 15px;">Message directly ↗</span></a>
@@ -387,6 +399,7 @@
       <a href="tel:+971585015885" data-h="1" style="display: inline-flex; align-items: center; gap: 12px; font-size: 11.5px; letter-spacing: .18em; font-weight: 500; border-bottom: 1px solid rgba(7,26,43,.4); padding-bottom: 6px; white-space: nowrap;">SPEAK TO RICHARD ↗</a>
     </div>
   </section>
+  <a class="m-only" href="https://wa.me/971585015885" target="_blank" rel="noopener" style="position: fixed; right: 16px; bottom: 16px; z-index: 120; align-items: center; gap: 10px; padding: 14px 18px; background: #071A2B; color: #F3EFE7; font-size: 10.5px; letter-spacing: .18em; font-weight: 500; box-shadow: 0 16px 40px rgba(7,26,43,.35);">WHATSAPP <span style="color: #D2B77D;">↗</span></a>
 </main>
 
 <footer data-screen-label="Footer" style="background: #071A2B; color: #F3EFE7;">
@@ -402,8 +415,10 @@
           <a href="RFR%20Website%20v5.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Home</a>
           <a href="rfr-listings.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Listings</a>
           <a href="rfr-offplan.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Off-Plan</a>
+          <a href="rfr-areas.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Areas</a>
           <a href="rfr-services.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Services</a>
           <a href="rfr-about.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">About</a>
+        <a href="rfr-market.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Market Note</a>
         </div>
       </div>
       <div>
@@ -417,8 +432,8 @@
       </div>
     </div>
     <div class="m-wrap" style="margin-top: 44px; padding-top: 22px; border-top: 1px solid rgba(210,183,125,.16); display: flex; align-items: baseline; justify-content: space-between; gap: 16px; font-size: 11.5px; color: rgba(243,239,231,.42);">
-      <span>© 2026 RFR Real Estate &amp; Advisory FZ-LLC</span>
-      <span style="letter-spacing: .3em;">REAL&nbsp;ESTATE&nbsp;&amp;&nbsp;ADVISORY</span>
+      <span>© 2026 RFR Real Estate &amp; Advisory FZ-LLC · Licensed in Ras Al Khaimah · Licence no. on request</span>
+      <span style="display: flex; gap: 22px; letter-spacing: .12em; font-size: 10.5px;"><a href="#" data-h="1" style="color: rgba(243,239,231,.6);">PRIVACY</a><a href="#" data-h="1" style="color: rgba(243,239,231,.6);">TERMS</a><a href="#" data-h="1" style="color: rgba(243,239,231,.6);">COOKIES</a><a href="https://www.instagram.com/" target="_blank" rel="noopener" data-h="1" style="color: rgba(243,239,231,.6);">INSTAGRAM</a><a href="https://www.linkedin.com/" target="_blank" rel="noopener" data-h="1" style="color: rgba(243,239,231,.6);">LINKEDIN</a></span>
     </div>
   </div>
 </footer>
@@ -426,6 +441,7 @@
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   componentDidMount() {
+    if (window.RFR && window.RFR.bindPage) window.RFR.bindPage();
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this._cleanup = [];
 

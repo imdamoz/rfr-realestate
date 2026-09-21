@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&amp;display=swap">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&amp;display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="rfr-data.js"></script>
+  <script src="image-slot.js"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #F3EFE7; color: #071A2B; font-family: 'Satoshi', 'Helvetica Neue', sans-serif; overflow-x: clip; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    a:hover { opacity: .72; }
+    ::selection { background: #D2B77D; color: #071A2B; }
+    select, input { font-family: 'Satoshi', sans-serif; }
+    select option { background: #F3EFE7; color: #071A2B; }
+    input::placeholder { color: rgba(7,26,43,.4); }
+    .m-only { display: none !important; }
+    .rfr-pin { background: #D2B77D; color: #071A2B; font: 500 11px/1 'Satoshi', sans-serif; letter-spacing: .04em; padding: 7px 10px; border: 1px solid #071A2B; white-space: nowrap; box-shadow: 0 8px 20px rgba(7,26,43,.25); cursor: pointer; transform: translate(-50%, -100%); }
+    .rfr-pin:hover { background: #071A2B; color: #F3EFE7; }
+    .leaflet-container { background: #E6E0D2; font-family: 'Satoshi', sans-serif; }
+    .leaflet-control-attribution { font-size: 9px; background: rgba(243,239,231,.8); }
+    @media (max-width: 960px) {
+      .m-hide { display: none !important; }
+      .m-only { display: flex !important; }
+      .m-col { grid-template-columns: 1fr !important; }
+      .m-col3 { grid-template-columns: 1fr 1fr !important; }
+      .m-span12 { grid-column: 1 / -1 !important; }
+      .m-pad { padding-left: 20px !important; padding-right: 20px !important; }
+      .m-wrap { flex-wrap: wrap !important; }
+      .m-drawer { width: 100vw !important; }
+    }
+  </style>
+</helmet>
+
+<header style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 84px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(20px, 3.4vw, 64px); background: rgba(243,239,231,.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(7,26,43,.12); color: #071A2B;">
+  <a href="RFR%20Website%20v5.dc.html" data-h="1" style="display: flex; align-items: center;"><img src="brand/logo/rfr-navy.png" alt="RFR — Real Estate &amp; Advisory" style="height: 44px; display: block;"></a>
+  <nav class="m-hide" style="display: flex; gap: 30px; font-size: 12.5px; font-weight: 500; letter-spacing: .05em; white-space: nowrap;">
+    <a href="RFR%20Website%20v5.dc.html" data-h="1">Home</a>
+    <a href="rfr-listings.dc.html" data-h="1">Listings</a>
+    <a href="rfr-offplan.dc.html" data-h="1">Off-Plan</a>
+    <a href="rfr-areas.dc.html" data-h="1">Areas</a>
+    <a href="rfr-services.dc.html" data-h="1">Services</a>
+    <a href="rfr-about.dc.html" data-h="1">About</a>
+    <a href="rfr-market.dc.html" data-h="1" style="border-bottom: 1px solid #B08D4F; padding-bottom: 4px;">Market Note</a>
+  </nav>
+  <div style="display: flex; align-items: center; gap: clamp(14px, 2vw, 26px);">
+    <select id="cur-sel" aria-label="Currency" style="all: unset; cursor: pointer; font-size: 11px; letter-spacing: .16em; font-weight: 500; padding: 8px 0; border-bottom: 1px solid rgba(7,26,43,.35);"><option value="AED">AED</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select>
+    <a href="rfr-listings.dc.html" data-h="1" class="m-hide" style="display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .18em; font-weight: 500;">SHORTLIST<span id="sl-count" style="display: none; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #071A2B; color: #F3EFE7; font-size: 10px; letter-spacing: 0;"></span></a>
+    <button id="menu-btn" style="all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; color: inherit; font-family: 'Satoshi', sans-serif; font-size: 12px; letter-spacing: .2em; font-weight: 500; padding: 8px 0;">MENU<span style="display: inline-flex; flex-direction: column; gap: 4px;"><span style="width: 18px; height: 1.5px; background: currentColor;"></span><span style="width: 18px; height: 1.5px; background: currentColor;"></span></span></button>
+    <a href="RFR%20Website%20v5.dc.html#contact" data-h="1" class="m-hide" style="display: flex; align-items: baseline; gap: 9px; font-size: 12.5px; font-weight: 500; white-space: nowrap;">
+      <span style="border-bottom: 1px solid rgba(7,26,43,.4); padding-bottom: 3px;">Speak to Richard</span>
+      <span style="color: #B08D4F; font-size: 14px;">↗</span>
+    </a>
+  </div>
+</header>
+
+<div id="menu-ov" style="position: fixed; inset: 0; z-index: 200; background: #071A2B; color: #F3EFE7; opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility .5s ease; overflow: auto;">
+  <div style="display: flex; align-items: center; justify-content: space-between; height: 84px; padding: 0 clamp(20px, 3.4vw, 64px); border-bottom: 1px solid rgba(210,183,125,.2);">
+    <img src="brand/logo/rfr-gold.png" alt="RFR" style="height: 40px; display: block;">
+    <button id="menu-x" style="all: unset; cursor: pointer; color: #F3EFE7; font-family: 'Satoshi', sans-serif; font-size: 12px; letter-spacing: .22em; font-weight: 500; padding: 10px 0;">CLOSE ✕</button>
+  </div>
+  <div class="m-col" style="display: grid; grid-template-columns: 1.25fr .75fr; gap: clamp(28px, 4vw, 60px); padding: clamp(28px, 5vh, 60px) clamp(20px, 3.4vw, 64px) 60px; box-sizing: border-box; min-height: calc(100svh - 84px); align-items: stretch;">
+    <nav style="display: flex; flex-direction: column; justify-content: center; gap: clamp(2px, 1vh, 10px);">
+      <a href="RFR%20Website%20v5.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">01</span>Home</a>
+      <a href="rfr-listings.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">02</span>Listings</a>
+      <a href="rfr-offplan.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">03</span>Off-Plan</a>
+      <a href="rfr-areas.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">04</span>Areas</a>
+      <a href="rfr-services.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">05</span>Services</a>
+      <a href="rfr-about.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">06</span>About</a>
+      <a href="rfr-market.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">07</span>Market Note</a>
+      <a href="RFR%20Website%20v5.dc.html#contact" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">08</span>Contact</a>
+    </nav>
+    <div class="m-hide" style="border-left: 1px solid rgba(210,183,125,.22); padding-left: clamp(24px, 3vw, 48px); display: flex; flex-direction: column; justify-content: flex-end; gap: 13px;">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width: 11px; height: 15px; margin-bottom: 10px;"><path d="M50 0 C55 32 68 45 100 50 C68 55 55 68 50 100 C45 68 32 55 0 50 C32 45 45 32 50 0 Z" fill="#D2B77D"></path></svg>
+      <div style="font-size: 10.5px; letter-spacing: .28em; color: rgba(243,239,231,.5); font-weight: 500;">ADVISORY ENQUIRIES</div>
+      <a href="tel:+971585015885" data-h="1" style="color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 2.4vh, 28px);">+971 58 501 5885</a>
+      <a href="mailto:info@rfrrealestate.com" data-h="1" style="color: rgba(243,239,231,.8); font-size: 14px;">info@rfrrealestate.com</a>
+      <div style="font-size: 12.5px; color: rgba(243,239,231,.55); line-height: 1.7;">Ras Al Khaimah, UAE<br>Mon–Fri 9–6 · Sat 10–4</div>
+      <div style="margin-top: 10px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #D2B77D; font-size: 16px;">Wherever you call home.</div>
+    </div>
+  </div>
+</div>
+
+
+
+<main>
+  <article data-screen-label="Market note" class="m-pad" style="padding: 150px clamp(20px, 3.4vw, 64px) clamp(80px, 12vh, 140px);">
+    <div style="max-width: 1560px; margin: 0 auto;">
+      <div style="display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px; white-space: nowrap;">( MARKET NOTE )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap;">NO. 01 · SEPTEMBER 2026</span><span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span><span class="m-hide" style="font-size: 11px; letter-spacing: .18em; color: rgba(7,26,43,.55); white-space: nowrap;">MONTHLY · 6 MIN READ</span></div>
+      <h1 style="margin: clamp(24px, 4vh, 40px) 0 0; max-width: 16ch; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(40px, 5.4vw, 92px); line-height: 1.0; letter-spacing: -0.01em;">The Emirate the market is watching — <em style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F;">and what to do about it.</em></h1>
+      <div class="m-wrap" style="display: flex; align-items: baseline; justify-content: space-between; gap: 18px; margin-top: clamp(24px, 4vh, 40px); padding-bottom: 18px;"><span style="font-size: 10.5px; letter-spacing: .2em; color: rgba(7,26,43,.55); font-weight: 500;">RICHARD BOSWELL · REAL ESTATE ADVISOR</span><span style="font-size: 10.5px; letter-spacing: .2em; color: rgba(7,26,43,.55);">RAS AL KHAIMAH</span></div>
+      <div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); padding: clamp(36px, 6vh, 64px) 0; border-top: 1px solid rgba(7,26,43,.16);" class="m-col"><div style="grid-column: 1 / span 4;" class="m-span12"><div style="display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px; white-space: nowrap;">( 01 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap;">THE HEADLINE</span></div><h2 style="margin: 16px 0 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(26px, 2.6vw, 42px); line-height: 1.12;">One resort opening is repricing a coastline.</h2></div><div style="grid-column: 6 / -1; font-size: 16px; line-height: 1.8; color: rgba(7,26,43,.74);" class="m-span12"><p style="margin: 0 0 18px;">Wynn Al Marjan Island is scheduled to open in 2027, and almost everything else on the island is being priced against that date. Our current book carries 9 launches on Al Marjan alone, with developer entry prices from <span data-aed="920000" data-compact="1">AED 0.92M</span> to <span data-aed="4060000" data-compact="1">AED 4.06M</span>.</p><p style="margin: 0 0 18px;">The names tell you who believes the story: Emaar, Aldar, Ellington, Marriott (JW and W), Nobu and Nikki Beach have all committed to the same four islands within two years. That concentration is the market’s real signal — not any single price per square foot.</p></div></div><div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); padding: clamp(36px, 6vh, 64px) 0; border-top: 1px solid rgba(7,26,43,.16);" class="m-col"><div style="grid-column: 1 / span 4;" class="m-span12"><div style="display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px; white-space: nowrap;">( 02 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap;">SALES</span></div><h2 style="margin: 16px 0 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(26px, 2.6vw, 42px); line-height: 1.12;">Branded, beachfront and paid over time.</h2></div><div style="grid-column: 6 / -1; font-size: 16px; line-height: 1.8; color: rgba(7,26,43,.74);" class="m-span12"><p style="margin: 0 0 18px;">Nearly every launch is a branded residence with a hotel component, sold on plans that run from 50/50 to 80/20. That structure matters more than the headline price: a 60/40 plan on a Q4 2028 handover means most of your capital stays with you until the resort is already open.</p><p style="margin: 0 0 18px;">Against Dubai, the same brands on the same beach are trading at a substantial discount per square foot. Whether that gap closes is the bet. Our view: it narrows, but the mechanism is rent — resort-driven demand for furnished units — rather than speculative flipping.</p></div></div><div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); padding: clamp(36px, 6vh, 64px) 0; border-top: 1px solid rgba(7,26,43,.16);" class="m-col"><div style="grid-column: 1 / span 4;" class="m-span12"><div style="display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px; white-space: nowrap;">( 03 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap;">RENTAL</span></div><h2 style="margin: 16px 0 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(26px, 2.6vw, 42px); line-height: 1.12;">Long-term rents are firm; the tenant is arriving before the towers.</h2></div><div style="grid-column: 6 / -1; font-size: 16px; line-height: 1.8; color: rgba(7,26,43,.74);" class="m-span12"><p style="margin: 0 0 18px;">On the island, furnished one-bedrooms in our book sit between <span data-aed="65000">AED 65,000</span> and <span data-aed="90000">AED 90,000</span> a year; two-bedroom duplexes above that. Al Hamra Village remains the deepest rental market in the Emirate and the natural home for the resort workforce.</p><p style="margin: 0 0 18px;">For owners: a unit handing over in Q4 2026 can be tenanted for a full year before Wynn opens. That is the window the earliest buyers are playing for.</p></div></div><div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); padding: clamp(36px, 6vh, 64px) 0; border-top: 1px solid rgba(7,26,43,.16);" class="m-col"><div style="grid-column: 1 / span 4;" class="m-span12"><div style="display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px; white-space: nowrap;">( 04 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap;">WATCHLIST</span></div><h2 style="margin: 16px 0 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(26px, 2.6vw, 42px); line-height: 1.12;">Q4 2026: the first handover wave.</h2></div><div style="grid-column: 6 / -1; font-size: 16px; line-height: 1.8; color: rgba(7,26,43,.74);" class="m-span12"><p style="margin: 0 0 18px;">Three projects in the current book — Manta Bay, Sora Beach Residences, Masa Residence — hand over this quarter and next. Watch how quickly they let, and at what furnished premium. That is the first real data the island will produce, and it will set the tone for the 2027–2028 launches.</p><p style="margin: 0 0 18px;">Also watch: Mina Al Arab’s first branded product (Ritz-Carlton Residences, Porto Playa), and whether Downtown yields hold as supply arrives on the coast.</p></div></div>
+      <div style="padding: clamp(36px, 6vh, 64px) 0 0; border-top: 1px solid rgba(7,26,43,.16);"><div style="display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px; white-space: nowrap;">( 05 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap;">WHAT IT MEANS FOR YOU</span><span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span></div><div class="m-col3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(20px, 3vw, 48px); margin-top: 26px;"><div style="padding-top: 18px; border-top: 1px solid rgba(7,26,43,.3);"><div style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(22px, 2vw, 30px);">If you are buying</div><p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.7; color: rgba(7,26,43,.66);">Pick the plan and the handover date before the brand. A Q4 2026 unit rents a year earlier; a 2028 unit keeps your cash longer. We shortlist both.</p><a href="rfr-listings.dc.html#q?type=offplan" data-h="1" style="display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 10.5px; letter-spacing: .16em; font-weight: 500; border-bottom: 1px solid rgba(7,26,43,.35); padding-bottom: 4px;">SEE OFF-PLAN LISTINGS <span style="color: #B08D4F;">↗</span></a></div><div style="padding-top: 18px; border-top: 1px solid rgba(7,26,43,.3);"><div style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(22px, 2vw, 30px);">If you are selling</div><p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.7; color: rgba(7,26,43,.66);">Ask for the number before you decide. Holding and re-letting furnished may beat selling into a launch-heavy market.</p><a href="RFR%20Website%20v5.dc.html#sell-review" data-h="1" style="display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 10.5px; letter-spacing: .16em; font-weight: 500; border-bottom: 1px solid rgba(7,26,43,.35); padding-bottom: 4px;">GET A FREE REVIEW <span style="color: #B08D4F;">↗</span></a></div><div style="padding-top: 18px; border-top: 1px solid rgba(7,26,43,.3);"><div style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(22px, 2vw, 30px);">If you are leasing</div><p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.7; color: rgba(7,26,43,.66);">Furnished island units move fast; villas in Al Juwais and Al Hamra give more space per dirham. Viewings this week.</p><a href="rfr-listings.dc.html#q?type=rent" data-h="1" style="display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 10.5px; letter-spacing: .16em; font-weight: 500; border-bottom: 1px solid rgba(7,26,43,.35); padding-bottom: 4px;">SEE RENTALS <span style="color: #B08D4F;">↗</span></a></div></div></div>
+      <div class="m-col" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); margin-top: clamp(50px, 8vh, 90px); padding: clamp(28px, 4vw, 44px); background: #071A2B; color: #F3EFE7; align-items: center;"><div style="grid-column: 1 / span 6;" class="m-span12"><div style="font-size: 10px; letter-spacing: .24em; color: #D2B77D; font-weight: 500;">THE MONTHLY NOTE</div><div style="margin-top: 12px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(24px, 2.4vw, 38px); line-height: 1.15;">One email a month. Numbers, not noise.</div></div><form id="sub-form" style="grid-column: 8 / -1; display: flex; gap: 10px; align-items: stretch;" class="m-span12 m-wrap"><input id="sub-email" type="email" required placeholder="you@email.com" style="flex: 1; min-width: 200px; padding: 14px 0; background: transparent; border: 0; border-bottom: 1px solid rgba(210,183,125,.5); color: #F3EFE7; font-family: inherit; font-size: 15px; outline: none;"><button type="submit" style="all: unset; cursor: pointer; padding: 14px 24px; background: #D2B77D; color: #071A2B; font-family: inherit; font-size: 11px; letter-spacing: .18em; font-weight: 500; white-space: nowrap;">SUBSCRIBE ↗</button></form></div>
+      <p style="margin: 30px 0 0; font-size: 11.5px; line-height: 1.6; color: rgba(7,26,43,.5);">Indicative commentary based on RFR’s current book and publicly announced launches. Not financial advice; figures per unit on request.</p>
+    </div>
+  </article>
+  <a class="m-only" href="https://wa.me/971585015885" target="_blank" rel="noopener" style="position: fixed; right: 16px; bottom: 16px; z-index: 120; align-items: center; gap: 10px; padding: 14px 18px; background: #071A2B; color: #F3EFE7; font-size: 10.5px; letter-spacing: .18em; font-weight: 500; box-shadow: 0 16px 40px rgba(7,26,43,.35);">WHATSAPP <span style="color: #D2B77D;">↗</span></a>
+</main>
+
+<footer data-screen-label="Footer" style="background: #071A2B; color: #F3EFE7; border-top: 1px solid rgba(210,183,125,.22);">
+  <div class="m-pad" style="padding: clamp(50px, 8vh, 80px) clamp(20px, 3.4vw, 64px) 36px;">
+    <div class="m-col" style="display: grid; grid-template-columns: 1fr auto auto auto; gap: clamp(36px, 5vw, 100px); align-items: start;">
+      <div>
+        <img src="brand/logo/rfr-gold.png" alt="RFR" style="display: block; height: 56px;">
+        <div style="margin-top: 22px; max-width: 30ch; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(18px, 1.6vw, 24px); line-height: 1.4; color: #D2B77D;">Wherever you call home.</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; letter-spacing: .28em; color: rgba(243,239,231,.45); margin-bottom: 16px; font-weight: 500; white-space: nowrap;">NAVIGATE</div>
+        <div style="display: flex; flex-direction: column; gap: 11px; font-size: 14px;">
+          <a href="RFR%20Website%20v5.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Home</a>
+          <a href="rfr-listings.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Listings</a>
+          <a href="rfr-offplan.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Off-Plan</a>
+          <a href="rfr-areas.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Areas</a>
+          <a href="rfr-services.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Services</a>
+          <a href="rfr-about.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">About</a>
+          <a href="rfr-market.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Market Note</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 10px; letter-spacing: .28em; color: rgba(243,239,231,.45); margin-bottom: 16px; font-weight: 500; white-space: nowrap;">CONTACT</div>
+        <div style="display: flex; flex-direction: column; gap: 11px; font-size: 14px; color: rgba(243,239,231,.78);">
+          <a href="tel:+971585015885" data-h="1" style="color: rgba(243,239,231,.78);">+971 58 501 5885</a>
+          <a href="mailto:info@rfrrealestate.com" data-h="1" style="color: rgba(243,239,231,.78);">info@rfrrealestate.com</a>
+          <span>Ras Al Khaimah, United Arab Emirates</span>
+          <span style="color: rgba(243,239,231,.5);">Mon–Fri 9–6 · Sat 10–4</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 10px; letter-spacing: .28em; color: rgba(243,239,231,.45); margin-bottom: 16px; font-weight: 500; white-space: nowrap;">FOLLOW</div>
+        <div style="display: flex; flex-direction: column; gap: 11px; font-size: 14px;">
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener" data-h="1" style="color: rgba(243,239,231,.78);">Instagram</a>
+          <a href="https://www.linkedin.com/" target="_blank" rel="noopener" data-h="1" style="color: rgba(243,239,231,.78);">LinkedIn</a>
+          <a href="https://wa.me/971585015885" target="_blank" rel="noopener" data-h="1" style="color: rgba(243,239,231,.78);">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="m-wrap" style="margin-top: 44px; padding-top: 22px; border-top: 1px solid rgba(210,183,125,.16); display: flex; align-items: baseline; justify-content: space-between; gap: 16px; font-size: 11.5px; color: rgba(243,239,231,.42);">
+      <span>© 2026 RFR Real Estate &amp; Advisory FZ-LLC · Licensed in Ras Al Khaimah · Licence no. on request</span>
+      <span style="display: flex; gap: 22px; letter-spacing: .12em; font-size: 10.5px;"><a href="#" data-h="1" style="color: rgba(243,239,231,.6);">PRIVACY</a><a href="#" data-h="1" style="color: rgba(243,239,231,.6);">TERMS</a><a href="#" data-h="1" style="color: rgba(243,239,231,.6);">COOKIES</a></span>
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const ov = document.getElementById('menu-ov'), mb = document.getElementById('menu-btn');
+    if (ov && mb) { const setOv = (o) => { ov.style.opacity = o ? '1' : '0'; ov.style.visibility = o ? 'visible' : 'hidden'; document.body.style.overflow = o ? 'hidden' : ''; }; mb.addEventListener('click', () => setOv(true)); const mx = document.getElementById('menu-x'); if (mx) mx.addEventListener('click', () => setOv(false)); ov.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOv(false))); }
+    if (window.RFR && window.RFR.bindPage) window.RFR.bindPage();
+    const f = document.getElementById('sub-form');
+    if (f) f.addEventListener('submit', (e) => { e.preventDefault(); const em = document.getElementById('sub-email').value; window.location.href = 'mailto:info@rfrrealestate.com?subject=' + encodeURIComponent('Subscribe me to the monthly market note') + '&body=' + encodeURIComponent('Please add ' + em + ' to the RFR monthly market note.'); });
+  }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
