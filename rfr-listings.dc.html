@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&amp;display=swap">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&amp;display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="rfr-data.js"></script>
+  <script src="image-slot.js"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #F3EFE7; color: #071A2B; font-family: 'Satoshi', 'Helvetica Neue', sans-serif; overflow-x: clip; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    a:hover { opacity: .72; }
+    ::selection { background: #D2B77D; color: #071A2B; }
+    select, input { font-family: 'Satoshi', sans-serif; }
+    select option { background: #F3EFE7; color: #071A2B; }
+    input::placeholder { color: rgba(7,26,43,.4); }
+    .m-only { display: none !important; }
+    .rfr-pin { background: #D2B77D; color: #071A2B; font: 500 11px/1 'Satoshi', sans-serif; letter-spacing: .04em; padding: 7px 10px; border: 1px solid #071A2B; white-space: nowrap; box-shadow: 0 8px 20px rgba(7,26,43,.25); cursor: pointer; transform: translate(-50%, -100%); }
+    .rfr-pin:hover { background: #071A2B; color: #F3EFE7; }
+    .leaflet-container { background: #E6E0D2; font-family: 'Satoshi', sans-serif; }
+    .leaflet-control-attribution { font-size: 9px; background: rgba(243,239,231,.8); }
+    @media (max-width: 960px) {
+      .m-hide { display: none !important; }
+      .m-only { display: flex !important; }
+      .m-col { grid-template-columns: 1fr !important; }
+      .m-col3 { grid-template-columns: 1fr 1fr !important; }
+      .m-span12 { grid-column: 1 / -1 !important; }
+      .m-pad { padding-left: 20px !important; padding-right: 20px !important; }
+      .m-wrap { flex-wrap: wrap !important; }
+      .m-drawer { width: 100vw !important; }
+    }
+  </style>
+</helmet>
+
+<header style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 84px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(20px, 3.4vw, 64px); background: rgba(243,239,231,.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(7,26,43,.12); color: #071A2B;">
+  <a href="RFR%20Website%20v5.dc.html" data-h="1" style="display: flex; align-items: center;"><img src="brand/logo/rfr-navy.png" alt="RFR — Real Estate &amp; Advisory" style="height: 44px; display: block;"></a>
+  <nav class="m-hide" style="display: flex; gap: 30px; font-size: 12.5px; font-weight: 500; letter-spacing: .05em; white-space: nowrap;">
+    <a href="RFR%20Website%20v5.dc.html" data-h="1">Home</a>
+    <a href="rfr-listings.dc.html" data-h="1" style="border-bottom: 1px solid #B08D4F; padding-bottom: 4px;">Listings</a>
+    <a href="rfr-offplan.dc.html" data-h="1">Off-Plan</a>
+    <a href="rfr-listings.dc.html" data-h="1">Areas</a>
+    <a href="rfr-services.dc.html" data-h="1">Services</a>
+    <a href="rfr-about.dc.html" data-h="1">About</a>
+    <a href="rfr-listings.dc.html" data-h="1">Market Note</a>
+  </nav>
+  <div style="display: flex; align-items: center; gap: clamp(14px, 2vw, 26px);">
+    <select id="cur-sel" aria-label="Currency" style="all: unset; cursor: pointer; font-size: 11px; letter-spacing: .16em; font-weight: 500; padding: 8px 0; border-bottom: 1px solid rgba(7,26,43,.35);"><option value="AED">AED</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select>
+    <button onClick="{{openSl}}" style="all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .18em; font-weight: 500; padding: 8px 0;">SHORTLIST<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #071A2B; color: #F3EFE7; font-size: 10.5px; letter-spacing: 0;">{{savedCount}}</span></button>
+    <button id="menu-btn" style="all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; color: inherit; font-family: 'Satoshi', sans-serif; font-size: 12px; letter-spacing: .2em; font-weight: 500; padding: 8px 0;">MENU<span style="display: inline-flex; flex-direction: column; gap: 4px;"><span style="width: 18px; height: 1.5px; background: currentColor;"></span><span style="width: 18px; height: 1.5px; background: currentColor;"></span></span></button>
+    <a href="RFR%20Website%20v5.dc.html#contact" data-h="1" class="m-hide" style="display: flex; align-items: baseline; gap: 9px; font-size: 12.5px; font-weight: 500; white-space: nowrap;">
+      <span style="border-bottom: 1px solid rgba(7,26,43,.4); padding-bottom: 3px;">Speak to Richard</span>
+      <span style="color: #B08D4F; font-size: 14px;">↗</span>
+    </a>
+  </div>
+</header>
+
+<div id="menu-ov" style="position: fixed; inset: 0; z-index: 200; background: #071A2B; color: #F3EFE7; opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility .5s ease; overflow: auto;">
+  <div style="display: flex; align-items: center; justify-content: space-between; height: 84px; padding: 0 clamp(20px, 3.4vw, 64px); border-bottom: 1px solid rgba(210,183,125,.2);">
+    <img src="brand/logo/rfr-gold.png" alt="RFR" style="height: 40px; display: block;">
+    <button id="menu-x" style="all: unset; cursor: pointer; color: #F3EFE7; font-family: 'Satoshi', sans-serif; font-size: 12px; letter-spacing: .22em; font-weight: 500; padding: 10px 0;">CLOSE ✕</button>
+  </div>
+  <div class="m-col" style="display: grid; grid-template-columns: 1.25fr .75fr; gap: clamp(28px, 4vw, 60px); padding: clamp(28px, 5vh, 60px) clamp(20px, 3.4vw, 64px) 60px; box-sizing: border-box; min-height: calc(100svh - 84px); align-items: stretch;">
+    <nav style="display: flex; flex-direction: column; justify-content: center; gap: clamp(2px, 1vh, 10px);">
+      <a href="RFR%20Website%20v5.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">01</span>Home</a>
+      <a href="rfr-listings.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">02</span>Listings</a>
+      <a href="rfr-offplan.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">03</span>Off-Plan</a>
+      <a href="rfr-listings.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">04</span>Areas</a>
+      <a href="rfr-services.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">05</span>Services</a>
+      <a href="rfr-about.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">06</span>About</a>
+      <a href="rfr-listings.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">07</span>Market Note</a>
+      <a href="RFR%20Website%20v5.dc.html#contact" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 5.4vh, 66px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">08</span>Contact</a>
+    </nav>
+    <div class="m-hide" style="border-left: 1px solid rgba(210,183,125,.22); padding-left: clamp(24px, 3vw, 48px); display: flex; flex-direction: column; justify-content: flex-end; gap: 13px;">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width: 11px; height: 15px; margin-bottom: 10px;"><path d="M50 0 C55 32 68 45 100 50 C68 55 55 68 50 100 C45 68 32 55 0 50 C32 45 45 32 50 0 Z" fill="#D2B77D"></path></svg>
+      <div style="font-size: 10.5px; letter-spacing: .28em; color: rgba(243,239,231,.5); font-weight: 500;">ADVISORY ENQUIRIES</div>
+      <a href="tel:+971585015885" data-h="1" style="color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 2.4vh, 28px);">+971 58 501 5885</a>
+      <a href="mailto:info@rfrrealestate.com" data-h="1" style="color: rgba(243,239,231,.8); font-size: 14px;">info@rfrrealestate.com</a>
+      <div style="font-size: 12.5px; color: rgba(243,239,231,.55); line-height: 1.7;">Ras Al Khaimah, UAE<br>Mon–Fri 9–6 · Sat 10–4</div>
+      <div style="margin-top: 10px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #D2B77D; font-size: 16px;">Wherever you call home.</div>
+    </div>
+  </div>
+</div>
+
+<sc-if value="{{slOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: fixed; inset: 0; z-index: 150; background: rgba(7,26,43,.55);" onClick="{{closeSl}}"></div>
+<aside class="m-drawer" data-screen-label="Shortlist drawer" style="position: fixed; top: 0; right: 0; bottom: 0; width: 440px; z-index: 160; background: #F3EFE7; color: #071A2B; display: flex; flex-direction: column; box-shadow: -30px 0 80px rgba(7,26,43,.35);">
+  <div style="display: flex; align-items: center; justify-content: space-between; height: 84px; padding: 0 28px; border-bottom: 1px solid rgba(7,26,43,.14);">
+    <span style="display: flex; align-items: baseline; gap: 12px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px;">( {{savedCount}} )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500;">YOUR SHORTLIST</span></span>
+    <button onClick="{{closeSl}}" style="all: unset; cursor: pointer; font-size: 11px; letter-spacing: .2em; font-weight: 500;">CLOSE ✕</button>
+  </div>
+  <div style="flex: 1; overflow: auto; padding: 10px 28px;">
+    <sc-if value="{{savedEmpty}}" hint-placeholder-val="{{ false }}">
+      <p style="margin: 40px 0; font-size: 14.5px; line-height: 1.7; color: rgba(7,26,43,.62);">Nothing saved yet. Tap <em style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F;">Save</em> on any listing and request viewings for the whole set in one message.</p>
+    </sc-if>
+    <sc-for list="{{saved}}" as="s" hint-placeholder-count="0">
+      <div style="display: grid; grid-template-columns: 92px 1fr auto; gap: 14px; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(7,26,43,.12);">
+        <a href="{{s.href}}" onClick="{{closeSl}}" style="display: block; aspect-ratio: 4 / 3; overflow: hidden;"><img src="{{s.img}}" alt="{{s.title}}" style="width: 100%; height: 100%; object-fit: cover; display: block;"></a>
+        <a href="{{s.href}}" onClick="{{closeSl}}" style="min-width: 0;">
+          <span style="display: block; font-size: 9.5px; letter-spacing: .2em; color: rgba(7,26,43,.55); font-weight: 500;">{{s.metaTxt}}</span>
+          <span style="display: block; margin-top: 4px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: 17px; line-height: 1.25;">{{s.title}}</span>
+          <span style="display: block; margin-top: 4px; font-size: 12.5px; color: rgba(7,26,43,.7);">{{s.priceTxt}}</span>
+        </a>
+        <button onClick="{{toggleSave}}" data-slug="{{s.slug}}" aria-label="Remove" style="all: unset; cursor: pointer; font-size: 14px; color: rgba(7,26,43,.5); padding: 6px;">✕</button>
+      </div>
+    </sc-for>
+  </div>
+  <div style="padding: 22px 28px 28px; border-top: 1px solid rgba(7,26,43,.14); display: flex; flex-direction: column; gap: 12px;">
+    <a href="{{slWa}}" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 17px 20px; background: #071A2B; color: #F3EFE7; font-size: 11.5px; letter-spacing: .18em; font-weight: 500; text-align: center;">REQUEST VIEWINGS FOR THESE {{savedCount}} <span style="color: #D2B77D;">↗</span></a>
+    <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 10.5px; letter-spacing: .14em; color: rgba(7,26,43,.55);">
+      <a href="{{slMail}}" style="border-bottom: 1px solid rgba(7,26,43,.3); padding-bottom: 3px;">EMAIL INSTEAD</a>
+      <button onClick="{{clearSl}}" style="all: unset; cursor: pointer; font-size: 10.5px; letter-spacing: .14em; color: rgba(7,26,43,.55);">CLEAR ALL</button>
+    </div>
+  </div>
+</aside>
+</sc-if>
+
+<main>
+  <sc-if value="{{showGrid}}" hint-placeholder-val="{{ true }}">
+  <section data-screen-label="Listings index" class="m-pad" style="padding: 150px clamp(20px, 3.4vw, 64px) 0;">
+    <div style="max-width: 1560px; margin: 0 auto;">
+      <div style="display: flex; align-items: baseline; gap: 18px;">
+        <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px; white-space: nowrap;">( LISTINGS )</span>
+        <span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap;">BUY · RENT · OFF-PLAN</span>
+        <span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span>
+        <span class="m-hide" style="font-size: 11px; letter-spacing: .18em; color: rgba(7,26,43,.55); white-space: nowrap;">{{countTxt}}</span>
+      </div>
+      <div class="m-col" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); align-items: end; margin-top: clamp(24px, 4vh, 40px);">
+        <h1 style="grid-column: 1 / span 7; margin: 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(40px, 5.4vw, 92px); line-height: 1.0; letter-spacing: -0.01em;" class="m-span12">Available <em style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F;">now.</em></h1>
+        <p style="grid-column: 9 / -1; margin: 0 0 12px; font-size: 15px; line-height: 1.7; color: rgba(7,26,43,.62);" class="m-span12">Every listing here is one we would show a friend. Save the ones you like and request viewings for the set in one message.</p>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Filters" class="m-pad" style="position: sticky; top: 84px; z-index: 60; background: rgba(243,239,231,.96); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 18px clamp(20px, 3.4vw, 64px); margin-top: clamp(28px, 4vh, 44px); border-top: 1px solid rgba(7,26,43,.14); border-bottom: 1px solid rgba(7,26,43,.14);">
+    <div style="max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px;">
+      <div class="m-wrap" style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <sc-for list="{{filters}}" as="f" hint-placeholder-count="4">
+            <button onClick="{{setFilter}}" data-f="{{f.id}}" style="all: unset; cursor: pointer; padding: 9px 16px; font-size: 10.5px; letter-spacing: .18em; font-weight: 500; border: 1px solid {{f.bd}}; background: {{f.bg}}; color: {{f.fg}}; transition: background .3s ease, color .3s ease;">{{f.label}}</button>
+          </sc-for>
+        </div>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <sc-for list="{{areaChips}}" as="a" hint-placeholder-count="5">
+            <button onClick="{{setArea}}" data-a="{{a.id}}" style="all: unset; cursor: pointer; padding: 9px 14px; font-size: 10.5px; letter-spacing: .14em; font-weight: 500; border-bottom: 1px solid {{a.bd}}; color: {{a.fg}}; transition: color .3s ease, border-color .3s ease;">{{a.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div class="m-wrap" style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+        <div style="display: flex; gap: clamp(14px, 2vw, 28px); flex-wrap: wrap; align-items: center;">
+          <label style="display: flex; align-items: baseline; gap: 10px; font-size: 10px; letter-spacing: .2em; color: rgba(7,26,43,.55); font-weight: 500;">BEDS<select value="{{beds}}" onChange="{{setBeds}}" style="all: unset; cursor: pointer; font-size: 12px; letter-spacing: .06em; color: #071A2B; border-bottom: 1px solid rgba(7,26,43,.35); padding: 4px 0;"><option value="any">Any</option><option value="0">Studio</option><option value="1">1</option><option value="2">2</option><option value="3">3+</option></select></label>
+          <label style="display: flex; align-items: baseline; gap: 10px; font-size: 10px; letter-spacing: .2em; color: rgba(7,26,43,.55); font-weight: 500;">MAX BUDGET<select value="{{budget}}" onChange="{{setBudget}}" style="all: unset; cursor: pointer; font-size: 12px; letter-spacing: .06em; color: #071A2B; border-bottom: 1px solid rgba(7,26,43,.35); padding: 4px 0;"><option value="any">Any</option><option value="80000">AED 80K / yr</option><option value="100000">AED 100K / yr</option><option value="1000000">AED 1M</option><option value="1500000">AED 1.5M</option><option value="2500000">AED 2.5M</option><option value="4500000">AED 4.5M</option></select></label>
+          <label style="display: flex; align-items: baseline; gap: 10px; font-size: 10px; letter-spacing: .2em; color: rgba(7,26,43,.55); font-weight: 500;">SORT<select value="{{sort}}" onChange="{{setSort}}" style="all: unset; cursor: pointer; font-size: 12px; letter-spacing: .06em; color: #071A2B; border-bottom: 1px solid rgba(7,26,43,.35); padding: 4px 0;"><option value="new">Newest</option><option value="asc">Price — low to high</option><option value="desc">Price — high to low</option></select></label>
+          <button onClick="{{reset}}" style="all: unset; cursor: pointer; font-size: 10px; letter-spacing: .2em; color: #B08D4F; font-weight: 500;">RESET</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 18px;">
+          <span style="font-size: 10.5px; letter-spacing: .16em; color: rgba(7,26,43,.55);">{{countTxt}}</span>
+          <div style="display: flex; border: 1px solid rgba(7,26,43,.35);">
+            <button onClick="{{viewGrid}}" style="all: unset; cursor: pointer; padding: 9px 16px; font-size: 10.5px; letter-spacing: .18em; font-weight: 500; background: {{gridBg}}; color: {{gridFg}};">GRID</button>
+            <button onClick="{{viewMap}}" style="all: unset; cursor: pointer; padding: 9px 16px; font-size: 10.5px; letter-spacing: .18em; font-weight: 500; background: {{mapBg}}; color: {{mapFg}}; border-left: 1px solid rgba(7,26,43,.35);">MAP</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <sc-if value="{{isGrid}}" hint-placeholder-val="{{ true }}">
+  <section data-screen-label="Listing grid" class="m-pad" style="padding: clamp(36px, 5vh, 60px) clamp(20px, 3.4vw, 64px) clamp(80px, 12vh, 140px);">
+    <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+      <div style="max-width: 1560px; margin: 0 auto; padding: 60px 0; text-align: center;">
+        <div style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(26px, 2.6vw, 40px);">Nothing matches that brief — yet.</div>
+        <p style="margin: 14px auto 0; max-width: 46ch; font-size: 14.5px; line-height: 1.7; color: rgba(7,26,43,.62);">Most of what we sell never reaches the site. Send the brief and we will come back with a private shortlist within 48 hours.</p>
+        <a href="{{briefWa}}" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; padding: 15px 30px; background: #071A2B; color: #F3EFE7; font-size: 11.5px; letter-spacing: .18em; font-weight: 500;">SEND THIS BRIEF <span style="color: #D2B77D;">↗</span></a>
+      </div>
+    </sc-if>
+    <div class="m-col" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(24px, 3vw, 44px) clamp(20px, 2.4vw, 36px); max-width: 1560px; margin: 0 auto;">
+      <sc-for list="{{list}}" as="it" hint-placeholder-count="6">
+        <div style="position: relative;">
+          <a href="{{it.href}}" data-h="1" style="display: block;">
+            <div style="position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #071A2B;">
+              <img src="{{it.img}}" alt="{{it.title}}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.22,1,.36,1);" style-hover="transform: scale(1.045)">
+              <span style="position: absolute; left: 14px; top: 14px; padding: 6px 10px; background: {{it.badgeBg}}; color: {{it.badgeFg}}; font-size: 9.5px; letter-spacing: .2em; font-weight: 500;">{{it.statusTxt}}</span>
+            </div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-top: 14px;">
+              <span style="font-size: 9.5px; letter-spacing: .22em; color: rgba(7,26,43,.55); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{it.metaTxt}}</span>
+              <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(17px, 1.3vw, 22px); white-space: nowrap;">{{it.priceTxt}}</span>
+            </div>
+            <div style="margin-top: 6px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(19px, 1.5vw, 26px); line-height: 1.25;">{{it.title}}</div>
+            <div style="margin-top: 8px; font-size: 11px; letter-spacing: .14em; color: rgba(7,26,43,.62);">{{it.specTxt}}</div>
+          </a>
+          <button onClick="{{toggleSave}}" data-slug="{{it.slug}}" style="all: unset; cursor: pointer; position: absolute; right: 12px; top: 12px; padding: 7px 11px; background: {{it.saveBg}}; color: {{it.saveFg}}; font-size: 9.5px; letter-spacing: .18em; font-weight: 500; border: 1px solid rgba(243,239,231,.5); transition: background .3s ease;">{{it.saveTxt}}</button>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+  </sc-if>
+
+  <sc-if value="{{isMap}}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="Listing map" style="position: relative; height: calc(100svh - 84px); min-height: 560px; display: grid; grid-template-columns: minmax(0, 1fr) 380px;" class="m-col">
+    <div id="map" style="height: 100%; min-height: 60vh; border-right: 1px solid rgba(7,26,43,.14);"></div>
+    <div style="overflow: auto; padding: 14px clamp(16px, 1.6vw, 26px);">
+      <sc-for list="{{list}}" as="it" hint-placeholder-count="4">
+        <a href="{{it.href}}" data-h="1" onMouseEnter="{{hoverPin}}" data-slug="{{it.slug}}" style="display: grid; grid-template-columns: 96px 1fr; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(7,26,43,.12); align-items: center;">
+          <span style="display: block; aspect-ratio: 4 / 3; overflow: hidden;"><img src="{{it.img}}" alt="{{it.title}}" style="width: 100%; height: 100%; object-fit: cover; display: block;"></span>
+          <span style="min-width: 0;">
+            <span style="display: block; font-size: 9px; letter-spacing: .2em; color: rgba(7,26,43,.55); font-weight: 500;">{{it.metaTxt}}</span>
+            <span style="display: block; margin-top: 4px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: 16px; line-height: 1.25;">{{it.title}}</span>
+            <span style="display: block; margin-top: 4px; font-size: 12px; color: rgba(7,26,43,.72);">{{it.priceTxt}} · {{it.specTxt}}</span>
+          </span>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+  </sc-if>
+  </sc-if>
+
+  <sc-if value="{{cur}}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="Listing detail" class="m-pad" style="padding: 120px clamp(20px, 3.4vw, 64px) clamp(70px, 10vh, 120px);">
+    <div style="max-width: 1560px; margin: 0 auto;">
+      <div style="display: flex; align-items: baseline; gap: 18px;">
+        <a href="#" data-h="1" style="display: inline-flex; align-items: baseline; gap: 10px; font-size: 11.5px; letter-spacing: .18em; font-weight: 500; white-space: nowrap;"><span style="color: #B08D4F;">←</span> ALL LISTINGS</a>
+        <span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span>
+        <span style="font-size: 10.5px; letter-spacing: .2em; color: rgba(7,26,43,.55); white-space: nowrap;">REF {{cur.ref}}</span>
+      </div>
+      <div class="m-col" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); align-items: end; margin-top: clamp(24px, 4vh, 40px);">
+        <div style="grid-column: 1 / span 8;" class="m-span12">
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <span style="padding: 6px 10px; background: {{cur.badgeBg}}; color: {{cur.badgeFg}}; font-size: 9.5px; letter-spacing: .2em; font-weight: 500;">{{cur.statusTxt}}</span>
+            <span style="font-size: 10.5px; letter-spacing: .22em; color: rgba(7,26,43,.6); font-weight: 500;">{{cur.metaTxt}}</span>
+          </div>
+          <h1 style="margin: 16px 0 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 4.2vw, 68px); line-height: 1.04; letter-spacing: -0.01em;">{{cur.title}}</h1>
+        </div>
+        <div style="grid-column: 9 / -1; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;" class="m-span12">
+          <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(28px, 2.8vw, 44px); white-space: nowrap;">{{cur.priceTxt}}</span>
+          <span style="font-size: 10.5px; letter-spacing: .2em; color: rgba(7,26,43,.55);">{{cur.terms}}</span>
+        </div>
+      </div>
+
+      <div class="m-col" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(24px, 3vw, 48px); margin-top: clamp(28px, 4vh, 44px); align-items: start;">
+        <div style="grid-column: 1 / span 8;" class="m-span12">
+          <div style="position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #071A2B;" onMouseEnter="{{pauseOn}}" onMouseLeave="{{pauseOff}}">
+            <sc-for list="{{slides}}" as="s" hint-placeholder-count="1">
+              <img src="{{s.src}}" alt="{{s.alt}}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{s.op}}; transform: scale({{s.sc}}); transition: opacity .9s ease, transform 1.6s cubic-bezier(.22,1,.36,1);">
+            </sc-for>
+            <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,26,43,0) 60%, rgba(7,26,43,.55) 100%); pointer-events: none;"></div>
+            <button onClick="{{prevImg}}" aria-label="Previous image" style="all: unset; cursor: pointer; position: absolute; left: 0; top: 0; bottom: 0; width: 22%;"></button>
+            <button onClick="{{nextImg}}" aria-label="Next image" style="all: unset; cursor: pointer; position: absolute; right: 0; top: 0; bottom: 0; width: 22%;"></button>
+            <div style="position: absolute; left: 22px; right: 22px; bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; color: #F3EFE7;">
+              <span style="font-size: 10px; letter-spacing: .24em; font-weight: 500;">{{imgCaption}}</span>
+              <span style="display: flex; align-items: center; gap: 14px;">
+                <span style="display: flex; gap: 6px;"><sc-for list="{{dots}}" as="d" hint-placeholder-count="3"><button onClick="{{setImg}}" data-i="{{d.i}}" aria-label="Image {{d.n}}" style="all: unset; cursor: pointer; display: block; width: {{d.w}}; height: 2px; background: {{d.bg}}; transition: width .4s ease;"></button></sc-for></span>
+                <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 15px; color: #D2B77D;">{{imgNum}}</span>
+              </span>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 8px;" class="m-col3">
+            <sc-for list="{{cur.thumbs}}" as="t" hint-placeholder-count="3">
+              <button onClick="{{setImg}}" data-i="{{t.i}}" style="all: unset; cursor: pointer; display: block; aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid {{t.bd}}; opacity: {{t.op}}; transition: opacity .3s ease;"><img src="{{t.src}}" alt="Thumbnail {{t.n}}" style="width: 100%; height: 100%; object-fit: cover; display: block;"></button>
+            </sc-for>
+          </div>
+
+          <p style="margin: clamp(28px, 4vh, 44px) 0 0; max-width: 62ch; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 1.7vw, 27px); line-height: 1.4;">{{cur.desc}}</p>
+
+          <div style="margin-top: clamp(30px, 4.5vh, 48px); display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px;">( 01 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500;">SPECIFICATION</span><span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span></div>
+          <div class="m-col3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 clamp(20px, 2.4vw, 40px); margin-top: 8px;">
+            <sc-for list="{{cur.spec}}" as="r" hint-placeholder-count="9">
+              <div style="display: flex; justify-content: space-between; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(7,26,43,.14); font-size: 12.5px;"><span style="letter-spacing: .16em; font-size: 9.5px; color: rgba(7,26,43,.55); font-weight: 500;">{{r.k}}</span><span style="text-align: right;">{{r.v}}</span></div>
+            </sc-for>
+          </div>
+
+          <div style="margin-top: clamp(30px, 4.5vh, 48px); display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px;">( 02 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500;">THE NUMBERS</span><span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span></div>
+          <div class="m-col3" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(14px, 2vw, 28px); margin-top: 18px;">
+            <sc-for list="{{cur.numbers}}" as="n" hint-placeholder-count="4">
+              <div style="padding: 16px 0 0; border-top: 1px solid rgba(7,26,43,.3);"><span style="display: block; font-size: 9.5px; letter-spacing: .18em; color: rgba(7,26,43,.55); font-weight: 500;">{{n.k}}</span><span style="display: block; margin-top: 8px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(17px, 1.4vw, 22px);">{{n.v}}</span></div>
+            </sc-for>
+          </div>
+
+          <div class="m-col" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 3vw, 48px); margin-top: clamp(30px, 4.5vh, 48px);">
+            <div>
+              <div style="display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px;">( 03 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500;">AMENITIES</span><span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span></div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; margin-top: 8px;">
+                <sc-for list="{{cur.amenities}}" as="a" hint-placeholder-count="8"><div style="padding: 11px 0; border-bottom: 1px solid rgba(7,26,43,.12); font-size: 13px;"><span style="color: #B08D4F; margin-right: 8px;">✦</span>{{a.t}}</div></sc-for>
+              </div>
+            </div>
+            <div>
+              <div style="display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px;">( 04 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500;">NEARBY</span><span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span></div>
+              <div style="margin-top: 8px;">
+                <sc-for list="{{cur.near}}" as="n" hint-placeholder-count="6"><div style="display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid rgba(7,26,43,.12); font-size: 13px;"><span>{{n.k}}</span><span style="color: rgba(7,26,43,.6); white-space: nowrap;">{{n.v}}</span></div></sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div class="m-col" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 3vw, 48px); margin-top: clamp(30px, 4.5vh, 48px);">
+            <div>
+              <div style="display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px;">( 05 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500;">FLOOR PLAN</span><span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span></div>
+              <div style="position: relative; aspect-ratio: 4 / 3; margin-top: 16px; border: 1px solid rgba(7,26,43,.25); background: #FFFFFF;">
+                <image-slot id="fp-{{cur.slug}}" shape="rect" placeholder="Drop the floor plan (PDF page or image)"></image-slot>
+              </div>
+              <a href="{{cur.fpWa}}" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 10.5px; letter-spacing: .16em; font-weight: 500; border-bottom: 1px solid rgba(7,26,43,.35); padding-bottom: 4px;">REQUEST FULL PLANS <span style="color: #B08D4F;">↗</span></a>
+            </div>
+            <div>
+              <div style="display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px;">( 06 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500;">LOCATION</span><span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span></div>
+              <div id="map-mini" style="aspect-ratio: 4 / 3; margin-top: 16px; border: 1px solid rgba(7,26,43,.25); background: #E6E0D2;"></div>
+              <div style="margin-top: 12px; font-size: 12.5px; color: rgba(7,26,43,.62);">{{cur.areaName}}, Ras Al Khaimah · Exact address on viewing</div>
+            </div>
+          </div>
+        </div>
+
+        <aside style="grid-column: 9 / -1; position: sticky; top: 104px;" class="m-span12">
+          <div style="border: 1px solid rgba(7,26,43,.3); padding: clamp(20px, 2vw, 28px);">
+            <div style="display: flex; gap: 16px; align-items: center;">
+              <div style="width: 68px; height: 84px; flex: none; overflow: hidden; border: 1px solid rgba(7,26,43,.3);"><image-slot id="agent-portrait" shape="rect" placeholder="Portrait" src="https://i.pravatar.cc/300?img=59"></image-slot></div>
+              <div>
+                <div style="font-size: 9.5px; letter-spacing: .2em; color: rgba(7,26,43,.55); font-weight: 500;">YOUR ADVISOR</div>
+                <div style="margin-top: 4px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: 22px;">Richard Boswell</div>
+                <div style="margin-top: 2px; font-size: 12px; color: rgba(7,26,43,.62);">Real Estate Advisor · Replies within the day</div>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px;">
+              <a href="{{cur.wa}}" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 10px; background: #071A2B; color: #F3EFE7; font-size: 10.5px; letter-spacing: .16em; font-weight: 500;">WHATSAPP <span style="color: #D2B77D;">↗</span></a>
+              <a href="tel:+971585015885" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 10px; border: 1px solid rgba(7,26,43,.4); font-size: 10.5px; letter-spacing: .16em; font-weight: 500;">CALL</a>
+              <button onClick="{{toggleSave}}" data-slug="{{cur.slug}}" style="all: unset; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 10px; border: 1px solid rgba(7,26,43,.4); font-size: 10.5px; letter-spacing: .16em; font-weight: 500; background: {{cur.saveBgD}}; color: {{cur.saveFgD}};">{{cur.saveTxt}}</button>
+              <button onClick="{{share}}" style="all: unset; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 10px; border: 1px solid rgba(7,26,43,.4); font-size: 10.5px; letter-spacing: .16em; font-weight: 500;">{{shareTxt}}</button>
+            </div>
+            <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(7,26,43,.18);">
+              <div style="font-size: 10px; letter-spacing: .24em; font-weight: 500;">SCHEDULE A VIEWING</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px;">
+                <label style="display: block; font-size: 9px; letter-spacing: .18em; color: rgba(7,26,43,.55); font-weight: 500;">DATE<input id="vw-date" type="date" style="display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px 0; border: 0; border-bottom: 1px solid rgba(7,26,43,.35); background: transparent; font-size: 13px; color: #071A2B; outline: none;"></label>
+                <label style="display: block; font-size: 9px; letter-spacing: .18em; color: rgba(7,26,43,.55); font-weight: 500;">TIME<select id="vw-time" style="display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px 0; border: 0; border-bottom: 1px solid rgba(7,26,43,.35); background: transparent; font-size: 13px; color: #071A2B; outline: none;"><option>Morning · 9–12</option><option>Afternoon · 12–4</option><option>Evening · 4–7</option><option>Video call</option></select></label>
+                <label style="display: block; grid-column: 1 / -1; font-size: 9px; letter-spacing: .18em; color: rgba(7,26,43,.55); font-weight: 500;">NAME<input id="vw-name" type="text" placeholder="Your name" style="display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px 0; border: 0; border-bottom: 1px solid rgba(7,26,43,.35); background: transparent; font-size: 13px; color: #071A2B; outline: none;"></label>
+                <label style="display: block; grid-column: 1 / -1; font-size: 9px; letter-spacing: .18em; color: rgba(7,26,43,.55); font-weight: 500;">PHONE / WHATSAPP<input id="vw-phone" type="tel" placeholder="+971" style="display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px 0; border: 0; border-bottom: 1px solid rgba(7,26,43,.35); background: transparent; font-size: 13px; color: #071A2B; outline: none;"></label>
+              </div>
+              <button onClick="{{bookViewing}}" style="all: unset; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; box-sizing: border-box; margin-top: 16px; padding: 15px 10px; background: #D2B77D; color: #071A2B; font-size: 10.5px; letter-spacing: .18em; font-weight: 500;">REQUEST THIS SLOT <span>↗</span></button>
+              <div style="margin-top: 10px; font-size: 11px; line-height: 1.6; color: rgba(7,26,43,.55);">Confirmed by WhatsApp the same day. Overseas? Choose <em style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600;">video call</em> and Richard walks it for you.</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div style="margin-top: clamp(50px, 8vh, 90px); display: flex; align-items: baseline; gap: 18px;"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px;">( 07 )</span><span style="font-size: 11px; letter-spacing: .26em; font-weight: 500;">SIMILAR LISTINGS</span><span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span><a href="#" data-h="1" style="font-size: 10.5px; letter-spacing: .16em; font-weight: 500; white-space: nowrap;">VIEW ALL <span style="color: #B08D4F;">↗</span></a></div>
+      <div class="m-col" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(20px, 2.4vw, 36px); margin-top: 22px;">
+        <sc-for list="{{more}}" as="it" hint-placeholder-count="3">
+          <a href="{{it.href}}" data-h="1" style="display: block;">
+            <div style="position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #071A2B;"><img src="{{it.img}}" alt="{{it.title}}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.22,1,.36,1);" style-hover="transform: scale(1.045)"></div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-top: 12px;"><span style="font-size: 9.5px; letter-spacing: .2em; color: rgba(7,26,43,.55); font-weight: 500;">{{it.metaTxt}}</span><span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: 18px; white-space: nowrap;">{{it.priceTxt}}</span></div>
+            <div style="margin-top: 6px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.4vw, 23px); line-height: 1.25;">{{it.title}}</div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <section data-screen-label="CTA" style="background: #071A2B; color: #F3EFE7;">
+    <div class="m-pad m-wrap" style="padding: clamp(70px, 11vh, 120px) clamp(20px, 3.4vw, 64px); display: flex; align-items: flex-end; justify-content: space-between; gap: clamp(24px, 4vw, 60px); max-width: 1560px; margin: 0 auto;">
+      <div>
+        <div style="font-size: 11px; letter-spacing: .26em; font-weight: 500; color: #D2B77D;">NOT ON THE SITE</div>
+        <h2 style="margin: 18px 0 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 3.6vw, 60px); line-height: 1.06; max-width: 18ch;">Most of what we sell <em style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #D2B77D;">never gets listed.</em></h2>
+      </div>
+      <a href="{{briefWa}}" target="_blank" rel="noopener" data-h="1" style="display: inline-flex; align-items: center; gap: 12px; padding: 17px 34px; background: #D2B77D; color: #071A2B; font-size: 11.5px; letter-spacing: .18em; font-weight: 500; white-space: nowrap;">SEND YOUR BRIEF ↗</a>
+    </div>
+  </section>
+
+  <a class="m-only" href="https://wa.me/971585015885" target="_blank" rel="noopener" style="position: fixed; right: 16px; bottom: 16px; z-index: 120; align-items: center; gap: 10px; padding: 14px 18px; background: #071A2B; color: #F3EFE7; font-size: 10.5px; letter-spacing: .18em; font-weight: 500; box-shadow: 0 16px 40px rgba(7,26,43,.35);">WHATSAPP <span style="color: #D2B77D;">↗</span></a>
+</main>
+
+<footer data-screen-label="Footer" style="background: #071A2B; color: #F3EFE7; border-top: 1px solid rgba(210,183,125,.22);">
+  <div class="m-pad" style="padding: clamp(50px, 8vh, 80px) clamp(20px, 3.4vw, 64px) 36px;">
+    <div class="m-col" style="display: grid; grid-template-columns: 1fr auto auto auto; gap: clamp(36px, 5vw, 100px); align-items: start;">
+      <div>
+        <img src="brand/logo/rfr-gold.png" alt="RFR" style="display: block; height: 56px;">
+        <div style="margin-top: 22px; max-width: 30ch; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(18px, 1.6vw, 24px); line-height: 1.4; color: #D2B77D;">Wherever you call home.</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; letter-spacing: .28em; color: rgba(243,239,231,.45); margin-bottom: 16px; font-weight: 500; white-space: nowrap;">NAVIGATE</div>
+        <div style="display: flex; flex-direction: column; gap: 11px; font-size: 14px;">
+          <a href="RFR%20Website%20v5.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Home</a>
+          <a href="rfr-listings.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Listings</a>
+          <a href="rfr-offplan.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Off-Plan</a>
+          <a href="rfr-listings.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Areas</a>
+          <a href="rfr-services.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Services</a>
+          <a href="rfr-about.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">About</a>
+          <a href="rfr-listings.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Market Note</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 10px; letter-spacing: .28em; color: rgba(243,239,231,.45); margin-bottom: 16px; font-weight: 500; white-space: nowrap;">CONTACT</div>
+        <div style="display: flex; flex-direction: column; gap: 11px; font-size: 14px; color: rgba(243,239,231,.78);">
+          <a href="tel:+971585015885" data-h="1" style="color: rgba(243,239,231,.78);">+971 58 501 5885</a>
+          <a href="mailto:info@rfrrealestate.com" data-h="1" style="color: rgba(243,239,231,.78);">info@rfrrealestate.com</a>
+          <span>Ras Al Khaimah, United Arab Emirates</span>
+          <span style="color: rgba(243,239,231,.5);">Mon–Fri 9–6 · Sat 10–4</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 10px; letter-spacing: .28em; color: rgba(243,239,231,.45); margin-bottom: 16px; font-weight: 500; white-space: nowrap;">FOLLOW</div>
+        <div style="display: flex; flex-direction: column; gap: 11px; font-size: 14px;">
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener" data-h="1" style="color: rgba(243,239,231,.78);">Instagram</a>
+          <a href="https://www.linkedin.com/" target="_blank" rel="noopener" data-h="1" style="color: rgba(243,239,231,.78);">LinkedIn</a>
+          <a href="https://wa.me/971585015885" target="_blank" rel="noopener" data-h="1" style="color: rgba(243,239,231,.78);">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="m-wrap" style="margin-top: 44px; padding-top: 22px; border-top: 1px solid rgba(210,183,125,.16); display: flex; align-items: baseline; justify-content: space-between; gap: 16px; font-size: 11.5px; color: rgba(243,239,231,.42);">
+      <span>© 2026 RFR Real Estate &amp; Advisory FZ-LLC · Licensed in Ras Al Khaimah · Licence no. on request</span>
+      <span style="display: flex; gap: 22px; letter-spacing: .12em; font-size: 10.5px;"><a href="#" data-h="1" style="color: rgba(243,239,231,.6);">PRIVACY</a><a href="#" data-h="1" style="color: rgba(243,239,231,.6);">TERMS</a><a href="#" data-h="1" style="color: rgba(243,239,231,.6);">COOKIES</a></span>
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { open: null, filter: 'all', area: 'all', beds: 'any', budget: 'any', sort: 'new', view: 'grid', imgIdx: 0, cur: 'AED', saved: [], slOpen: false, shareTxt: 'SHARE' };
+
+  D() { return window.RFR || { LISTINGS: [], AREAS: [], fmt: () => '', curGet: () => 'AED', slGet: () => [], slToggle: () => [], slSet: () => {}, wa: (t) => '#', areaOf: () => null }; }
+
+  parseHash() {
+    const h = window.location.hash || '';
+    const m = h.match(/^#l\/(.+)$/);
+    if (m) return { open: decodeURIComponent(m[1]) };
+    const q = h.match(/^#q\?(.+)$/);
+    const st = { open: null };
+    if (q) {
+      const p = new URLSearchParams(q[1]);
+      const type = p.get('type'); if (type) st.filter = type;
+      const area = p.get('area'); if (area) st.area = area;
+      const budget = p.get('budget'); if (budget) st.budget = budget;
+      const beds = p.get('beds'); if (beds) st.beds = beds;
+    }
+    return st;
+  }
+
+  componentDidMount() {
+    const R = this.D();
+    this.setState({ ...this.parseHash(), cur: R.curGet(), saved: R.slGet() });
+    this._onHash = () => { this.setState({ ...this.parseHash(), imgIdx: 0, shareTxt: 'SHARE' }); setTimeout(() => window.scrollTo({ top: 0, behavior: 'auto' }), 30); };
+    window.addEventListener('hashchange', this._onHash);
+    this._onCur = (e) => this.setState({ cur: e.detail });
+    this._onSl = (e) => this.setState({ saved: e.detail });
+    window.addEventListener('rfr-cur', this._onCur);
+    window.addEventListener('rfr-shortlist', this._onSl);
+    if (R.bindPage) R.bindPage();
+
+    const ov = document.getElementById('menu-ov'), mb = document.getElementById('menu-btn');
+    if (ov && mb) {
+      const setOv = (o) => { ov.style.opacity = o ? '1' : '0'; ov.style.visibility = o ? 'visible' : 'hidden'; document.body.style.overflow = o ? 'hidden' : ''; };
+      mb.addEventListener('click', () => setOv(true));
+      const mx = document.getElementById('menu-x'); if (mx) mx.addEventListener('click', () => setOv(false));
+      ov.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOv(false)));
+    }
+    this._auto = setInterval(() => { if (!this._pause && !document.hidden && this.state.open) this.step(1); }, 5600);
+    this._onKey = (ev) => { if (!this.state.open) return; if (ev.key === 'ArrowRight') { this.step(1); this._pause = true; } else if (ev.key === 'ArrowLeft') { this.step(-1); this._pause = true; } };
+    window.addEventListener('keydown', this._onKey);
+    this.syncMaps();
+  }
+
+  componentDidUpdate() { this.syncMaps(); }
+
+  componentWillUnmount() {
+    window.removeEventListener('hashchange', this._onHash);
+    window.removeEventListener('keydown', this._onKey);
+    window.removeEventListener('rfr-cur', this._onCur);
+    window.removeEventListener('rfr-shortlist', this._onSl);
+    clearInterval(this._auto);
+    if (this._map) { this._map.remove(); this._map = null; }
+    if (this._mini) { this._mini.remove(); this._mini = null; }
+  }
+
+  step(d) {
+    const o = this.D().LISTINGS.find((x) => x.slug === this.state.open);
+    const n = o ? 1 + o.extra.length : 1;
+    this.setState((s) => ({ imgIdx: (s.imgIdx + d + n) % n }));
+  }
+
+  filtered() {
+    const R = this.D(), s = this.state;
+    let list = R.LISTINGS.filter((x) => {
+      if (s.filter === 'buy' && !(x.cat === 'buy' && !x.offplan)) return false;
+      if (s.filter === 'rent' && x.cat !== 'rent') return false;
+      if (s.filter === 'offplan' && !x.offplan) return false;
+      if (s.area !== 'all' && x.area !== s.area) return false;
+      if (s.beds !== 'any') { const b = parseInt(s.beds, 10); if (b === 3 ? x.beds < 3 : x.beds !== b) return false; }
+      if (s.budget !== 'any') { if (x.price === null || x.price > parseInt(s.budget, 10)) return false; }
+      return true;
+    });
+    if (s.sort === 'asc') list = list.slice().sort((a, b) => (a.price ?? 1e12) - (b.price ?? 1e12));
+    if (s.sort === 'desc') list = list.slice().sort((a, b) => (b.price ?? -1) - (a.price ?? -1));
+    return list;
+  }
+
+  decorate(x) {
+    const R = this.D(), s = this.state;
+    const a = R.areaOf(x.area);
+    const saved = s.saved.includes(x.slug);
+    const purpose = x.offplan ? 'OFF-PLAN' : x.cat === 'rent' ? 'RENT' : 'BUY';
+    const st = x.status || 'Available';
+    const dark = /offer|Leased|Sold/.test(st);
+    const bedsTxt = x.beds === 0 && x.type !== 'Residential plot' ? 'STUDIO' : x.beds ? x.beds + ' BED' : null;
+    return {
+      ...x, href: '#l/' + x.slug,
+      metaTxt: purpose + ' — ' + (a ? a.short : ''),
+      areaName: a ? a.name : 'Ras Al Khaimah',
+      priceTxt: R.fmt(x.price, s.cur) + (x.cat === 'rent' && x.price !== null ? ' / yr' : ''),
+      statusTxt: st.toUpperCase(),
+      badgeBg: dark ? '#071A2B' : st === 'New' || st === 'Launch' ? '#D2B77D' : 'rgba(243,239,231,.92)',
+      badgeFg: dark ? '#F3EFE7' : '#071A2B',
+      specTxt: [bedsTxt, x.baths ? x.baths + ' BATH' : null, x.sqft ? x.sqft.toLocaleString('en-US') + ' SQ FT' : null].filter(Boolean).join(' · '),
+      saveTxt: saved ? 'SAVED ✦' : 'SAVE',
+      saveBg: saved ? '#D2B77D' : 'rgba(7,26,43,.55)', saveFg: saved ? '#071A2B' : '#F3EFE7',
+      saveBgD: saved ? '#D2B77D' : 'transparent', saveFgD: '#071A2B'
+    };
+  }
+
+  syncMaps() {
+    const L = window.L; if (!L) return;
+    const R = this.D();
+    const el = document.getElementById('map');
+    if (el && this.state.view === 'grid') { /* not shown */ }
+    if (el && !this.state.open) {
+      if (this._map && this._map.getContainer() !== el) { this._map.remove(); this._map = null; }
+      if (!this._map) {
+        this._map = L.map(el, { scrollWheelZoom: false, zoomControl: true, attributionControl: true }).setView([25.73, 55.82], 11);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; OpenStreetMap' }).addTo(this._map);
+        this._layer = L.layerGroup().addTo(this._map);
+      }
+      const list = this.filtered();
+      const key = list.map((x) => x.slug).join('|') + '|' + this.state.cur;
+      if (this._key !== key) {
+        this._key = key; this._layer.clearLayers(); this._pins = {};
+        const pts = [];
+        list.forEach((x) => {
+          const icon = L.divIcon({ className: '', html: '<div class="rfr-pin">' + R.fmt(x.price, this.state.cur, { compact: true }) + '</div>', iconSize: [0, 0], iconAnchor: [0, 0] });
+          const mk = L.marker([x.lat, x.lng], { icon }).addTo(this._layer);
+          mk.on('click', () => { window.location.hash = '#l/' + x.slug; });
+          this._pins[x.slug] = mk; pts.push([x.lat, x.lng]);
+        });
+        if (pts.length) this._map.fitBounds(pts, { padding: [60, 60], maxZoom: 13 });
+        setTimeout(() => this._map && this._map.invalidateSize(), 60);
+      }
+    } else if (this._map && !el) { this._map.remove(); this._map = null; this._key = null; }
+
+    const mini = document.getElementById('map-mini');
+    const o = this.state.open ? R.LISTINGS.find((x) => x.slug === this.state.open) : null;
+    if (mini && o) {
+      if (this._mini && (this._mini.getContainer() !== mini || this._miniSlug !== o.slug)) { this._mini.remove(); this._mini = null; }
+      if (!this._mini) {
+        this._miniSlug = o.slug;
+        this._mini = L.map(mini, { scrollWheelZoom: false, zoomControl: false, dragging: false, attributionControl: true }).setView([o.lat, o.lng], 13);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; OpenStreetMap' }).addTo(this._mini);
+        L.circle([o.lat, o.lng], { radius: 550, color: '#B08D4F', weight: 1, fillColor: '#D2B77D', fillOpacity: .35 }).addTo(this._mini);
+        L.circleMarker([o.lat, o.lng], { radius: 6, color: '#071A2B', weight: 2, fillColor: '#D2B77D', fillOpacity: 1 }).addTo(this._mini);
+        setTimeout(() => this._mini && this._mini.invalidateSize(), 60);
+      }
+    } else if (this._mini && !mini) { this._mini.remove(); this._mini = null; }
+  }
+
+  renderVals() {
+    const R = this.D(), s = this.state;
+    const sel = (on) => ({ bg: on ? '#071A2B' : 'transparent', fg: on ? '#F3EFE7' : '#071A2B', bd: on ? '#071A2B' : 'rgba(7,26,43,.4)' });
+    const filters = [['all', 'ALL'], ['buy', 'BUY'], ['rent', 'RENT'], ['offplan', 'OFF-PLAN']].map(([id, label]) => ({ id, label, ...sel(s.filter === id) }));
+    const areaChips = [{ id: 'all', label: 'ALL AREAS', fg: s.area === 'all' ? '#071A2B' : 'rgba(7,26,43,.5)', bd: s.area === 'all' ? '#B08D4F' : 'transparent' }]
+      .concat(R.AREAS.map((a) => ({ id: a.slug, label: a.short, fg: s.area === a.slug ? '#071A2B' : 'rgba(7,26,43,.5)', bd: s.area === a.slug ? '#B08D4F' : 'transparent' })));
+    const list = this.filtered().map((x) => this.decorate(x));
+    const saved = s.saved.map((sl) => R.LISTINGS.find((x) => x.slug === sl)).filter(Boolean).map((x) => this.decorate(x));
+    const briefLines = ['Hello RFR — here is my brief:', 'Purpose: ' + s.filter, 'Area: ' + (s.area === 'all' ? 'any' : (R.areaOf(s.area) || {}).name), 'Bedrooms: ' + s.beds, 'Max budget: ' + (s.budget === 'any' ? 'flexible' : 'AED ' + Number(s.budget).toLocaleString('en-US')), 'Please send a private shortlist.'];
+    const slLines = ['Hello RFR — I would like to arrange viewings for:'].concat(saved.map((x, i) => (i + 1) + '. ' + x.title + ' — ' + x.areaName + ' (' + x.priceTxt + ') ref ' + x.slug)).concat(['Which days work this week?']);
+
+    const o = s.open ? R.LISTINGS.find((x) => x.slug === s.open) : null;
+    let cur = null, more = [], slides = [], dots = [], imgNum = '', imgCaption = '';
+    if (o) {
+      const d = this.decorate(o);
+      const imgs = [o.img, ...o.extra];
+      const idx = Math.min(s.imgIdx, imgs.length - 1);
+      const caps = ['Reception', 'Principal bedroom', 'Living space', 'Terrace and view', 'Building and grounds'];
+      const pad = (n) => (n < 10 ? '0' + n : '' + n);
+      imgNum = pad(idx + 1) + ' / ' + pad(imgs.length);
+      imgCaption = (caps[idx] || 'View ' + (idx + 1)).toUpperCase();
+      slides = imgs.map((src, i) => ({ src, i, alt: (caps[i] || 'View') + ' — ' + o.title, op: i === idx ? 1 : 0, sc: i === idx ? 1.02 : 1.08 }));
+      dots = imgs.map((src, i) => ({ i, n: i + 1, w: i === idx ? '34px' : '14px', bg: i === idx ? '#D2B77D' : 'rgba(243,239,231,.45)' }));
+      const isRent = o.cat === 'rent', isOff = !!o.offplan, villa = /villa|plot/i.test(o.type);
+      const ref = 'RFR-' + (1100 + R.LISTINGS.indexOf(o) * 7);
+      const spec = [['REFERENCE', ref], ['PROPERTY TYPE', o.type], ['PURPOSE', isRent ? 'For rent — long term' : isOff ? 'Off-plan sale' : 'For sale'], ['BEDROOMS', o.beds === 0 ? (villa ? '—' : 'Studio') : String(o.beds)], ['BATHROOMS', o.baths ? String(o.baths) : '—'], [villa && /plot/i.test(o.type) ? 'PLOT AREA' : 'INTERNAL AREA', o.sqft.toLocaleString('en-US') + ' sq ft'], ['FURNISHING', o.furnishing], ['VIEW', o.view], ['PARKING', villa ? '2 covered bays' : '1 covered bay'], ['OWNERSHIP', 'Freehold — all nationalities'], ['DEVELOPER', o.developer || 'On request'], ['AVAILABLE', isOff ? 'Handover ' + o.handover : 'Immediately']].map(([k, v]) => ({ k, v }));
+      const marjan = o.area === 'al-marjan-island';
+      const amen = (marjan ? ['Private beach access', 'Infinity pool', 'Gymnasium', 'Concierge', 'Covered parking', '24-hour security', 'Retail and dining', 'Kids pool'] : villa ? ['Private garden', 'Community pool', 'Gated community', 'Maid room', 'Covered parking', 'Walk to beach', 'Play areas', '24-hour security'] : ['Swimming pool', 'Gymnasium', 'Balcony', 'Built-in wardrobes', 'Covered parking', 'Lobby reception', 'Walk to corniche', '24-hour security']).map((t) => ({ t }));
+      const near = (marjan ? [['Wynn Al Marjan Island', '5 min'], ['Al Hamra Marina', '12 min'], ['Al Hamra Mall', '14 min'], ['RAK city centre', '22 min'], ['RAK International Airport', '35 min'], ['Dubai (DXB)', '55 min']] : [['Nearest beach', '5 min'], ['Al Hamra Mall', '10 min'], ['RAK city centre', '15 min'], ['RAK Hospital', '18 min'], ['RAK International Airport', '30 min'], ['Dubai (DXB)', '60 min']]).map(([k, v]) => ({ k, v }));
+      const p = d.priceTxt;
+      const numbers = (isRent ? [['ANNUAL RENT', p], ['CHEQUES', '1–2 accepted'], ['SECURITY DEPOSIT', '5%'], ['AGENCY FEE', '5% + VAT']] : isOff ? [['FROM', p], ['PAYMENT PLAN', o.plan], ['HANDOVER', o.handover], ['REGISTRATION FEE', '4%']] : [['ASKING', p], ['TRANSFER FEE', '4% + admin'], ['SERVICE CHARGE', 'On request'], ['INDICATIVE GROSS YIELD', 'On request']]).map(([k, v]) => ({ k, v }));
+      cur = { ...d, ref, spec, amenities: amen, near, numbers, terms: isRent ? '1–2 CHEQUES · ANNUAL' : isOff ? 'PAYMENT PLAN ' + o.plan : 'FREEHOLD',
+        thumbs: imgs.map((src, i) => ({ src, i, n: i + 1, op: i === idx ? 1 : 0.55, bd: i === idx ? '#B08D4F' : 'rgba(7,26,43,.15)' })),
+        wa: R.wa(`Hello RFR — I'm interested in "${o.title}" (${d.areaName}, ref ${ref}). Is it still available?`),
+        fpWa: R.wa(`Hello RFR — could you send the floor plans and service charge for "${o.title}" (ref ${ref})?`) };
+      more = R.LISTINGS.filter((x) => x.slug !== o.slug).sort((a, b) => (b.area === o.area) - (a.area === o.area) || (b.cat === o.cat) - (a.cat === o.cat)).slice(0, 3).map((x) => this.decorate(x));
+    }
+    const on = s.view === 'map';
+    return {
+      filters, areaChips, list, empty: list.length === 0, countTxt: list.length + (list.length === 1 ? ' PROPERTY' : ' PROPERTIES'),
+      beds: s.beds, budget: s.budget, sort: s.sort,
+      isGrid: !on, isMap: on, gridBg: on ? 'transparent' : '#071A2B', gridFg: on ? '#071A2B' : '#F3EFE7', mapBg: on ? '#071A2B' : 'transparent', mapFg: on ? '#F3EFE7' : '#071A2B',
+      showGrid: !o, cur, more, slides, dots, imgNum, imgCaption, shareTxt: s.shareTxt,
+      saved, savedCount: saved.length, savedEmpty: saved.length === 0, slOpen: s.slOpen,
+      slWa: R.wa(slLines.join('\n')), slMail: 'mailto:info@rfrrealestate.com?subject=' + encodeURIComponent('Viewing request — ' + saved.length + ' properties') + '&body=' + encodeURIComponent(slLines.join('\n')),
+      briefWa: R.wa(briefLines.join('\n')),
+      setFilter: (e) => this.setState({ filter: e.currentTarget.getAttribute('data-f') }),
+      setArea: (e) => this.setState({ area: e.currentTarget.getAttribute('data-a') }),
+      setBeds: (e) => this.setState({ beds: e.target.value }),
+      setBudget: (e) => this.setState({ budget: e.target.value }),
+      setSort: (e) => this.setState({ sort: e.target.value }),
+      reset: () => this.setState({ filter: 'all', area: 'all', beds: 'any', budget: 'any', sort: 'new' }),
+      viewGrid: () => this.setState({ view: 'grid' }), viewMap: () => this.setState({ view: 'map' }),
+      hoverPin: (e) => { const mk = this._pins && this._pins[e.currentTarget.getAttribute('data-slug')]; if (mk && mk._icon) { mk._icon.style.zIndex = 1000; const p = mk._icon.querySelector('.rfr-pin'); if (p) { p.style.background = '#071A2B'; p.style.color = '#F3EFE7'; setTimeout(() => { p.style.background = ''; p.style.color = ''; }, 900); } } },
+      toggleSave: (e) => { e.preventDefault(); e.stopPropagation(); R.slToggle(e.currentTarget.getAttribute('data-slug')); },
+      openSl: () => this.setState({ slOpen: true }), closeSl: () => this.setState({ slOpen: false }), clearSl: () => R.slSet([]),
+      share: () => { const url = window.location.href; const done = () => this.setState({ shareTxt: 'LINK COPIED' }); if (navigator.share) navigator.share({ title: o ? o.title : 'RFR', url }).then(done).catch(() => {}); else if (navigator.clipboard) navigator.clipboard.writeText(url).then(done); },
+      bookViewing: () => { const v = (id) => { const el = document.getElementById(id); return el ? el.value : ''; }; const txt = `Hello RFR — I'd like to view "${o ? o.title : ''}" (ref ${cur ? cur.ref : ''}).\nDate: ${v('vw-date') || 'flexible'}\nTime: ${v('vw-time')}\nName: ${v('vw-name')}\nPhone: ${v('vw-phone')}`; window.open(R.wa(txt), '_blank', 'noopener'); },
+      prevImg: () => this.step(-1), nextImg: () => this.step(1), pauseOn: () => { this._pause = true; }, pauseOff: () => { this._pause = false; },
+      setImg: (e) => this.setState({ imgIdx: parseInt(e.currentTarget.getAttribute('data-i'), 10) })
+    };
+  }
+}
+</script>
+</body>
+</html>

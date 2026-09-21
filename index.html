@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&amp;display=swap">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&amp;display=swap">
+  <script src="image-slot.js"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #F3EFE7; color: #071A2B; font-family: 'Satoshi', 'Helvetica Neue', sans-serif; overflow-x: clip; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    a:hover { opacity: .72; }
+    ::selection { background: #D2B77D; color: #071A2B; }
+    @media (max-width: 960px) {
+      .m-hide { display: none !important; }
+      .m-col { grid-template-columns: 1fr !important; }
+      .m-span12 { grid-column: 1 / -1 !important; }
+      .m-pad { padding-left: 20px !important; padding-right: 20px !important; }
+      .m-wrap { flex-wrap: wrap !important; }
+      .m-band { min-height: 78svh !important; }
+      .m-bandcopy { max-width: 100% !important; }
+      .m-firmcopy { position: static !important; transform: none !important; width: auto !important; }
+      #firm { height: auto !important; }
+      #firm-stage { position: static !important; height: auto !important; padding: 110px 20px 80px !important; box-sizing: border-box !important; }
+      #firm-img { position: relative !important; height: 42svh !important; clip-path: none !important; margin-bottom: 30px !important; }
+      #firm-photo { width: 100% !important; transform: none !important; }
+      #firm-veil { opacity: 0 !important; }
+      #firm-cap { opacity: 1 !important; }
+      [data-fl] { opacity: 1 !important; transform: none !important; }
+      .m-panels { flex-direction: column !important; height: auto !important; }
+      .m-panel-item { min-height: 360px !important; border-left: none !important; border-top: 1px solid rgba(210,183,125,.28) !important; }
+      .m-panel-grad { background: linear-gradient(180deg, rgba(7,26,43,.35) 0%, rgba(7,26,43,.42) 38%, rgba(7,26,43,.94) 100%) !important; }
+      .m-trisub { white-space: normal !important; font-size: 11px !important; line-height: 1.4 !important; }
+    }
+  </style>
+</helmet>
+
+<header id="hdr" style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 84px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(20px, 3.4vw, 64px); color: #F3EFE7; background: rgba(243,239,231,0); border-bottom: 1px solid rgba(243,239,231,.18); transition: background .4s ease, border-color .4s ease, color .4s ease;">
+  <a href="#top" data-h="1" style="display: flex; align-items: center;"><img id="hdr-logo" src="brand/logo/rfr-gold.png" alt="RFR — Real Estate &amp; Advisory" style="height: 44px; display: block;"></a>
+  <nav class="m-hide" style="display: flex; gap: 36px; font-size: 12.5px; font-weight: 500; letter-spacing: .05em; white-space: nowrap;">
+    <a href="#buy" data-h="1">Buy</a>
+    <a href="#sell" data-h="1">Sell</a>
+    <a href="#lease" data-h="1">Lease</a>
+    <a href="rfr-listings.dc.html" data-h="1">Listings</a>
+    <a href="rfr-offplan.dc.html" data-h="1">Off-Plan</a>
+    <a href="rfr-services.dc.html" data-h="1">Services</a>
+    <a href="rfr-about.dc.html" data-h="1">About</a>
+  </nav>
+  <div style="display: flex; align-items: center; gap: clamp(14px, 2vw, 28px);">
+  <button id="menu-btn" style="all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; color: inherit; font-family: 'Satoshi', sans-serif; font-size: 12px; letter-spacing: .2em; font-weight: 500; padding: 8px 0;">MENU<span style="display: inline-flex; flex-direction: column; gap: 4px;"><span style="width: 18px; height: 1.5px; background: currentColor;"></span><span style="width: 18px; height: 1.5px; background: currentColor;"></span></span></button>
+  <a href="#contact" data-h="1" style="display: flex; align-items: baseline; gap: 9px; font-size: 12.5px; font-weight: 500; white-space: nowrap;">
+    <span id="hdr-cta" style="border-bottom: 1px solid rgba(243,239,231,.5); padding-bottom: 3px;">Speak to Richard</span>
+    <span style="color: #D2B77D; font-size: 14px;">↗</span>
+  </a>
+  </div>
+</header>
+
+<div id="menu-ov" style="position: fixed; inset: 0; z-index: 200; background: #071A2B; color: #F3EFE7; opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility .5s ease; overflow: auto;">
+  <div style="display: flex; align-items: center; justify-content: space-between; height: 84px; padding: 0 clamp(20px, 3.4vw, 64px); border-bottom: 1px solid rgba(210,183,125,.2);">
+    <img src="brand/logo/rfr-gold.png" alt="RFR" style="height: 40px; display: block;">
+    <button id="menu-x" style="all: unset; cursor: pointer; color: #F3EFE7; font-family: 'Satoshi', sans-serif; font-size: 12px; letter-spacing: .22em; font-weight: 500; padding: 10px 0;">CLOSE ✕</button>
+  </div>
+  <div class="m-col" style="display: grid; grid-template-columns: 1.25fr .75fr; gap: clamp(28px, 4vw, 60px); padding: clamp(28px, 5vh, 60px) clamp(20px, 3.4vw, 64px) 60px; box-sizing: border-box; min-height: calc(100svh - 84px); align-items: stretch;">
+    <nav style="display: flex; flex-direction: column; justify-content: center; gap: clamp(4px, 1.2vh, 14px);">
+      <a href="#top" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">01</span>Home</a>
+      <a href="rfr-listings.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">02</span>Listings</a>
+      <a href="rfr-offplan.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">03</span>Off-Plan</a>
+      <a href="rfr-services.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">04</span>Services</a>
+      <a href="rfr-about.dc.html" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">05</span>About</a>
+      <a href="#contact" data-h="1" style="display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px); color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 6.2vh, 76px); line-height: 1.12; transition: color .35s ease, transform .45s cubic-bezier(.22,1,.36,1);" style-hover="color: #D2B77D; transform: translateX(16px)"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(13px, 1.6vh, 16px); color: #B08D4F; width: 38px; flex: none;">06</span>Contact</a>
+    </nav>
+    <div class="m-hide" style="border-left: 1px solid rgba(210,183,125,.22); padding-left: clamp(24px, 3vw, 48px); display: flex; flex-direction: column; justify-content: flex-end; gap: 13px;">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width: 11px; height: 15px; margin-bottom: 10px;"><path d="M50 0 C55 32 68 45 100 50 C68 55 55 68 50 100 C45 68 32 55 0 50 C32 45 45 32 50 0 Z" fill="#D2B77D"></path></svg>
+      <div style="font-size: 10.5px; letter-spacing: .28em; color: rgba(243,239,231,.5); font-weight: 500;">ADVISORY ENQUIRIES</div>
+      <a href="tel:+971585015885" data-h="1" style="color: #F3EFE7; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 2.4vh, 28px);">+971 58 501 5885</a>
+      <a href="mailto:info@rfrrealestate.com" data-h="1" style="color: rgba(243,239,231,.8); font-size: 14px;">info@rfrrealestate.com</a>
+      <div style="font-size: 12.5px; color: rgba(243,239,231,.55); line-height: 1.7;">Ras Al Khaimah, UAE<br>Mon–Fri 9–6 · Sat 10–4</div>
+      <div style="margin-top: 10px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #D2B77D; font-size: 16px;">Wherever you call home.</div>
+    </div>
+  </div>
+</div>
+
+<div id="pv" class="m-hide" style="position: fixed; top: 0; left: 0; width: 268px; height: 178px; z-index: 90; pointer-events: none; opacity: 0; overflow: hidden; transition: opacity .45s ease; box-shadow: 0 30px 60px rgba(7,26,43,.4); will-change: transform;">
+  <img data-pvi="0" src="https://static.wixstatic.com/media/e0d1cd_44d4c7a2994b4e65ac70275785b4a91c~mv2.jpg/v1/fill/w_800,h_534,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/1758366660-image2-plain.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .4s ease;">
+  <img data-pvi="1" src="https://static.wixstatic.com/media/11062b_efd1208e66d941c8b0059ee7fb6fa839~mv2.jpg/v1/fill/w_800,h_565,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Modern%20Bedroom%20Design.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .4s ease;">
+  <img data-pvi="2" src="https://static.wixstatic.com/media/11062b_ee9203816e6d46f78d20eb83d1b183ed~mv2.png/v1/fill/w_800,h_603,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Modern%20Living%20Room.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .4s ease;">
+  <img data-pvi="3" src="" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .4s ease;">
+  <div style="position: absolute; inset: 0; border: 1px solid rgba(210,183,125,.5);"></div>
+</div>
+
+<main id="top">
+
+  <section data-screen-label="Hero" style="position: relative; height: 100svh; min-height: 620px; background: #071A2B; overflow: hidden;">
+    <img id="hero-img" src="brand/photos/hero-clean.jpg" alt="Dusk over the Ras Al Khaimah coastline" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; transform: scale(1.06); will-change: transform;">
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,26,43,.5) 0%, rgba(7,26,43,.06) 34%, rgba(7,26,43,.1) 58%, rgba(7,26,43,.62) 100%);"></div>
+    <div id="hero-copy" style="position: absolute; left: clamp(20px, 3.4vw, 64px); right: clamp(20px, 3.4vw, 64px); bottom: clamp(96px, 15vh, 150px); will-change: transform, opacity;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(243,239,231,.3); margin-bottom: clamp(20px, 3.5vh, 36px);" class="m-wrap">
+        <span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; color: rgba(243,239,231,.9); white-space: nowrap;">RAS AL KHAIMAH — UNITED ARAB EMIRATES</span>
+        <span class="m-hide" style="font-size: 11px; letter-spacing: .2em; color: rgba(243,239,231,.6); white-space: nowrap;">25.789° N · 55.943° E</span>
+        <span style="font-size: 11px; letter-spacing: .2em; color: rgba(243,239,231,.6); white-space: nowrap;">REAL ESTATE &amp; ADVISORY</span>
+      </div>
+      <h1 style="margin: 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; color: #F3EFE7; font-size: clamp(44px, 7.6vw, 138px); line-height: 1.0; letter-spacing: -0.012em;">
+        <span style="display: block; overflow: hidden; padding-bottom: .09em; margin-bottom: -.06em;"><span data-mask="0" style="display: block;">Own the coastline</span></span>
+        <span style="display: block; overflow: hidden; padding-bottom: .09em;"><span data-mask="1" style="display: block;">before it is <em style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #D2B77D;">found.</em></span></span>
+      </h1>
+      <p data-rv="0" style="margin: clamp(18px, 2.6vh, 30px) 0 0; max-width: 54ch; font-size: clamp(14.5px, 1.15vw, 17px); line-height: 1.72; color: rgba(243,239,231,.82); opacity: 0; transform: translateY(14px);">Boutique property advisory in Ras Al Khaimah — one advisor from first call to keys. Zero income tax, zero capital gains, residency from AED 2M.</p>
+    </div>
+    <div style="position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; background: rgba(7,26,43,.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(210,183,125,.3); color: #F3EFE7;">
+      <a href="#buy" data-tri="0" data-h="1" style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 20px clamp(16px, 2vw, 32px); transition: background .4s ease;" style-hover="background: rgba(210,183,125,.16)">
+        <span style="display: flex; align-items: baseline; gap: 12px;"><span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 1.8vw, 30px);">Buy</span></span>
+        <span class="m-trisub" style="font-size: 13.5px; letter-spacing: .02em; color: rgba(243,239,231,.82); white-space: nowrap;">Shortlist in 48 hours <span style="color: #D2B77D;">↗</span></span>
+      </a>
+      <a href="#sell" data-tri="1" data-h="1" style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 20px clamp(16px, 2vw, 32px); border-left: 1px solid rgba(210,183,125,.24); transition: background .4s ease;" style-hover="background: rgba(210,183,125,.16)">
+        <span style="display: flex; align-items: baseline; gap: 12px;"><span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 1.8vw, 30px);">Sell</span></span>
+        <span class="m-trisub" style="font-size: 13.5px; letter-spacing: .02em; color: rgba(243,239,231,.82); white-space: nowrap;">Free valuation, no listing <span style="color: #D2B77D;">↗</span></span>
+      </a>
+      <a href="#lease" data-tri="2" data-h="1" style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 20px clamp(16px, 2vw, 32px); border-left: 1px solid rgba(210,183,125,.24); transition: background .4s ease;" style-hover="background: rgba(210,183,125,.16)">
+        <span style="display: flex; align-items: baseline; gap: 12px;"><span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 1.8vw, 30px);">Lease</span></span>
+        <span class="m-trisub" style="font-size: 13.5px; letter-spacing: .02em; color: rgba(243,239,231,.82); white-space: nowrap;">Viewings this week <span style="color: #D2B77D;">↗</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section id="firm" data-screen-label="Statement" style="position: relative; height: 300vh; background: #F3EFE7;">
+    <div id="firm-stage" style="position: sticky; top: 0; height: 100svh; overflow: hidden;">
+      <div id="firm-img" style="position: absolute; inset: 0; overflow: hidden; will-change: clip-path;">
+        <img id="firm-photo" src="https://static.wixstatic.com/media/e0d1cd_4bff9bed686c49bbadc1b9a08d89751e~mv2.jpg/v1/fill/w_2560,h_1280,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/wynn%20image.jpg" alt="Al Marjan Island, Ras Al Khaimah" style="position: absolute; top: 0; left: 0; width: 120%; height: 100%; object-fit: cover; will-change: transform;">
+        <div id="firm-veil" style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(243,239,231,.85) 0%, rgba(243,239,231,.25) 42%, rgba(243,239,231,0) 70%); opacity: 0;"></div>
+      </div>
+      <div class="m-pad" style="position: absolute; left: 0; right: 0; top: clamp(84px, 13vh, 120px); padding: 0 clamp(20px, 3.4vw, 64px); display: flex; align-items: baseline; gap: 18px;">
+        <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px; white-space: nowrap;">( 01 )</span>
+        <span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap;">THE FIRM</span>
+        <span id="firm-rule" style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span>
+        <span class="m-hide" style="font-size: 10.5px; letter-spacing: .2em; color: rgba(7,26,43,.55); white-space: nowrap;">A LOCAL PARTNER, WHEREVER YOU CALL HOME</span>
+      </div>
+      <div id="firm-copy" class="m-firmcopy" style="position: absolute; left: clamp(20px, 3.4vw, 64px); top: 50%; transform: translateY(-50%); width: min(46vw, 680px);">
+        <div style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(28px, 3.4vw, 60px); line-height: 1.18; letter-spacing: -0.005em;">
+          <span style="display: block; overflow: hidden; padding-bottom: .1em; margin-bottom: -.06em;"><span data-fl="0" style="display: block;">Most agencies pass you</span></span>
+          <span style="display: block; overflow: hidden; padding-bottom: .1em;"><span data-fl="1" style="display: block;">from desk to desk. <em style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F;">One advisor</em> carries your file.</span></span>
+        </div>
+        <p data-fl="2" style="margin: clamp(18px, 3vh, 30px) 0 0; max-width: 50ch; font-size: 15.5px; line-height: 1.75; color: rgba(7,26,43,.66);">RFR is a boutique real estate and advisory firm in Ras Al Khaimah. Richard takes your first call, walks the units himself, negotiates your price and answers the phone after settlement. No juniors, no handovers, no pressure to transact.</p>
+        <div data-fl="3" class="m-wrap" style="display: flex; align-items: center; gap: 26px; margin-top: clamp(20px, 3.4vh, 36px);">
+          <a href="#contact" data-h="1" style="display: inline-flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: .16em; font-weight: 500; border-bottom: 1px solid rgba(7,26,43,.35); padding-bottom: 6px; white-space: nowrap;">BOOK A 20-MINUTE CALL <span style="color: #B08D4F; font-size: 14px;">↗</span></a>
+          <a href="https://wa.me/971585015885" target="_blank" rel="noopener" data-h="1" style="display: inline-flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: .16em; font-weight: 500; white-space: nowrap;">WHATSAPP <span style="color: #B08D4F; font-size: 14px;">↗</span></a>
+        </div>
+      </div>
+      <div id="firm-cap" class="m-hide" style="position: absolute; right: clamp(20px, 3.4vw, 64px); bottom: clamp(50px, 9vh, 100px); display: flex; align-items: baseline; gap: 20px; opacity: 0;">
+        <span style="font-size: 10.5px; letter-spacing: .18em; color: rgba(7,26,43,.55);">— AL MARJAN ISLAND, RAS AL KHAIMAH</span>
+        <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 13px; color: #B08D4F;">( fig. 01 )</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="personas" data-screen-label="Buy Sell Lease" style="background: #071A2B; color: #F3EFE7;">
+    <div class="m-panels" style="display: flex; align-items: stretch; height: clamp(520px, 76vh, 840px); border-top: 1px solid rgba(210,183,125,.25); border-bottom: 1px solid rgba(210,183,125,.25);">
+    <a id="buy" data-panel="1" href="#contact" data-h="1" class="m-panel-item" style="position: relative; flex: 1 1 0%; min-width: 0; overflow: hidden; display: block; color: #F3EFE7; transition: flex-grow .9s cubic-bezier(.22,1,.36,1);">
+      <img data-par="1" src="https://static.wixstatic.com/media/e0d1cd_44d4c7a2994b4e65ac70275785b4a91c~mv2.jpg/v1/fill/w_1600,h_1067,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/1758366660-image2-plain.jpg" alt="Bright modern living room, Al Marjan Island" style="position: absolute; left: 0; right: 0; top: -8%; width: 100%; height: 116%; object-fit: cover; will-change: transform;">
+      <div class="m-panel-grad" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,26,43,.3) 0%, rgba(7,26,43,.08) 38%, rgba(7,26,43,.9) 100%); pointer-events: none;"></div>
+      <div style="position: absolute; left: clamp(20px, 2vw, 34px); right: clamp(20px, 2vw, 34px); bottom: clamp(20px, 3vh, 32px);">
+        <div style="font-size: 11px; letter-spacing: .26em; color: #D2B77D; font-weight: 500; white-space: nowrap;">FOR BUYERS &amp; INVESTORS</div>
+        <div style="margin-top: 10px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(36px, 3.6vw, 64px); line-height: 1;">Buy</div>
+        <div style="margin-top: 12px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(17px, 1.4vw, 24px); line-height: 1.3;">A second home that pays for itself.</div>
+        <div data-detail style="opacity: 0; transform: translateY(12px); transition: opacity .5s ease .12s, transform .6s cubic-bezier(.22,1,.36,1) .12s;">
+          <p style="margin: 12px 0 0; max-width: 40ch; font-size: 14.5px; line-height: 1.7; color: rgba(243,239,231,.78);">Island and beachfront apartments at a fraction of Dubai pricing, in a market being repriced by the resorts now under construction. We shortlist only what we would buy ourselves — and tell you what to walk away from.</p>
+          <span style="display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 11.5px; letter-spacing: .16em; font-weight: 500; border-bottom: 1px solid rgba(210,183,125,.55); padding-bottom: 6px; white-space: nowrap;">REQUEST A SHORTLIST <span style="color: #D2B77D; font-size: 13px;">↗</span></span>
+        </div>
+      </div>
+    </a>
+    <a id="sell" data-panel="1" href="#contact" data-h="1" class="m-panel-item" style="position: relative; flex: 1 1 0%; min-width: 0; overflow: hidden; display: block; color: #F3EFE7; transition: flex-grow .9s cubic-bezier(.22,1,.36,1); border-left: 1px solid rgba(210,183,125,.28);">
+      <img data-par="1" src="https://static.wixstatic.com/media/11062b_efd1208e66d941c8b0059ee7fb6fa839~mv2.jpg/v1/fill/w_1600,h_1130,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Modern%20Bedroom%20Design.jpg" alt="Modern bedroom interior" style="position: absolute; left: 0; right: 0; top: -8%; width: 100%; height: 116%; object-fit: cover; will-change: transform;">
+      <div class="m-panel-grad" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,26,43,.3) 0%, rgba(7,26,43,.08) 38%, rgba(7,26,43,.9) 100%); pointer-events: none;"></div>
+      <div style="position: absolute; left: clamp(20px, 2vw, 34px); right: clamp(20px, 2vw, 34px); bottom: clamp(20px, 3vh, 32px);">
+        <div style="font-size: 11px; letter-spacing: .26em; color: #D2B77D; font-weight: 500; white-space: nowrap;">FOR OWNERS</div>
+        <div style="margin-top: 10px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(36px, 3.6vw, 64px); line-height: 1;">Sell</div>
+        <div style="margin-top: 12px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(17px, 1.4vw, 24px); line-height: 1.3;">Know your number before you decide.</div>
+        <div data-detail style="opacity: 0; transform: translateY(12px); transition: opacity .5s ease .12s, transform .6s cubic-bezier(.22,1,.36,1) .12s;">
+          <p style="margin: 12px 0 0; max-width: 40ch; font-size: 14.5px; line-height: 1.7; color: rgba(243,239,231,.78);">A free property performance review: what your unit would sell for today, what it would rent for, and which of sell, hold or rent leaves you better off. No obligation, no listing agreement.</p>
+          <span style="display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 11.5px; letter-spacing: .16em; font-weight: 500; border-bottom: 1px solid rgba(210,183,125,.55); padding-bottom: 6px; white-space: nowrap;">GET MY FREE REVIEW <span style="color: #D2B77D; font-size: 13px;">↗</span></span>
+        </div>
+      </div>
+    </a>
+    <a id="lease" data-panel="1" href="#contact" data-h="1" class="m-panel-item" style="position: relative; flex: 1 1 0%; min-width: 0; overflow: hidden; display: block; color: #F3EFE7; transition: flex-grow .9s cubic-bezier(.22,1,.36,1); border-left: 1px solid rgba(210,183,125,.28);">
+      <img data-par="1" src="https://static.wixstatic.com/media/11062b_ee9203816e6d46f78d20eb83d1b183ed~mv2.png/v1/fill/w_1600,h_1205,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Modern%20Living%20Room.png" alt="Coastal living room" style="position: absolute; left: 0; right: 0; top: -8%; width: 100%; height: 116%; object-fit: cover; will-change: transform;">
+      <div class="m-panel-grad" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,26,43,.3) 0%, rgba(7,26,43,.08) 38%, rgba(7,26,43,.9) 100%); pointer-events: none;"></div>
+      <div style="position: absolute; left: clamp(20px, 2vw, 34px); right: clamp(20px, 2vw, 34px); bottom: clamp(20px, 3vh, 32px);">
+        <div style="font-size: 11px; letter-spacing: .26em; color: #D2B77D; font-weight: 500; white-space: nowrap;">FOR TENANTS</div>
+        <div style="margin-top: 10px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(36px, 3.6vw, 64px); line-height: 1;">Lease</div>
+        <div style="margin-top: 12px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(17px, 1.4vw, 24px); line-height: 1.3;">The home your rent should be getting you.</div>
+        <div data-detail style="opacity: 0; transform: translateY(12px); transition: opacity .5s ease .12s, transform .6s cubic-bezier(.22,1,.36,1) .12s;">
+          <p style="margin: 12px 0 0; max-width: 40ch; font-size: 14.5px; line-height: 1.7; color: rgba(243,239,231,.78);">Sea views, a real kitchen, a building that answers the phone. Send your budget and move-in date; we return a shortlist worth seeing and arrange viewings around your week.</p>
+          <span style="display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 11.5px; letter-spacing: .16em; font-weight: 500; border-bottom: 1px solid rgba(210,183,125,.55); padding-bottom: 6px; white-space: nowrap;">SEE WHAT IS AVAILABLE <span style="color: #D2B77D; font-size: 13px;">↗</span></span>
+        </div>
+      </div>
+    </a>
+    </div>
+  </section>
+
+  <section id="listings" data-screen-label="Current listings" class="m-pad" style="background: #F3EFE7; padding: clamp(80px, 13vh, 150px) clamp(20px, 3.4vw, 64px);">
+    <div style="display: flex; align-items: baseline; gap: 18px;">
+      <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px; white-space: nowrap;">( 02 )</span>
+      <span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap;">CURRENT LISTINGS</span>
+      <span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span>
+      <a href="rfr-listings.dc.html" data-h="1" style="font-size: 11px; letter-spacing: .16em; font-weight: 500; white-space: nowrap;">VIEW ALL <span style="color: #B08D4F;">↗</span></a>
+    </div>
+    <div class="m-col" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); align-items: end; margin-top: clamp(28px, 5vh, 48px); margin-bottom: clamp(32px, 6vh, 60px);">
+      <h2 style="grid-column: 1 / span 7; margin: 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(36px, 4.6vw, 84px); line-height: 1.04;" class="m-span12">Available <em style="font-style: italic; color: #B08D4F;">now.</em></h2>
+      <p style="grid-column: 9 / -1; margin: 0 0 10px; font-size: 15px; line-height: 1.7; color: rgba(7,26,43,.62);" class="m-span12">Every listing here is one we would show a friend. Annual prices as listed; floor plans, service charges and viewings on request — usually the same day you ask.</p>
+    </div>
+    <div class="m-col" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 3vw, 48px);">
+      <a href="rfr-listings.dc.html#l/duplex-marjan" data-rv="0" data-h="1" style="display: block; opacity: 0; transform: translateY(14px);">
+        <div style="position: relative; aspect-ratio: 3 / 2; overflow: hidden;">
+          <img src="https://static.wixstatic.com/media/e0d1cd_44d4c7a2994b4e65ac70275785b4a91c~mv2.jpg/v1/fill/w_1400,h_933,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/1758366660-image2-plain.jpg" alt="Living room of a duplex on Al Marjan Island" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.22,1,.36,1);" style-hover="transform: scale(1.045)">
+        </div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-top: 14px;">
+          <span style="font-size: 10px; letter-spacing: .22em; color: rgba(7,26,43,.55); font-weight: 500; white-space: nowrap;">BUY — AL MARJAN ISLAND</span>
+          <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px); white-space: nowrap;">AED 75,960</span>
+        </div>
+        <div style="margin-top: 8px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 1.8vw, 30px); line-height: 1.25; max-width: 24ch;">Luxury 2 Bedroom Duplex for Rent Al Marjan Island – Furnished</div>
+      </a>
+      <a href="rfr-listings.dc.html#l/villa-juwais" data-rv="70" data-h="1" style="display: block; margin-top: clamp(0px, 6vh, 70px); opacity: 0; transform: translateY(14px);">
+        <div style="position: relative; aspect-ratio: 3 / 2; overflow: hidden;">
+          <img src="https://static.wixstatic.com/media/e0d1cd_5ad9ffa7786c4fb4a7e86ef529d13d27~mv2.jpg/v1/fill/w_1400,h_842,al_c,q_85,enc_avif,quality_auto/1763543380-img-3559-plain-912x548.jpg" alt="Villa in Al Juwais, Mina Al Arab" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.22,1,.36,1);" style-hover="transform: scale(1.045)">
+        </div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-top: 14px;">
+          <span style="font-size: 10px; letter-spacing: .22em; color: rgba(7,26,43,.55); font-weight: 500; white-space: nowrap;">RENT — MINA AL ARAB</span>
+          <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px); white-space: nowrap;">AED 84,850</span>
+        </div>
+        <div style="margin-top: 8px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 1.8vw, 30px); line-height: 1.25; max-width: 24ch;">3 Bedroom Villa for Rent in Al Juwais – Ready to Move Into – Must See</div>
+      </a>
+      <a href="rfr-listings.dc.html#l/onebed-hamra" data-rv="60" data-h="1" style="display: block; opacity: 0; transform: translateY(14px);">
+        <div style="position: relative; aspect-ratio: 3 / 2; overflow: hidden;">
+          <img src="https://static.wixstatic.com/media/11062b_ee9203816e6d46f78d20eb83d1b183ed~mv2.png/v1/fill/w_1400,h_1054,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Modern%20Living%20Room.png" alt="One bedroom apartment, Marjan Island" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.22,1,.36,1);" style-hover="transform: scale(1.045)">
+        </div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-top: 14px;">
+          <span style="font-size: 10px; letter-spacing: .22em; color: rgba(7,26,43,.55); font-weight: 500; white-space: nowrap;">OFF-PLAN — AL HAMRA VILLAGE</span>
+          <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px); white-space: nowrap;">AED 85,250</span>
+        </div>
+        <div style="margin-top: 8px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 1.8vw, 30px); line-height: 1.25; max-width: 24ch;">One Bedroom for Rent in Marjan Island – Utilities included</div>
+      </a>
+      <a href="rfr-listings.dc.html#l/onebed-falcon" data-rv="130" data-h="1" style="display: block; margin-top: clamp(0px, 6vh, 70px); opacity: 0; transform: translateY(14px);">
+        <div style="position: relative; aspect-ratio: 3 / 2; overflow: hidden;">
+          <img src="https://static.wixstatic.com/media/11062b_0ddd359e3ec74e4ea8619f53b42eebda~mv2.jpg/v1/fill/w_1400,h_706,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Modern%20Living%20Space.jpg" alt="Furnished apartment on Falcon Island" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.22,1,.36,1);" style-hover="transform: scale(1.045)">
+        </div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-top: 14px;">
+          <span style="font-size: 10px; letter-spacing: .22em; color: rgba(7,26,43,.55); font-weight: 500; white-space: nowrap;">BUY — FALCON ISLAND</span>
+          <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px); white-space: nowrap;">AED 65,500</span>
+        </div>
+        <div style="margin-top: 8px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 1.8vw, 30px); line-height: 1.25; max-width: 24ch;">Fully Furnished 1 Bedroom Apartment for Rent Al Marjan Island</div>
+      </a>
+    </div>
+    <div style="display: flex; justify-content: center; margin-top: clamp(36px, 6vh, 60px);">
+      <a href="rfr-listings.dc.html" data-h="1" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 36px; border: 1px solid rgba(7,26,43,.45); font-size: 12px; letter-spacing: .18em; font-weight: 500; white-space: nowrap; transition: background .4s ease;" style-hover="background: rgba(210,183,125,.22)">VIEW MORE LISTINGS <span style="color: #B08D4F; font-size: 14px;">↗</span></a>
+    </div>
+  </section>
+
+  <section id="why" data-screen-label="Why Ras Al Khaimah" style="position: relative; min-height: 92svh; display: flex; align-items: flex-end; background: #071A2B; overflow: hidden;" class="m-band">
+    <img data-par="1" src="https://static.wixstatic.com/media/e0d1cd_4bff9bed686c49bbadc1b9a08d89751e~mv2.jpg/v1/fill/w_1920,h_1440,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/wynn%20image.jpg" alt="Wynn Al Marjan Island resort" style="position: absolute; left: 0; right: 0; top: -8%; width: 100%; height: 116%; object-fit: cover; will-change: transform;">
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,26,43,.35) 0%, rgba(7,26,43,.12) 40%, rgba(7,26,43,.85) 100%);"></div>
+    <a href="rfr-island-3d.html" data-h="1" data-rv="0" style="position: absolute; right: clamp(20px, 3.4vw, 64px); top: clamp(86px, 15vh, 150px); z-index: 3; display: flex; align-items: center; gap: clamp(14px, 1.4vw, 22px); color: #F3EFE7; opacity: 0; transform: translateY(14px);">
+      <span style="position: relative; flex: none; width: clamp(56px, 5vw, 78px); height: clamp(56px, 5vw, 78px); border-radius: 50%; border: 1px solid rgba(210,183,125,.55); display: flex; align-items: center; justify-content: center; background: rgba(7,26,43,.32); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background .5s cubic-bezier(.22,.61,.2,1), border-color .5s ease, transform .5s cubic-bezier(.22,.61,.2,1);" style-hover="background: rgba(210,183,125,.26); border-color: #D2B77D; transform: scale(1.08)">
+        <svg viewBox="0 0 24 24" style="width: 40%; height: 40%; margin-left: 8%;"><path d="M5 3 L20 12 L5 21 Z" fill="#D2B77D"></path></svg>
+      </span>
+      <span style="display: flex; flex-direction: column; gap: 5px; max-width: 24ch;">
+        <span style="font-size: 10px; letter-spacing: .26em; font-weight: 500; color: rgba(243,239,231,.62);">INTERACTIVE</span>
+        <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(17px, 1.5vw, 24px); line-height: 1.15;">Watch Al Marjan Island <em style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #D2B77D;">draw itself</em></span>
+      </span>
+    </a>
+    <div class="m-pad" style="position: relative; width: 100%; padding: clamp(90px, 16vh, 170px) clamp(20px, 3.4vw, 64px) clamp(50px, 8vh, 80px); color: #F3EFE7;">
+      <div style="display: flex; align-items: baseline; gap: 18px;">
+        <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #D2B77D; font-size: 15px; white-space: nowrap;">( 03 )</span>
+        <span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; color: #D2B77D; white-space: nowrap;">WHY RAS AL KHAIMAH</span>
+        <span style="flex: 1; height: 1px; background: rgba(210,183,125,.3);"></span>
+        <span class="m-hide" style="font-size: 10.5px; letter-spacing: .18em; color: rgba(243,239,231,.6); white-space: nowrap;">— WYNN AL MARJAN ISLAND, RENDER</span>
+      </div>
+      <h2 style="margin: clamp(20px, 3.5vh, 36px) 0 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(38px, 5.4vw, 100px); line-height: 1.02; max-width: 14ch;">
+        <span style="display: block; overflow: hidden; padding-bottom: .09em; margin-bottom: -.05em;"><span data-mask="0" style="display: block;">The Emirate the</span></span>
+        <span style="display: block; overflow: hidden; padding-bottom: .09em;"><span data-mask="1" style="display: block;">market is <em style="font-style: italic; color: #D2B77D;">watching.</em></span></span>
+      </h2>
+    </div>
+  </section>
+
+  <section data-screen-label="Investment pillars" class="m-pad" style="background: #071A2B; color: #F3EFE7; padding: clamp(50px, 8vh, 90px) clamp(20px, 3.4vw, 64px) clamp(80px, 13vh, 140px);">
+    <div class="m-col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 clamp(32px, 5vw, 90px);">
+      <div data-rv="0" style="padding: 28px 0; border-top: 1px solid rgba(210,183,125,.28); opacity: 0; transform: translateY(14px);">
+        <div style="display: flex; align-items: center; gap: 16px;"><svg viewBox="0 0 24 24" fill="none" stroke="#D2B77D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 26px; height: 26px; flex: none;"><path d="M3 17 L9 11 L13 15 L21 7"></path><path d="M15 7 H21 V13"></path></svg><span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(21px, 1.9vw, 30px);">Strategic growth Emirate</span></div>
+        <p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.7; color: rgba(243,239,231,.6); max-width: 52ch;">One of the UAE's fastest-growing emirates — government investment, new infrastructure and pro-investor policy, all landing at once.</p>
+      </div>
+      <div data-rv="70" style="padding: 28px 0; border-top: 1px solid rgba(210,183,125,.28); opacity: 0; transform: translateY(14px);">
+        <div style="display: flex; align-items: center; gap: 16px;"><svg viewBox="0 0 24 24" fill="none" stroke="#D2B77D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 26px; height: 26px; flex: none;"><path d="M12 3 C12.7 8 15 10.3 20 12 C15 13.7 12.7 16 12 21 C11.3 16 9 13.7 4 12 C9 10.3 11.3 8 12 3 Z"></path></svg><span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(21px, 1.9vw, 30px);">Luxury tourism &amp; global brands</span></div>
+        <p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.7; color: rgba(243,239,231,.6); max-width: 52ch;">Global resort brands and integrated developments are building on this coastline now. Room rates set the tone for everything priced around them.</p>
+      </div>
+      <div data-rv="120" style="padding: 28px 0; border-top: 1px solid rgba(210,183,125,.28); opacity: 0; transform: translateY(14px);">
+        <div style="display: flex; align-items: center; gap: 16px;"><svg viewBox="0 0 24 24" fill="none" stroke="#D2B77D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 26px; height: 26px; flex: none;"><path d="M3 9.5 C6 7.5 8.5 7.5 11.5 9.5 C14.5 11.5 17 11.5 21 9.5"></path><path d="M3 15.5 C6 13.5 8.5 13.5 11.5 15.5 C14.5 17.5 17 17.5 21 15.5"></path></svg><span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(21px, 1.9vw, 30px);">High-yield waterfront assets</span></div>
+        <p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.7; color: rgba(243,239,231,.6); max-width: 52ch;">Beachfront supply is finite and largely allocated. Demand keeps arriving from Dubai, Europe and the CIS — which is what puts a floor under both your rent and your resale.</p>
+      </div>
+      <div data-rv="190" style="padding: 28px 0; border-top: 1px solid rgba(210,183,125,.28); opacity: 0; transform: translateY(14px);">
+        <div style="display: flex; align-items: center; gap: 16px;"><svg viewBox="0 0 24 24" fill="none" stroke="#D2B77D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 26px; height: 26px; flex: none;"><circle cx="12" cy="12" r="9"></circle><path d="M9 15 L15 9"></path><circle cx="9.3" cy="9.3" r="1"></circle><circle cx="14.7" cy="14.7" r="1"></circle></svg><span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(21px, 1.9vw, 30px);">Investor-friendly environment</span></div>
+        <p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.7; color: rgba(243,239,231,.6); max-width: 52ch;">0% income tax. 0% capital gains. Freehold title for foreign nationals, and a 10-year Golden Visa from AED 2M.</p>
+      </div>
+    </div>
+    <div style="margin-top: clamp(40px, 7vh, 70px);">
+      <div style="display: flex; align-items: baseline; gap: 18px;">
+        <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #D2B77D; font-size: 15px; white-space: nowrap;">( 04 )</span>
+        <span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; color: #D2B77D; white-space: nowrap;">OFF-PLAN — BEFORE THE LAUNCH</span>
+        <span style="flex: 1; height: 1px; background: rgba(210,183,125,.3);"></span>
+      </div>
+      <div class="m-wrap" data-rv="0" style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-top: clamp(18px, 2.6vh, 28px); opacity: 0; transform: translateY(14px);">
+        <p style="margin: 0; max-width: 56ch; font-size: 14.5px; line-height: 1.7; color: rgba(243,239,231,.62);">Allocations are placed before launch, not after. Starting prices below are developer entry points — ask what is actually left: unit, floor, view and payment plan.</p>
+        <a href="#contact" data-h="1" style="display: inline-flex; align-items: center; gap: 10px; font-size: 11.5px; letter-spacing: .16em; font-weight: 500; color: #F3EFE7; border-bottom: 1px solid rgba(210,183,125,.55); padding-bottom: 6px; white-space: nowrap;">REQUEST CURRENT AVAILABILITY <span style="color: #D2B77D;">↗</span></a>
+      </div>
+      <div class="m-col" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 clamp(24px, 3vw, 56px); margin-top: 8px;">
+        <a href="#contact" data-h="1" data-prev="https://al-marjanisland.com/wp-content/uploads/2024/10/Address-Residences.jpg" data-rv="0" style="display: block; padding: 18px 6px 15px; border-bottom: 1px solid rgba(210,183,125,.22); color: #F3EFE7; opacity: 0; transform: translateY(14px); transition: background .45s ease;" style-hover="background: rgba(210,183,125,.09)">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+            <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px);">Address Residences</span>
+            <span style="font-size: 11.5px; letter-spacing: .08em; color: #D2B77D; white-space: nowrap;">AED 2.4M ↗</span>
+          </span>
+          <span style="display: block; margin-top: 7px; font-size: 9.5px; letter-spacing: .2em; color: rgba(243,239,231,.45);">EMAAR · AL MARJAN · Q1 2028</span>
+        </a>
+        <a href="#contact" data-h="1" data-prev="https://al-marjanisland.com/wp-content/uploads/2025/04/Nobu.jpeg" data-rv="35" style="display: block; padding: 18px 6px 15px; border-bottom: 1px solid rgba(210,183,125,.22); color: #F3EFE7; opacity: 0; transform: translateY(14px); transition: background .45s ease;" style-hover="background: rgba(210,183,125,.09)">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+            <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px);">Nobu Residences</span>
+            <span style="font-size: 11.5px; letter-spacing: .08em; color: #D2B77D; white-space: nowrap;">AED 2.1M ↗</span>
+          </span>
+          <span style="display: block; margin-top: 7px; font-size: 9.5px; letter-spacing: .2em; color: rgba(243,239,231,.45);">H&amp;H DEVELOPMENT · Q1 2028</span>
+        </a>
+        <a href="#contact" data-h="1" data-prev="https://al-marjanisland.com/wp-content/uploads/2024/10/JW-Marriott-Residences-Al-Marjan-Island.jpg" data-rv="70" style="display: block; padding: 18px 6px 15px; border-bottom: 1px solid rgba(210,183,125,.22); color: #F3EFE7; opacity: 0; transform: translateY(14px); transition: background .45s ease;" style-hover="background: rgba(210,183,125,.09)">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+            <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px);">JW Marriott Residences</span>
+            <span style="font-size: 11.5px; letter-spacing: .08em; color: #D2B77D; white-space: nowrap;">AED 2.95M ↗</span>
+          </span>
+          <span style="display: block; margin-top: 7px; font-size: 9.5px; letter-spacing: .2em; color: rgba(243,239,231,.45);">WOW RESORTS · Q4 2027</span>
+        </a>
+        <a href="#contact" data-h="1" data-prev="https://al-marjanisland.com/wp-content/uploads/2024/03/Nikki-Beach-Residences.jpeg" data-rv="105" style="display: block; padding: 18px 6px 15px; border-bottom: 1px solid rgba(210,183,125,.22); color: #F3EFE7; opacity: 0; transform: translateY(14px); transition: background .45s ease;" style-hover="background: rgba(210,183,125,.09)">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+            <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px);">Nikki Beach Residences</span>
+            <span style="font-size: 11.5px; letter-spacing: .08em; color: #D2B77D; white-space: nowrap;">AED 1.75M ↗</span>
+          </span>
+          <span style="display: block; margin-top: 7px; font-size: 9.5px; letter-spacing: .2em; color: rgba(243,239,231,.45);">ALDAR · Q4 2028</span>
+        </a>
+        <a href="#contact" data-h="1" data-prev="https://al-marjanisland.com/wp-content/uploads/2026/08/W-Hotel-Residences.jpeg" data-rv="140" style="display: block; padding: 18px 6px 15px; border-bottom: 1px solid rgba(210,183,125,.22); color: #F3EFE7; opacity: 0; transform: translateY(14px); transition: background .45s ease;" style-hover="background: rgba(210,183,125,.09)">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+            <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px);">W Hotel &amp; Residences</span>
+            <span style="font-size: 11.5px; letter-spacing: .08em; color: #D2B77D; white-space: nowrap;">AED 4.06M ↗</span>
+          </span>
+          <span style="display: block; margin-top: 7px; font-size: 9.5px; letter-spacing: .2em; color: rgba(243,239,231,.45);">DALANDS · DEC 2027</span>
+        </a>
+        <a href="#contact" data-h="1" data-prev="https://al-marjanisland.com/wp-content/uploads/2025/02/Costa-Mare-Ellington-1024x601.jpg" data-rv="175" style="display: block; padding: 18px 6px 15px; border-bottom: 1px solid rgba(210,183,125,.22); color: #F3EFE7; opacity: 0; transform: translateY(14px); transition: background .45s ease;" style-hover="background: rgba(210,183,125,.09)">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+            <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px);">Costa Mare</span>
+            <span style="font-size: 11.5px; letter-spacing: .08em; color: #D2B77D; white-space: nowrap;">AED 2.1M ↗</span>
+          </span>
+          <span style="display: block; margin-top: 7px; font-size: 9.5px; letter-spacing: .2em; color: rgba(243,239,231,.45);">ELLINGTON · Q3 2028</span>
+        </a>
+        <a href="#contact" data-h="1" data-prev="https://al-marjanisland.com/wp-content/uploads/2024/10/Manta-Bay.jpg" data-rv="210" style="display: block; padding: 18px 6px 15px; border-bottom: 1px solid rgba(210,183,125,.22); color: #F3EFE7; opacity: 0; transform: translateY(14px); transition: background .45s ease;" style-hover="background: rgba(210,183,125,.09)">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+            <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px);">Manta Bay</span>
+            <span style="font-size: 11.5px; letter-spacing: .08em; color: #D2B77D; white-space: nowrap;">AED 1.2M ↗</span>
+          </span>
+          <span style="display: block; margin-top: 7px; font-size: 9.5px; letter-spacing: .2em; color: rgba(243,239,231,.45);">MAJOR DEVELOPERS · Q4 2026</span>
+        </a>
+        <a href="#contact" data-h="1" data-prev="https://al-marjanisland.com/wp-content/uploads/2025/04/Sora-beach.jpg" data-rv="245" style="display: block; padding: 18px 6px 15px; border-bottom: 1px solid rgba(210,183,125,.22); color: #F3EFE7; opacity: 0; transform: translateY(14px); transition: background .45s ease;" style-hover="background: rgba(210,183,125,.09)">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+            <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px);">Sora Beach Residences</span>
+            <span style="font-size: 11.5px; letter-spacing: .08em; color: #D2B77D; white-space: nowrap;">AED 2.8M ↗</span>
+          </span>
+          <span style="display: block; margin-top: 7px; font-size: 9.5px; letter-spacing: .2em; color: rgba(243,239,231,.45);">AARK · Q4 2026</span>
+        </a>
+        <a href="#contact" data-h="1" data-prev="https://al-marjanisland.com/wp-content/uploads/2024/03/Masa-Residences-1024x1024.jpeg" data-rv="280" style="display: block; padding: 18px 6px 15px; border-bottom: 1px solid rgba(210,183,125,.22); color: #F3EFE7; opacity: 0; transform: translateY(14px); transition: background .45s ease;" style-hover="background: rgba(210,183,125,.09)">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+            <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(18px, 1.5vw, 25px);">Masa Residence</span>
+            <span style="font-size: 11.5px; letter-spacing: .08em; color: #D2B77D; white-space: nowrap;">AED 920K ↗</span>
+          </span>
+          <span style="display: block; margin-top: 7px; font-size: 9.5px; letter-spacing: .2em; color: rgba(243,239,231,.45);">DURAR GROUP · Q4 2026</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="approach" data-screen-label="Our approach" class="m-pad" style="background: #F3EFE7; padding: clamp(80px, 13vh, 150px) clamp(20px, 3.4vw, 64px);">
+    <div style="display: flex; align-items: baseline; gap: 18px;">
+      <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px; white-space: nowrap;">( 05 )</span>
+      <span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap;">OUR APPROACH</span>
+      <span style="flex: 1; height: 1px; background: rgba(7,26,43,.2);"></span>
+    </div>
+    <div class="m-col" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); margin-top: clamp(28px, 5vh, 48px);">
+      <h2 style="grid-column: 1 / span 7; margin: 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(36px, 4.6vw, 84px); line-height: 1.04;" class="m-span12">Considered advice, <em style="font-style: italic; color: #B08D4F;">your file end to end.</em></h2>
+      <p style="grid-column: 9 / -1; margin: 8px 0 0; font-size: 15px; line-height: 1.7; color: rgba(7,26,43,.62);" class="m-span12">One senior advisor carries your file from first call to settlement — and answers for the outcome afterwards.</p>
+    </div>
+    <div style="margin-top: clamp(44px, 8vh, 80px); position: relative;">
+      <div style="position: relative; height: 1px; background: rgba(7,26,43,.22); margin: 0 clamp(10px, 4vw, 60px);">
+        <span style="position: absolute; left: 16.66%; top: 50%; transform: translate(-50%, -50%); width: 9px; height: 9px; border-radius: 50%; background: #B08D4F;"></span>
+        <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 9px; height: 9px; border-radius: 50%; background: #B08D4F;"></span>
+        <span style="position: absolute; left: 83.33%; top: 50%; transform: translate(-50%, -50%); width: 9px; height: 9px; border-radius: 50%; background: #B08D4F;"></span>
+        <span style="position: absolute; left: 0; top: -26px; font-size: 10px; letter-spacing: .24em; color: rgba(7,26,43,.55); white-space: nowrap;">FIRST CALL</span>
+        <span style="position: absolute; right: 0; top: -26px; font-size: 10px; letter-spacing: .24em; color: rgba(7,26,43,.55); white-space: nowrap;">KEYS — AND AFTER</span>
+      </div>
+      <div class="m-col" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(20px, 3vw, 48px); margin: 34px clamp(10px, 4vw, 60px) 0; align-items: start;">
+        <a href="#contact" data-h="1" data-vpanel="1" data-rv="0" style="display: block; color: #071A2B; padding-bottom: 4px; border-top: 1px solid rgba(7,26,43,.14); opacity: 0; transform: translateY(14px);">
+          <div data-vimg style="position: relative; height: 0; overflow: hidden; transition: height .75s cubic-bezier(.22,1,.36,1);">
+            <img src="brand/photos/lease-living.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%;">
+            <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,26,43,0) 40%, rgba(7,26,43,.28) 100%);"></div>
+          </div>
+          <div style="padding-top: 18px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px;">/ 01</span>
+            <div style="margin-top: 10px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(21px, 1.9vw, 30px); line-height: 1.2;">Asset &amp; portfolio management</div>
+            <p style="margin: 10px 0 0; font-size: 14.5px; line-height: 1.7; color: rgba(7,26,43,.6);">Tenanting, renewals, maintenance and reporting. Ownership without the 3am phone calls.</p>
+            <div data-vdetail style="max-height: 0; opacity: 0; overflow: hidden; transition: max-height .75s cubic-bezier(.22,1,.36,1), opacity .5s ease;">
+              <p style="margin: 14px 0 0; font-size: 14px; line-height: 1.7; color: rgba(7,26,43,.72);">Statements quarterly, decisions in plain language, one point of contact for the building, the tenant and the bill.</p>
+              <span style="display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; padding-bottom: 6px; font-size: 11.5px; letter-spacing: .16em; font-weight: 500; border-bottom: 1px solid rgba(7,26,43,.35);">DISCUSS MANAGEMENT <span style="color: #B08D4F;">↗</span></span>
+            </div>
+          </div>
+        </a>
+        <a href="#contact" data-h="1" data-vpanel="1" data-rv="70" style="display: block; color: #071A2B; padding-bottom: 4px; border-top: 1px solid rgba(7,26,43,.14); opacity: 0; transform: translateY(14px);">
+          <div data-vimg style="position: relative; height: 0; overflow: hidden; transition: height .75s cubic-bezier(.22,1,.36,1);">
+            <img src="brand/photos/sell-clean.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%;">
+            <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,26,43,0) 40%, rgba(7,26,43,.28) 100%);"></div>
+          </div>
+          <div style="padding-top: 18px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px;">/ 02</span>
+            <div style="margin-top: 10px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(21px, 1.9vw, 30px); line-height: 1.2;">Investment &amp; capital deployment</div>
+            <p style="margin: 10px 0 0; font-size: 14.5px; line-height: 1.7; color: rgba(7,26,43,.6);">Where the yield actually is, what it costs you to hold, and when to sell. Plainly, with the numbers shown.</p>
+            <div data-vdetail style="max-height: 0; opacity: 0; overflow: hidden; transition: max-height .75s cubic-bezier(.22,1,.36,1), opacity .5s ease;">
+              <p style="margin: 14px 0 0; font-size: 14px; line-height: 1.7; color: rgba(7,26,43,.72);">Entry price against comparable stock, service charge and void assumptions, and the exit you are underwriting before you commit.</p>
+              <span style="display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; padding-bottom: 6px; font-size: 11.5px; letter-spacing: .16em; font-weight: 500; border-bottom: 1px solid rgba(7,26,43,.35);">REVIEW THE NUMBERS <span style="color: #B08D4F;">↗</span></span>
+            </div>
+          </div>
+        </a>
+        <a href="#contact" data-h="1" data-vpanel="1" data-rv="140" style="display: block; color: #071A2B; padding-bottom: 4px; border-top: 1px solid rgba(7,26,43,.14); opacity: 0; transform: translateY(14px);">
+          <div data-vimg style="position: relative; height: 0; overflow: hidden; transition: height .75s cubic-bezier(.22,1,.36,1);">
+            <img src="brand/photos/buy-clean.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%;">
+            <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,26,43,0) 40%, rgba(7,26,43,.28) 100%);"></div>
+          </div>
+          <div style="padding-top: 18px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #B08D4F; font-size: 15px;">/ 03</span>
+            <div style="margin-top: 10px; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(21px, 1.9vw, 30px); line-height: 1.2;">Acquisition &amp; leasing advisory</div>
+            <p style="margin: 10px 0 0; font-size: 14.5px; line-height: 1.7; color: rgba(7,26,43,.6);">Search, negotiation, paperwork and handover — managed personally, on your side of the table.</p>
+            <div data-vdetail style="max-height: 0; opacity: 0; overflow: hidden; transition: max-height .75s cubic-bezier(.22,1,.36,1), opacity .5s ease;">
+              <p style="margin: 14px 0 0; font-size: 14px; line-height: 1.7; color: rgba(7,26,43,.72);">We shortlist, we view, we negotiate, and we sit across from the developer or landlord with you until the keys change hands.</p>
+              <span style="display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; padding-bottom: 6px; font-size: 11.5px; letter-spacing: .16em; font-weight: 500; border-bottom: 1px solid rgba(7,26,43,.35);">START A SEARCH <span style="color: #B08D4F;">↗</span></span>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div style="position: relative; margin: 30px clamp(10px, 4vw, 60px) 0;">
+        <svg viewBox="0 0 1000 120" preserveAspectRatio="none" style="display: block; width: 100%; height: clamp(70px, 10vw, 120px);">
+          <path d="M 998 0 C 998 70, 880 104, 500 104 C 120 104, 2 70, 2 0" fill="none" stroke="#B08D4F" stroke-opacity=".55" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+        </svg>
+        <div style="position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); background: #F3EFE7; padding: 0 18px; display: flex; align-items: center; gap: 12px; white-space: nowrap;">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width: 9px; height: 13px;"><path d="M50 0 C55 32 68 45 100 50 C68 55 55 68 50 100 C45 68 32 55 0 50 C32 45 45 32 50 0 Z" fill="#B08D4F"></path></svg>
+          <span style="font-size: 10.5px; letter-spacing: .24em; color: rgba(7,26,43,.7); font-weight: 500;">ONE ADVISOR, THE WHOLE WAY ROUND</span>
+        </div>
+      </div>
+    </div>
+    </section>
+
+  <section id="contact" data-screen-label="Contact" style="background: #D2B77D; color: #071A2B;">
+    <div class="m-pad" style="padding: clamp(80px, 13vh, 150px) clamp(20px, 3.4vw, 64px);">
+      <div style="display: flex; align-items: baseline; gap: 18px;">
+        <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 15px; white-space: nowrap;">( 06 )</span>
+        <span style="font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap;">SPEAK TO RICHARD</span>
+        <span style="flex: 1; height: 1px; background: rgba(7,26,43,.3);"></span>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width: 10px; height: 14px;"><path d="M50 0 C55 32 68 45 100 50 C68 55 55 68 50 100 C45 68 32 55 0 50 C32 45 45 32 50 0 Z" fill="#071A2B"></path></svg>
+      </div>
+      <div class="m-col" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(24px, 3vw, 48px); align-items: start; margin-top: clamp(30px, 5vh, 56px);">
+        <div style="grid-column: 1 / span 7;" class="m-span12">
+          <h2 style="margin: 0; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(44px, 6.4vw, 120px); line-height: 1.0; letter-spacing: -0.01em;">
+            <span style="display: block; overflow: hidden; padding-bottom: .09em; margin-bottom: -.05em;"><span data-mask="0" style="display: block;">Begin the</span></span>
+            <span style="display: block; overflow: hidden; padding-bottom: .09em;"><span data-mask="1" style="display: block;"><em style="font-style: italic;">conversation.</em></span></span>
+          </h2>
+          <p data-rv="100" style="margin: 26px 0 0; max-width: 44ch; font-size: 15px; line-height: 1.75; color: rgba(7,26,43,.72); opacity: 0; transform: translateY(14px);">Twenty minutes, no pitch. Tell us where you are — buying, selling or leasing — and you will leave the call with a number, a next step, and no obligation to use us.</p>
+          <div data-rv="160" style="margin-top: clamp(30px, 5vh, 50px); opacity: 0; transform: translateY(14px);">
+            <a href="tel:+971585015885" data-h="1" style="display: flex; align-items: baseline; justify-content: space-between; gap: 20px; padding: 22px 0; border-top: 1px solid rgba(7,26,43,.3);" class="m-wrap">
+              <span style="font-size: 10px; letter-spacing: .28em; color: rgba(7,26,43,.6); font-weight: 500; white-space: nowrap;">CALL</span>
+              <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(22px, 2.2vw, 34px);">+971 58 501 5885</span>
+            </a>
+            <a href="mailto:info@rfrrealestate.com" data-h="1" style="display: flex; align-items: baseline; justify-content: space-between; gap: 20px; padding: 22px 0; border-top: 1px solid rgba(7,26,43,.3);" class="m-wrap">
+              <span style="font-size: 10px; letter-spacing: .28em; color: rgba(7,26,43,.6); font-weight: 500; white-space: nowrap;">WRITE</span>
+              <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(22px, 2.2vw, 34px);">info@rfrrealestate.com</span>
+            </a>
+            <a href="https://wa.me/971585015885" target="_blank" rel="noopener" data-h="1" style="display: flex; align-items: baseline; justify-content: space-between; gap: 20px; padding: 22px 0; border-top: 1px solid rgba(7,26,43,.3); border-bottom: 1px solid rgba(7,26,43,.3);" class="m-wrap">
+              <span style="font-size: 10px; letter-spacing: .28em; color: rgba(7,26,43,.6); font-weight: 500; white-space: nowrap;">WHATSAPP</span>
+              <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(22px, 2.2vw, 34px);">Message us directly ↗</span>
+            </a>
+          </div>
+        </div>
+        <div data-rv="120" style="grid-column: 9 / -1; opacity: 0; transform: translateY(14px);" class="m-span12">
+          <div style="position: relative; width: 100%; aspect-ratio: 4 / 5; border: 1px solid rgba(7,26,43,.4); padding: 10px; box-sizing: border-box;">
+            <image-slot id="richard-portrait" shape="rect" placeholder="Drop Richard's portrait" src="https://i.pravatar.cc/900?img=59"></image-slot>
+          </div>
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 16px;" class="m-wrap">
+            <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: 23px;">Richard Boswell</span>
+            <span style="font-size: 10.5px; letter-spacing: .14em; color: rgba(7,26,43,.6); white-space: nowrap;">REAL ESTATE ADVISOR</span>
+          </div>
+          <div style="margin-top: 8px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 16px; color: rgba(7,26,43,.75);">Replies within the day.</div>
+          <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(7,26,43,.25); font-size: 10.5px; letter-spacing: .18em; color: rgba(7,26,43,.6);">MON–FRI 9–6 · SAT 10–4 · RAK, UAE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer data-screen-label="Footer" style="background: #071A2B; color: #F3EFE7;">
+  <div class="m-pad" style="padding: clamp(70px, 11vh, 120px) clamp(20px, 3.4vw, 64px) 36px;">
+    <img src="brand/logo/rfr-gold.png" alt="RFR" style="display: block; width: min(560px, 58vw);">
+    <div class="m-col" style="display: grid; grid-template-columns: 1fr auto auto; gap: clamp(36px, 5vw, 110px); align-items: start; margin-top: clamp(44px, 8vh, 80px); padding-top: 30px; border-top: 1px solid rgba(210,183,125,.22);">
+      <div style="max-width: 34ch; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(20px, 1.9vw, 28px); line-height: 1.4; color: #D2B77D;">Wherever you call home.</div>
+      <div>
+        <div style="font-size: 10px; letter-spacing: .28em; color: rgba(243,239,231,.45); margin-bottom: 16px; font-weight: 500; white-space: nowrap;">NAVIGATE</div>
+        <div style="display: flex; flex-direction: column; gap: 11px; font-size: 14px;">
+          <a href="rfr-listings.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Listings</a>
+          <a href="rfr-offplan.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Off-Plan</a>
+          <a href="rfr-services.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">Services</a>
+          <a href="rfr-about.dc.html" data-h="1" style="color: rgba(243,239,231,.78);">About</a>
+          <a href="#contact" data-h="1" style="color: rgba(243,239,231,.78);">Contact</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 10px; letter-spacing: .28em; color: rgba(243,239,231,.45); margin-bottom: 16px; font-weight: 500; white-space: nowrap;">CONTACT</div>
+        <div style="display: flex; flex-direction: column; gap: 11px; font-size: 14px; color: rgba(243,239,231,.78);">
+          <a href="tel:+971585015885" data-h="1" style="color: rgba(243,239,231,.78);">+971 58 501 5885</a>
+          <a href="mailto:info@rfrrealestate.com" data-h="1" style="color: rgba(243,239,231,.78);">info@rfrrealestate.com</a>
+          <span>Ras Al Khaimah, United Arab Emirates</span>
+          <span style="color: rgba(243,239,231,.5);">Mon–Fri 9–6 · Sat 10–4</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 60px; padding-top: 24px; border-top: 1px solid rgba(210,183,125,.16); display: flex; align-items: baseline; justify-content: space-between; gap: 16px; font-size: 11.5px; color: rgba(243,239,231,.42);" class="m-wrap">
+      <span>© 2026 RFR Real Estate &amp; Advisory FZ-LLC</span>
+      <span style="letter-spacing: .3em;">REAL&nbsp;ESTATE&nbsp;&amp;&nbsp;ADVISORY</span>
+      <a href="#top" data-h="1" style="letter-spacing: .2em; font-size: 10px; color: rgba(243,239,231,.6); white-space: nowrap;">BACK TO TOP ↑</a>
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;motionIntensity&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 1, &quot;min&quot;: 0, &quot;max&quot;: 1.5, &quot;step&quot;: 0.1, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Motion&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.m = this.props.motionIntensity ?? 1;
+    this._cleanup = [];
+    this._done = {};
+    this._timers = [];
+    const wire = () => { try { this.wireAll(); } catch (err) { console.warn('wire', err); } };
+    wire();
+    [120, 500, 1200, 2500, 4500].forEach((ms) => this._timers.push(setTimeout(wire, ms)));
+    this._onLoad = wire;
+    window.addEventListener('load', this._onLoad);
+    const tick = () => {
+      this._raf = requestAnimationFrame(tick);
+      try { this.frame(); } catch (err) {}
+    };
+    try { this.frame(); } catch (err) {}
+    this._raf = requestAnimationFrame(tick);
+  }
+
+  wireAll() {
+    const d = this._done;
+    const reduced = this.reduced;
+
+    if (!d.menu) {
+      const ov = document.getElementById('menu-ov');
+      const mb = document.getElementById('menu-btn');
+      if (ov && mb) {
+        d.menu = true;
+        const setOv = (o) => { ov.style.opacity = o ? '1' : '0'; ov.style.visibility = o ? 'visible' : 'hidden'; document.body.style.overflow = o ? 'hidden' : ''; };
+        const open = () => setOv(true), close = () => setOv(false);
+        mb.addEventListener('click', open);
+        this._cleanup.push(() => mb.removeEventListener('click', open));
+        const mx = document.getElementById('menu-x');
+        if (mx) { mx.addEventListener('click', close); this._cleanup.push(() => mx.removeEventListener('click', close)); }
+        ov.querySelectorAll('a').forEach((a) => { a.addEventListener('click', close); this._cleanup.push(() => a.removeEventListener('click', close)); });
+        const esc = (ev) => { if (ev.key === 'Escape') close(); };
+        document.addEventListener('keydown', esc);
+        this._cleanup.push(() => document.removeEventListener('keydown', esc));
+      }
+    }
+
+    if (!d.pv) {
+      const pv = document.getElementById('pv');
+      const tris = document.querySelectorAll('[data-tri]');
+      const prevs = document.querySelectorAll('[data-prev]');
+      if (pv && (tris.length || prevs.length) && window.matchMedia('(pointer: fine)').matches) {
+        d.pv = true;
+        this.pv = pv;
+        this.pvImgs = [0, 1, 2, 3].map((i) => pv.querySelector('[data-pvi="' + i + '"]'));
+        this.pvState = { px: 0, py: 0, tx: 0, ty: 0, shown: false };
+        const onMove = (ev) => { this.pvState.tx = ev.clientX + 26; this.pvState.ty = ev.clientY - 205; };
+        document.addEventListener('mousemove', onMove, { passive: true });
+        this._cleanup.push(() => document.removeEventListener('mousemove', onMove));
+        tris.forEach((el) => {
+          const idx = parseInt(el.getAttribute('data-tri'), 10);
+          const enter = () => { this.pvState.shown = true; pv.style.opacity = '1'; this.pvImgs.forEach((im, i) => { if (im) im.style.opacity = i === idx ? '1' : '0'; }); };
+          const leave = () => { this.pvState.shown = false; pv.style.opacity = '0'; };
+          el.addEventListener('mouseenter', enter);
+          el.addEventListener('mouseleave', leave);
+          this._cleanup.push(() => { el.removeEventListener('mouseenter', enter); el.removeEventListener('mouseleave', leave); });
+        });
+        const slot = this.pvImgs[3];
+        prevs.forEach((el) => {
+          const src = el.getAttribute('data-prev');
+          const enter = () => {
+            if (!slot) return;
+            if (slot.getAttribute('src') !== src) slot.setAttribute('src', src);
+            this.pvState.shown = true;
+            pv.style.opacity = '1';
+            this.pvImgs.forEach((im, i) => { if (im) im.style.opacity = i === 3 ? '1' : '0'; });
+          };
+          const leave = () => { this.pvState.shown = false; pv.style.opacity = '0'; };
+          el.addEventListener('mouseenter', enter);
+          el.addEventListener('mouseleave', leave);
+          this._cleanup.push(() => { el.removeEventListener('mouseenter', enter); el.removeEventListener('mouseleave', leave); });
+        });
+      }
+    }
+
+    if (!d.masks) {
+      const masks = document.querySelectorAll('[data-mask]');
+      if (masks.length) {
+        d.masks = true;
+        if (reduced) {
+          masks.forEach((el) => { el.style.transform = 'none'; });
+        } else {
+          masks.forEach((el) => { el.style.transform = 'translateY(112%)'; });
+          const maskIO = new IntersectionObserver((entries) => {
+            entries.forEach((en) => {
+              if (!en.isIntersecting) return;
+              const el = en.target.matches('[data-mask]') ? en.target : en.target.querySelector('[data-mask]');
+              if (!el) return;
+              const i = parseInt(el.getAttribute('data-mask') || '0', 10);
+              el.style.transition = 'transform .95s cubic-bezier(.22,1,.36,1) ' + (i * 110) + 'ms';
+              el.style.transform = 'translateY(0)';
+              maskIO.unobserve(en.target);
+            });
+          }, { threshold: 0.2 });
+          masks.forEach((el) => { if (el.parentElement) maskIO.observe(el.parentElement); });
+          this._maskIO = maskIO;
+          this._timers.push(setTimeout(() => document.querySelectorAll('[data-mask]').forEach((el) => {
+            el.style.transition = 'transform .9s cubic-bezier(.22,1,.36,1)';
+            el.style.transform = 'translateY(0)';
+          }), 2400));
+        }
+      }
+    }
+
+    const rvs = Array.from(document.querySelectorAll('[data-rv]')).filter((el) => !el.dataset.rvWired);
+    if (rvs.length) {
+      if (reduced) {
+        rvs.forEach((el) => { el.dataset.rvWired = '1'; el.style.opacity = '1'; el.style.transform = 'none'; });
+      } else {
+        if (!this._io) {
+          this._io = new IntersectionObserver((entries) => {
+            entries.forEach((en) => {
+              if (!en.isIntersecting) return;
+              const el = en.target;
+              const delay = parseInt(el.getAttribute('data-rv') || '0', 10);
+              el.style.transition = 'opacity .6s ease ' + delay + 'ms, transform .7s cubic-bezier(.22,1,.36,1) ' + delay + 'ms';
+              el.style.opacity = '1';
+              el.style.transform = 'translateY(0)';
+              this._io.unobserve(el);
+            });
+          }, { threshold: 0.12 });
+        }
+        rvs.forEach((el) => { el.dataset.rvWired = '1'; this._io.observe(el); });
+      }
+    }
+
+    if (!d.vpanels) {
+      const vps = document.querySelectorAll('[data-vpanel]');
+      if (vps.length) {
+        d.vpanels = true;
+        const narrow = () => window.innerWidth < 961;
+        vps.forEach((p) => {
+          const img = p.querySelector('[data-vimg]');
+          const det = p.querySelector('[data-vdetail]');
+          const open = () => {
+            if (narrow()) return;
+            if (img) img.style.height = 'clamp(150px, 17vw, 240px)';
+            if (det) { det.style.maxHeight = '260px'; det.style.opacity = '1'; }
+          };
+          const close = () => {
+            if (narrow()) return;
+            if (img) img.style.height = '0px';
+            if (det) { det.style.maxHeight = '0px'; det.style.opacity = '0'; }
+          };
+          p.addEventListener('mouseenter', open);
+          p.addEventListener('mouseleave', close);
+          this._cleanup.push(() => { p.removeEventListener('mouseenter', open); p.removeEventListener('mouseleave', close); });
+        });
+        const vsync = () => {
+          const n = narrow();
+          vps.forEach((p) => {
+            const img = p.querySelector('[data-vimg]');
+            const det = p.querySelector('[data-vdetail]');
+            if (img) img.style.height = n ? '150px' : '0px';
+            if (det) { det.style.maxHeight = n ? 'none' : '0px'; det.style.opacity = n ? '1' : '0'; }
+          });
+        };
+        vsync();
+        window.addEventListener('resize', vsync);
+        this._cleanup.push(() => window.removeEventListener('resize', vsync));
+      }
+    }
+
+    if (!d.panels) {
+      const panels = document.querySelectorAll('[data-panel]');
+      if (panels.length) {
+        d.panels = true;
+        const narrow = () => window.innerWidth < 961;
+        panels.forEach((p) => {
+          const detail = p.querySelector('[data-detail]');
+          const open = () => { if (narrow()) return; p.style.flexGrow = '2.4'; if (detail) { detail.style.opacity = '1'; detail.style.transform = 'translateY(0)'; } };
+          const close = () => { p.style.flexGrow = '1'; if (detail && !narrow()) { detail.style.opacity = '0'; detail.style.transform = 'translateY(12px)'; } };
+          p.addEventListener('mouseenter', open);
+          p.addEventListener('mouseleave', close);
+          this._cleanup.push(() => { p.removeEventListener('mouseenter', open); p.removeEventListener('mouseleave', close); });
+        });
+        const sync = () => { if (narrow()) document.querySelectorAll('[data-detail]').forEach((x) => { x.style.opacity = '1'; x.style.transform = 'none'; }); };
+        sync();
+        window.addEventListener('resize', sync);
+        this._cleanup.push(() => window.removeEventListener('resize', sync));
+      }
+    }
+
+    if (!d.firm) {
+      const fs = document.getElementById('firm');
+      const fimg = document.getElementById('firm-img');
+      const fphoto = document.getElementById('firm-photo');
+      if (fs && fimg && fphoto) {
+        d.firm = true;
+        this.firm = {
+          fs: fs, img: fimg, photo: fphoto,
+          stage: document.getElementById('firm-stage'),
+          veil: document.getElementById('firm-veil'),
+          cap: document.getElementById('firm-cap'),
+          lines: [0, 1, 2, 3].map((i) => document.querySelector('[data-fl="' + i + '"]')),
+          wasNarrow: null
+        };
+      }
+    }
+  }
+
+  firmStatic() {
+    const f = this.firm;
+    f.fs.style.height = 'auto';
+    if (f.stage) { f.stage.style.position = 'static'; f.stage.style.height = 'auto'; f.stage.style.padding = '110px 20px 80px'; f.stage.style.boxSizing = 'border-box'; }
+    f.img.style.position = 'relative';
+    f.img.style.clipPath = 'none';
+    f.img.style.height = '42svh';
+    f.img.style.marginBottom = '30px';
+    f.photo.style.width = '100%';
+    f.photo.style.transform = 'none';
+    if (f.veil) f.veil.style.opacity = '0';
+    if (f.cap) f.cap.style.opacity = '1';
+    f.lines.forEach((el) => { if (el) { el.style.opacity = '1'; el.style.transform = 'none'; } });
+  }
+
+  firmScene() {
+    const f = this.firm;
+    f.fs.style.height = '300vh';
+    if (f.stage) { f.stage.style.position = 'sticky'; f.stage.style.height = '100svh'; f.stage.style.padding = '0'; }
+    f.img.style.position = 'absolute';
+    f.img.style.height = '';
+    f.img.style.marginBottom = '';
+    f.photo.style.width = '120%';
+  }
+
+  frame() {
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const ss = (t) => t * t * (3 - 2 * t);
+    const sy = window.scrollY;
+    const vh = window.innerHeight, vw = window.innerWidth;
+    const reduced = this.reduced, m = this.m;
+
+    // header
+    const hdr = document.getElementById('hdr');
+    if (hdr) {
+      const wantSolid = sy > vh * 0.72;
+      if (wantSolid !== this._solid) {
+        this._solid = wantSolid;
+        hdr.style.background = wantSolid ? 'rgba(243,239,231,.95)' : 'rgba(243,239,231,0)';
+        hdr.style.borderColor = wantSolid ? 'rgba(7,26,43,.12)' : 'rgba(243,239,231,.18)';
+        hdr.style.color = wantSolid ? '#071A2B' : '#F3EFE7';
+        hdr.style.backdropFilter = wantSolid ? 'blur(10px)' : 'none';
+        const logo = document.getElementById('hdr-logo');
+        if (logo) logo.src = wantSolid ? 'brand/logo/rfr-navy.png' : 'brand/logo/rfr-gold.png';
+        const cta = document.getElementById('hdr-cta');
+        if (cta) cta.style.borderBottomColor = wantSolid ? 'rgba(7,26,43,.4)' : 'rgba(243,239,231,.5)';
+      }
+    }
+
+    if (!reduced) {
+      const heroImg = document.getElementById('hero-img');
+      if (heroImg && sy < vh) {
+        heroImg.style.transform = 'scale(1.06) translateY(' + (sy * 0.14 * m).toFixed(1) + 'px)';
+        const heroCopy = document.getElementById('hero-copy');
+        if (heroCopy) heroCopy.style.opacity = String(Math.max(0, 1 - (sy / vh) * 1.4));
+      }
+      const pars = document.querySelectorAll('[data-par]');
+      for (const im of pars) {
+        const par = im.parentElement;
+        if (!par) continue;
+        const r = par.getBoundingClientRect();
+        if (r.bottom < -40 || r.top > vh + 40) continue;
+        const c = (r.top + r.height / 2 - vh / 2) / vh;
+        im.style.transform = 'translateY(' + (c * -6 * m).toFixed(2) + '%)';
+      }
+    }
+
+    // firm scroll scene
+    const f = this.firm;
+    if (f) {
+      const narrow = vw < 961;
+      if (narrow !== f.wasNarrow) { f.wasNarrow = narrow; narrow ? this.firmStatic() : this.firmScene(); }
+      if (!narrow) {
+        const p = clamp((sy - f.fs.offsetTop) / Math.max(1, f.fs.offsetHeight - vh), 0, 1);
+        f.photo.style.transform = 'translateX(' + (ss(clamp(p / 0.42, 0, 1)) * -16).toFixed(2) + '%)';
+        const c = ss(clamp((p - 0.26) / 0.44, 0, 1));
+        const gut = Math.min(64, Math.max(20, vw * 0.034));
+        f.img.style.clipPath = 'inset(' + (c * vh * 0.155).toFixed(1) + 'px ' + (c * gut).toFixed(1) + 'px ' + (c * vh * 0.175).toFixed(1) + 'px ' + (c * vw * 0.53).toFixed(1) + 'px)';
+        if (f.veil) f.veil.style.opacity = (1 - c).toFixed(3);
+        const t = clamp((p - 0.08) / 0.3, 0, 1);
+        f.lines.forEach((el, i) => {
+          if (!el) return;
+          const o = clamp(t * 2.6 - i * 0.4, 0, 1);
+          el.style.opacity = o.toFixed(3);
+          el.style.transform = 'translateY(' + ((1 - o) * (i < 2 ? 106 : 22)).toFixed(1) + (i < 2 ? '%' : 'px') + ')';
+        });
+        if (f.cap) f.cap.style.opacity = clamp((c - 0.75) * 5, 0, 1).toFixed(3);
+      }
+    }
+
+    // hover preview follow
+    const st = this.pvState;
+    if (this.pv && st && (st.shown || this.pv.style.opacity === '1')) {
+      st.px += (st.tx - st.px) * 0.16;
+      st.py += (st.ty - st.py) * 0.16;
+      this.pv.style.transform = 'translate3d(' + st.px.toFixed(1) + 'px,' + st.py.toFixed(1) + 'px,0)';
+    }
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this._raf);
+    (this._timers || []).forEach((t) => clearTimeout(t));
+    if (this._onLoad) window.removeEventListener('load', this._onLoad);
+    if (this._io) this._io.disconnect();
+    if (this._maskIO) this._maskIO.disconnect();
+    (this._cleanup || []).forEach((fn) => fn());
+    document.body.style.overflow = '';
+  }
+
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

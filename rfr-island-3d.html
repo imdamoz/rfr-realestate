@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFR — Al Marjan Island, blueprint study</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,600&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500&display=swap">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+  }
+}
+</script>
+<style>
+  html, body { margin: 0; height: 100%; background: #071A2B; color: #F3EFE7; font-family: 'Satoshi', 'Helvetica Neue', sans-serif; overflow: hidden; -webkit-font-smoothing: antialiased; }
+  three-d-stage:not(:defined) { visibility: hidden; }
+  three-d-stage { display: block; width: 100vw; height: 100vh; }
+  .ov { position: fixed; inset: 0; pointer-events: none; }
+  .ov a { pointer-events: auto; color: inherit; text-decoration: none; }
+  .tl { position: absolute; left: clamp(20px, 3.4vw, 64px); top: 26px; display: flex; align-items: center; gap: 22px; }
+  .tl img { height: 40px; display: block; }
+  .kick { display: flex; align-items: baseline; gap: 16px; font-size: 11px; letter-spacing: .26em; font-weight: 500; white-space: nowrap; color: rgba(243,239,231,.85); }
+  .kick i, .cap i { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 15px; color: #D2B77D; letter-spacing: 0; }
+  .cap { position: absolute; right: clamp(20px, 3.4vw, 64px); top: 38px; display: flex; gap: 18px; align-items: baseline; font-size: 10.5px; letter-spacing: .2em; color: rgba(243,239,231,.5); }
+  .bl { position: absolute; left: clamp(20px, 3.4vw, 64px); top: 104px; max-width: 34ch; }
+  .bl h1 { margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(26px, 2.6vw, 42px); line-height: 1.06; letter-spacing: -0.005em; }
+  .bl h1 em { font-style: italic; font-weight: 600; color: #D2B77D; }
+  .bl p { margin: 12px 0 0; font-size: 13px; line-height: 1.7; color: rgba(243,239,231,.6); }
+  .hint { position: absolute; left: clamp(20px, 3.4vw, 64px); bottom: clamp(24px, 4vh, 44px); display: flex; gap: 22px; font-size: 10px; letter-spacing: .22em; color: rgba(243,239,231,.45); font-weight: 500; }
+  .lbls { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 3; }
+  .lbl { position: absolute; left: 0; top: 0; display: flex; align-items: center; margin: -7px 0 0 -3px; white-space: nowrap; opacity: 0; transition: opacity .5s ease; will-change: transform; backface-visibility: hidden; }
+  .lbl:hover { z-index: 6; }
+  .lbl .dot { width: 6px; height: 6px; border-radius: 50%; background: #D2B77D; box-shadow: 0 0 0 4px rgba(210,183,125,.16), 0 0 14px rgba(210,183,125,.6); }
+  .lbl .ln { width: 26px; height: 1px; background: rgba(210,183,125,.65); margin: 0 9px 0 6px; }
+  .lbl .tx { font-size: 9.5px; letter-spacing: .22em; font-weight: 500; color: rgba(243,239,231,.88); }
+  .lbl.hero .tx { font-size: 10.5px; color: #F3EFE7; }
+  .lbl .tx { pointer-events: auto; cursor: default; padding: 6px 2px; margin: -6px -2px; transition: color .3s ease; }
+  .lbl:hover .tx { color: #F3EFE7; }
+  .lbl:hover .dot { box-shadow: 0 0 0 6px rgba(210,183,125,.22), 0 0 22px rgba(210,183,125,.9); }
+  .lbl .card { position: absolute; left: 44px; bottom: 18px; width: 236px; opacity: 0; transform: translateY(8px) scale(.98); transform-origin: left bottom; transition: opacity .38s ease, transform .5s cubic-bezier(.22,.61,.2,1); pointer-events: none; z-index: 5; }
+  .lbl:hover .card { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  .lbl .card .ph image-slot { pointer-events: auto; }
+  .lbl.flip .card { left: auto; right: -20px; transform-origin: right bottom; }
+  .lbl.down .card { bottom: auto; top: 18px; transform-origin: left top; transform: translateY(-8px) scale(.98); }
+  .lbl.down.flip .card { transform-origin: right top; }
+  .lbl.down:hover .card { transform: translateY(0) scale(1); }
+  .lbl .card .ph { position: relative; width: 236px; height: 150px; overflow: hidden; background: #0E2A45; border: 1px solid rgba(210,183,125,.4); }
+  .lbl .card .ph img, .lbl .card .ph image-slot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .lbl .card .ph img { transform: scale(1.04); transition: transform 1.2s cubic-bezier(.22,.61,.2,1); }
+  .lbl:hover .card .ph img { transform: scale(1); }
+  .lbl .card .ph::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,26,43,0) 55%, rgba(7,26,43,.55) 100%); pointer-events: none; }
+  .lbl .card .ph i { position: absolute; left: 12px; bottom: 9px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 13px; color: #D2B77D; letter-spacing: 0; z-index: 1; }
+  .lbl .card .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 9px; }
+  .lbl .card .meta b { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 17px; color: #F3EFE7; letter-spacing: 0; white-space: normal; line-height: 1.15; }
+  .lbl .card .meta em { font-style: normal; font-size: 9px; letter-spacing: .2em; color: rgba(243,239,231,.55); white-space: nowrap; }
+  .lbl .card .desc { margin-top: 6px; font-size: 11.5px; line-height: 1.55; color: rgba(243,239,231,.66); letter-spacing: 0; white-space: normal; }
+  #gate { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: #071A2B; cursor: pointer; transition: opacity .9s ease; }
+  #gate.off { opacity: 0; pointer-events: none; }
+  #gate img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; filter: saturate(.7); }
+  #gate::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(7,26,43,.1) 0%, rgba(7,26,43,.85) 75%); }
+  #gate .play { position: relative; display: flex; flex-direction: column; align-items: center; gap: 18px; color: #F3EFE7; }
+  #gate .ring { width: 92px; height: 92px; border-radius: 50%; border: 1px solid rgba(210,183,125,.7); display: flex; align-items: center; justify-content: center; position: relative; transition: transform .6s cubic-bezier(.22,.61,.2,1), background .5s ease; }
+  #gate:hover .ring { transform: scale(1.08); background: rgba(210,183,125,.12); }
+  #gate .ring::after { content: ''; position: absolute; inset: -14px; border-radius: 50%; border: 1px solid rgba(210,183,125,.25); animation: ripple 2.8s ease-out infinite; }
+  @keyframes ripple { 0% { transform: scale(.85); opacity: .9; } 100% { transform: scale(1.35); opacity: 0; } }
+  #gate .ring svg { width: 22px; height: 22px; margin-left: 4px; }
+  #gate .lab { font-size: 10.5px; letter-spacing: .3em; font-weight: 500; color: rgba(243,239,231,.85); }
+  #gate .sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 15px; color: #D2B77D; margin-top: -8px; }
+  #gate .fine { position: absolute; bottom: clamp(24px, 4vh, 44px); right: clamp(20px, 3.4vw, 64px); font-size: 9.5px; letter-spacing: .22em; color: rgba(243,239,231,.4); }
+  @media (max-width: 1280px) { .cap { display: none; } }
+  @media (max-width: 720px) { .cap, .hint, .lbls { display: none; } .bl { max-width: 80vw; } .kick span { display: none; } }
+</style>
+</head>
+<body>
+<three-d-stage name="al-marjan-island-blueprint" background="#071A2B" autorotate></three-d-stage>
+
+<div id="gate" role="button" aria-label="Play the 3D study">
+  <img src="https://static.wixstatic.com/media/e0d1cd_4bff9bed686c49bbadc1b9a08d89751e~mv2.jpg/v1/fill/w_1920,h_1440,al_c,q_85,enc_auto/wynn%20image.jpg" alt="">
+  <div class="play"><div class="ring"><svg viewBox="0 0 24 24" fill="#F3EFE7"><path d="M6 4l14 8-14 8z"></path></svg></div><div class="lab">PLAY THE 3D STUDY</div><div class="sub">draws the archipelago live · ~1 MB</div></div>
+  <div class="fine">WEBGL · LOADS ON DEMAND</div>
+</div>
+<div class="lbls">
+  <div class="lbl hero" data-a="1380,332,340"><span class="dot"></span><span class="ln"></span><span class="tx">WYNN RESORT AND CASINO</span><div class="card"><div class="ph"><img src="https://static.wixstatic.com/media/e0d1cd_4bff9bed686c49bbadc1b9a08d89751e~mv2.jpg/v1/fill/w_640,h_420,al_c,q_80,enc_auto/wynn%20image.jpg" alt=""><i>( resort )</i></div><div class="meta"><b>Wynn Al Marjan Island</b><em>RESORT · 2027</em></div><div class="desc">The UAE’s first integrated gaming resort: 1,500 keys, a 305 m copper tower and its own marina at the tip of View Island.</div></div></div>
+  <div class="lbl" data-a="830,112,470"><span class="dot"></span><span class="ln"></span><span class="tx">OCEANO</span><div class="card"><div class="ph"><img src="https://al-marjanisland.com/wp-content/uploads/2025/04/Sora-beach.jpg" alt=""><i>( residences )</i></div><div class="meta"><b>Oceano</b><em>RESIDENCES</em></div><div class="desc">Twin curved towers by The Luxe Developers on a private islet, every apartment facing the Gulf.</div></div></div>
+  <div class="lbl" data-a="470,96,470"><span class="dot"></span><span class="ln"></span><span class="tx">NOBU RESIDENCES</span><div class="card"><div class="ph"><img src="https://al-marjanisland.com/wp-content/uploads/2025/04/Nobu.jpeg" alt=""><i>( branded )</i></div><div class="meta"><b>Nobu Residences</b><em>BRANDED · HOTEL</em></div><div class="desc">Nobu Hospitality’s terraced hotel and residences on the peninsula that reaches toward Oceano.</div></div></div>
+  <div class="lbl" data-a="60,42,690"><span class="dot"></span><span class="ln"></span><span class="tx">AL MARJAN RESORT AND RESIDENCES</span><div class="card"><div class="ph"><img src="https://al-marjanisland.com/wp-content/uploads/2024/10/JW-Marriott-Residences-Al-Marjan-Island.jpg" alt=""><i>( resort )</i></div><div class="meta"><b>Al Marjan Resort &amp; Residences</b><em>RESORT</em></div><div class="desc">Beachfront resort and residences on the spine’s northern shore, minutes from Wynn.</div></div></div>
+  <div class="lbl" data-a="-395,44,575"><span class="dot"></span><span class="ln"></span><span class="tx">MASA RESIDENCE</span><div class="card"><div class="ph"><img src="https://al-marjanisland.com/wp-content/uploads/2024/03/Masa-Residences-1024x1024.jpeg" alt=""><i>( residences )</i></div><div class="meta"><b>Masa Residence</b><em>RESIDENCES</em></div><div class="desc">Boutique waterfront apartments on Treasure Island with direct beach access.</div></div></div>
+  <div class="lbl" data-a="-630,38,450"><span class="dot"></span><span class="ln"></span><span class="tx">MOONSTONE INTERIORS</span><div class="card"><div class="ph"><img src="https://al-marjanisland.com/wp-content/uploads/2025/02/Costa-Mare-Ellington-1024x601.jpg" alt=""><i>( branded )</i></div><div class="meta"><b>Moonstone Interiors by Missoni</b><em>BRANDED · RESIDENCES</em></div><div class="desc">Fashion-house interiors over a lagoon-side beach on the western spine.</div></div></div>
+  <div class="lbl" data-a="-878,180,278"><span class="dot"></span><span class="ln"></span><span class="tx">NIKKI BEACH RESIDENCES · ROSSO BAY</span><div class="card"><div class="ph"><img src="https://al-marjanisland.com/wp-content/uploads/2024/03/Nikki-Beach-Residences.jpeg" alt=""><i>( branded )</i></div><div class="meta"><b>Nikki Beach Residences, Rosso Bay</b><em>BRANDED · RESIDENCES</em></div><div class="desc">Twin terraced towers around an oval pool, with the Rosso Bay beach club below.</div></div></div>
+  <div class="lbl" data-a="-1335,30,-180"><span class="dot"></span><span class="ln"></span><span class="tx">BAB AL BAHR RESIDENCES</span><div class="card"><div class="ph"><img src="https://al-marjanisland.com/wp-content/uploads/2026/08/W-Hotel-Residences.jpeg" alt=""><i>( established )</i></div><div class="meta"><b>Bab Al Bahr Residences</b><em>ESTABLISHED</em></div><div class="desc">The island’s first Mediterranean-style community, by the causeway to Al Hamra.</div></div></div>
+  <div class="lbl" data-a="460,42,1130"><span class="dot"></span><span class="ln"></span><span class="tx">PACIFIC</span><div class="card"><div class="ph"><img src="https://al-marjanisland.com/wp-content/uploads/2024/10/Manta-Bay.jpg" alt=""><i>( residences )</i></div><div class="meta"><b>Pacific</b><em>RESIDENCES</em></div><div class="desc">Low-rise waterfront apartments around Dream Island’s north-west bay.</div></div></div>
+  <div class="lbl" data-a="820,72,1200"><span class="dot"></span><span class="ln"></span><span class="tx">ADDRESS RESIDENCES</span><div class="card"><div class="ph"><img src="https://al-marjanisland.com/wp-content/uploads/2024/10/Address-Residences.jpg" alt=""><i>( branded )</i></div><div class="meta"><b>Address Residences Al Marjan Island</b><em>BRANDED · EMAAR</em></div><div class="desc">Emaar’s branded crescent on Dream Island’s north-east shore.</div></div></div>
+  <div class="lbl" data-a="960,18,900"><span class="dot"></span><span class="ln"></span><span class="tx">DANAH BAY</span><div class="card"><div class="ph"><img src="brand/photos/villa-sq.jpg" alt=""><i>( villas )</i></div><div class="meta"><b>Danah Bay</b><em>VILLAS · TOWNHOUSES</em></div><div class="desc">Beachfront townhouses and villas by Dubai Investments on the east of Dream Island.</div></div></div>
+  <div class="lbl" data-a="-1900,20,-620"><span class="dot"></span><span class="ln"></span><span class="tx">AL HAMRA · MAINLAND</span><div class="card"><div class="ph"><img src="brand/photos/hero-clean.jpg" alt=""><i>( mainland )</i></div><div class="meta"><b>Al Hamra Village</b><em>MAINLAND · GOLF · MARINA</em></div><div class="desc">The established golf-and-marina community the causeway leads home to.</div></div></div>
+</div>
+
+<div class="ov">
+  <div class="tl">
+    <a href="RFR%20Website%20v5.dc.html" title="Back to RFR"><img src="brand/logo/rfr-gold.png" alt="RFR — Real Estate &amp; Advisory"></a>
+    <div class="kick"><i>( 03 )</i><span>AL MARJAN ISLAND · BLUEPRINT STUDY</span></div>
+  </div>
+  <div class="cap"><span>— FOUR ISLANDS · 4.5 KM INTO THE GULF · SCHEMATIC</span><i>( fig. 03 )</i></div>
+  <div class="bl">
+    <h1>The Emirate the market is <em>watching.</em></h1>
+    <p>Al Marjan Island, Ras Al Khaimah — the full archipelago from Bab Al Bahr to Wynn, drawn live in wire and node.</p>
+  </div>
+  <div class="hint"><span>DRAG TO ORBIT</span><span>SCROLL TO ZOOM</span></div>
+</div>
+
+<script src="image-slot.js"></script>
+<script src="three-d-stage.js"></script>
+<script type="module">
+const stage = document.querySelector('three-d-stage');
+const gate = document.getElementById('gate');
+const embedded = window.self !== window.top;
+await new Promise((res) => {
+  const go = () => { gate.classList.add('off'); res(); };
+  if (!embedded || new URLSearchParams(location.search).has('autoplay')) { setTimeout(go, 400); return; }
+  gate.addEventListener('click', go, { once: true });
+});
+const { THREE } = await stage.ready;
+{
+  const r = stage._renderer;
+  r.shadowMap.enabled = false;
+  r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  stage._scene.traverse((o) => { if (o.isLight) o.castShadow = false; });
+  stage._controls.dampingFactor = 0.05;
+  if (stage._toolbar) stage._toolbar.style.display = 'none';
+  const note = stage.shadowRoot && stage.shadowRoot.querySelector('.note'); if (note) note.style.display = 'none';
+}
+
+// ---- materials ----
+const NAVY = 0x071A2B, GOLD = 0xD2B77D, PALE = 0xEAD9A8;
+const fillMat = new THREE.MeshBasicMaterial({ color: 0x0E2A45, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, transparent: true, opacity: 0 }); fillMat.name = 'fill_navy';
+const line = (color, op, name) => { const m = new THREE.LineBasicMaterial({ color, transparent: true, opacity: op }); m.name = name; return m; };
+const lineGold = line(GOLD, 0.9, 'line_gold'), lineTower = line(PALE, 0.95, 'line_tower'), lineSoft = line(GOLD, 0.5, 'line_soft'), lineFaint = line(GOLD, 0.26, 'line_faint'), lineGrid = line(GOLD, 0.08, 'line_grid');
+const lineDash = new THREE.LineDashedMaterial({ color: GOLD, transparent: true, opacity: 0.3, dashSize: 28, gapSize: 20 }); lineDash.name = 'line_dashed';
+const scanMat = line(PALE, 0, 'line_scan');
+const glow = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const rg = g.createRadialGradient(32, 32, 0, 32, 32, 32); rg.addColorStop(0, 'rgba(255,255,255,1)'); rg.addColorStop(0.3, 'rgba(255,255,255,.9)'); rg.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = rg; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+const nodeMat = (color, size, op, name) => { const m = new THREE.PointsMaterial({ color, size, map: glow, sizeAttenuation: false, transparent: true, opacity: op, depthWrite: false, blending: THREE.AdditiveBlending }); m.name = name; return m; };
+const dots = nodeMat(0xF3EFE7, 4.5, 0.85, 'node_porcelain'), dotsSmall = nodeMat(0xF3EFE7, 3, 0.55, 'node_small'), dotsGold = nodeMat(PALE, 8, 1, 'node_gold'), dotsPalm = nodeMat(GOLD, 3.6, 0.7, 'node_palm'), dotsSea = nodeMat(GOLD, 2.4, 0.35, 'node_sea');
+
+const model = new THREE.Group(); model.name = 'al_marjan_island_blueprint';
+let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const W = (mx, y, my) => new THREE.Vector3(mx, y, -my);
+const ext = (shape, h, segs = 8) => { const g = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false, curveSegments: segs }); g.rotateX(-Math.PI / 2); return g; };
+const poly = (pts) => { const s = new THREE.Shape(); s.setFromPoints(pts.map(([x, y]) => new THREE.Vector2(x, y))); return s; };
+const ring = (cx, cy, r0, r1, a0, a1) => { const s = new THREE.Shape(); s.absarc(cx, cy, r1, a0, a1, true); s.absarc(cx, cy, r0, a1, a0, false); return s; };
+const rrect = (w, h, r) => { const s = new THREE.Shape(), x = -w / 2, y = -h / 2; s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r); s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h); s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r); s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y); return s; };
+const positions = (arr) => new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(arr, 3));
+const arcPts = (cx, cy, r, a0, a1, n) => { const o = []; for (let i = 0; i <= n; i++) { const a = a0 + (a1 - a0) * i / n; o.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } return o; };
+// circular bay between two headlands, bulging to the right of P1->P2 by `depth`
+const bayArc = (P1, P2, depth, n = 10) => {
+  const dx = P2[0] - P1[0], dy = P2[1] - P1[1], L = Math.hypot(dx, dy), c = L / 2, nx = dy / L, ny = -dx / L;
+  const r = (c * c + depth * depth) / (2 * depth), C = [(P1[0] + P2[0]) / 2 - nx * (r - depth), (P1[1] + P2[1]) / 2 - ny * (r - depth)];
+  const a1 = Math.atan2(P1[1] - C[1], P1[0] - C[0]); let d = Math.atan2(P2[1] - C[1], P2[0] - C[0]) - a1;
+  while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
+  const o = []; for (let i = 1; i < n; i++) { const a = a1 + d * i / n; o.push([C[0] + r * Math.cos(a), C[1] + r * Math.sin(a)]); } return o;
+};
+const roundIsland = (cx, cy, R, bays, n = 56) => { const o = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2; let r = R; for (const b of bays) { let d = a - b.a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; if (Math.abs(d) < b.w) r -= b.depth * Math.pow(Math.cos(d / b.w * Math.PI / 2), 1.4); } o.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } return o; };
+const inPoly = (x, y, P) => { let inside = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { const xi = P[i][0], yi = P[i][1], xj = P[j][0], yj = P[j][1]; if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside; } return inside; };
+const deg = (d) => d * Math.PI / 180;
+
+const wire = (geo, name, mx, yBase, my, ry = 0, o = {}) => {
+  const g = new THREE.Group(); g.name = name; g.position.set(mx, yBase, -my); g.rotation.y = ry; g.userData.t0 = o.t0 ?? 1.6; g.userData.dur = o.dur ?? 1.0;
+  if (o.fill !== false) { const m = new THREE.Mesh(geo, fillMat); m.name = name + '_fill'; g.add(m); }
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo, o.threshold ?? 4), o.line || lineSoft); e.name = name + '_edges'; g.add(e);
+  if (o.points !== false) { const p = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', geo.getAttribute('position').clone()), o.points || dotsSmall); p.name = name + '_nodes'; g.add(p); }
+  model.add(g); return g;
+};
+const bt = (mx) => 1.6 + Math.max(0, Math.min(1, (mx + 1700) / 3700));
+const box = (w, h, d, name, mx, my, yBase, ry = 0, o = {}) => wire(new THREE.BoxGeometry(w, h, d).translate(0, h / 2, 0), name, mx, yBase, my, ry, { t0: bt(mx), dur: 0.8, ...o });
+const cylw = (r, h, seg, name, mx, my, yBase, o = {}) => wire(new THREE.CylinderGeometry(r, r, h, seg).translate(0, h / 2, 0), name, mx, yBase, my, 0, { t0: bt(mx), dur: 0.8, threshold: 10, ...o });
+const stepped = (name, mx, my, ry, tiers, o = {}) => { let y = H + 0.5; tiers.forEach(([w, hh, d], i) => { box(w, hh, d, name + '_' + (i + 1), mx, my, y, ry, { line: i === tiers.length - 1 ? lineGold : lineSoft, ...o }); y += hh; }); };
+
+const terrain = (pts, h, name, yBase, o = {}) => {
+  const g = new THREE.Group(); g.name = name; g.position.y = yBase; g.userData.t0 = o.t0 ?? 0.6; g.userData.dur = o.dur ?? 1.4;
+  if (o.fill !== false) { const m = new THREE.Mesh(ext(poly(pts), h, 4), fillMat); m.name = name + '_fill'; g.add(m); }
+  const loop = (yy, m) => { const l = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts.map((p) => W(p[0], yy, p[1]))), m); l.computeLineDistances(); l.name = name + '_contour'; return l; };
+  const n = o.contours ?? 3;
+  for (let i = 0; i < n; i++) g.add(loop(0.03 + (h - 0.03) * (i / Math.max(1, n - 1)), i === n - 1 ? (o.line || lineGold) : lineFaint));
+  if (o.shallows !== false) { const s = pts.map(([x, y]) => [x + (x - o.cx) * 0.05, y + (y - o.cy) * 0.05]); const l = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(s.map((p) => W(p[0], 0.2, p[1]))), lineDash); l.computeLineDistances(); l.name = name + '_shallows'; g.add(l); }
+  if (o.nodes) { const p = new THREE.Points(new THREE.BufferGeometry().setFromPoints(pts.filter((_, i) => i % o.nodes === 0).map(([x, y]) => W(x, h + 0.06, y))), dots); p.name = name + '_nodes'; g.add(p); }
+  model.add(g); return g;
+};
+const polyline = (pts, m, name, y, t0 = 1.3) => { const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts.map((p) => W(p[0], y, p[1]))), m); l.name = name; l.userData.t0 = t0; l.userData.dur = 1.2; model.add(l); return l; };
+const loopLine = (pts, m, name, y, t0 = 1.3) => { const l = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts.map((p) => W(p[0], y, p[1]))), m); l.name = name; l.userData.t0 = t0; l.userData.dur = 1.0; model.add(l); return l; };
+
+const H = 5;
+const LAND = [];
+
+// ---- mainland (Al Hamra coast) ----
+const MAIN = [[-2800,-540],[-2200,-560],[-1800,-590],[-1300,-680],[-700,-780],[-100,-850],[600,-920],[1300,-980],[2400,-1040],[2400,-1500],[-2800,-1500]];
+LAND.push(MAIN);
+terrain(MAIN, 4, 'mainland', 0.004, { t0: 0.4, line: lineSoft, contours: 2, shallows: false });
+for (let i = 0; i < 26; i++) { const x = -2600 + rnd() * 1300, y = -1000 + rnd() * 330; if (y > -600 - (x + 2800) * 0.05) continue; box(24 + rnd() * 30, 6 + rnd() * 9, 22 + rnd() * 26, 'al_hamra_block', x, y, 4, rnd() * 0.3, { line: lineFaint, points: false, t0: 1.2 + rnd() * 0.5 }); }
+for (let x = -2600; x <= -1300; x += 160) polyline([[x, -1480], [x + 60, -640 - (x + 2800) * 0.04]], lineGrid, 'road_grid', 4.1, 0.9);
+polyline(MAIN.slice(0, 10).map(([x, y]) => [x, y - 60]), lineFaint, 'coast_road', 4.1, 0.9);
+
+// ---- Breeze / Treasure spine with four lagoon bays + Nobu peninsula ----
+const OUT = [[-1600,-420],[-1560,-200],[-1400,0],[-1210,160],[-1010,340],[-760,460],[-520,575],[-280,665],[-40,725],[200,755],[380,725],[480,620]];
+const NOBU_E = [[540,480],[560,330],[520,200],[460,130]], NOBU_W = [[400,180],[380,320],[360,460],[300,520]];
+const HA = [240,540], HB = [-250,455], HC = [-330,455], HD = [-690,290], HE = [-770,250], HF = [-1080,50], HG = [-1150,10], HH = [-1420,-270];
+const SPINE = [...OUT, ...NOBU_E, ...NOBU_W, HA, ...bayArc(HA, HB, 120), HB, HC, ...bayArc(HC, HD, 80), HD, HE, ...bayArc(HE, HF, 90), HF, HG, ...bayArc(HG, HH, 80), HH, [-1490,-380], [-1550,-470]];
+LAND.push(SPINE);
+terrain(SPINE, H, 'breeze_treasure_islands', 0.002, { t0: 0.6, cx: -500, cy: 200, nodes: 4 });
+polyline([[-1560,-440],[-1450,-270],[-1300,-80],[-1130,100],[-940,270],[-720,410],[-480,530],[-250,620],[-20,680],[200,705],[360,680],[450,580],[480,430],[490,260],[470,160]], lineFaint, 'spine_road', H + 0.1, 1.3);
+box(150, 3, 12, 'causeway', -1600, -540, 6, deg(105), { points: false, t0: 1.2 });
+for (const t of [0.25, 0.5, 0.75]) cylw(3, 7, 8, 'causeway_pier', -1600 + Math.cos(deg(105)) * (t - 0.5) * 150, -540 + Math.sin(deg(105)) * (t - 0.5) * 150, 0, { points: false, line: lineFaint, t0: 1.2 });
+
+// Bab Al Bahr Residences — two rows of low Mediterranean blocks
+for (let i = 0; i < 8; i++) { const t = i / 7, x = -1440 + t * 210, y = -300 + t * 240, a = deg(49); const side = i % 2 ? 1 : -1; box(40, 20, 28, 'bab_al_bahr', x + Math.cos(a + Math.PI / 2) * side * 34, y + Math.sin(a + Math.PI / 2) * side * 34, H + 0.5, a); }
+// Rosso Bay / Nikki Beach Residences — twin towers around an oval pool, terraced blocks
+stepped('nikki_tower_a', -850, 300, deg(40), [[40, 60, 40], [36, 60, 36], [32, 50, 32]]);
+stepped('nikki_tower_b', -905, 255, deg(40), [[40, 60, 40], [36, 55, 36], [32, 40, 32]]);
+loopLine(arcPts(-960, 170, 46, 0, Math.PI * 2, 28).map(([x, y]) => [x, 170 + (y - 170) * 0.65]), lineSoft, 'rosso_pool', H + 0.6, 2.0);
+for (const [x, y, h, w, d] of [[-1010, 120, 52, 56, 44], [-920, 105, 44, 52, 42], [-1035, 225, 40, 50, 42], [-880, 210, 48, 54, 44]]) stepped('rosso_block', x, y, deg(40), [[w, h * 0.55, d], [w * 0.8, h * 0.3, d * 0.8], [w * 0.6, h * 0.15, d * 0.6]]);
+// Moonstone Interiors · Masa Residence
+for (const [x, y] of [[-600, 470], [-660, 428]]) box(46, 30, 34, 'moonstone', x, y, H + 0.5, deg(30));
+for (const [x, y] of [[-360, 590], [-430, 560]]) box(50, 36, 36, 'masa_residence', x, y, H + 0.5, deg(25), { line: lineGold });
+// Al Marjan Resort & Residences + resort hotels along the spine
+for (const [x, y, h] of [[-100, 668, 36], [60, 692, 34], [180, 714, 30]]) box(64, h, 40, 'al_marjan_resort', x, y, H + 0.5, deg(8), { line: lineGold });
+for (const [x, y, h, a] of [[-1120, 40, 28, 45], [-720, 380, 34, 30], [-220, 612, 30, 15], [320, 702, 26, -20]]) box(80, h, 40, 'resort_hotel', x, y, H + 0.5, deg(a), { line: lineFaint });
+// Nobu Residences — terraced wave blocks on the peninsula + pier
+stepped('nobu_a', 470, 470, deg(5), [[90, 30, 50], [76, 30, 42], [60, 26, 34]]);
+stepped('nobu_b', 500, 340, deg(-5), [[80, 28, 46], [66, 26, 38], [50, 22, 30]]);
+stepped('nobu_c', 450, 230, deg(-15), [[60, 22, 40], [48, 18, 32]]);
+box(240, 1.2, 6, 'nobu_pier', 365, 45, 0.5, deg(225), { points: false, line: lineSoft, t0: 2.1 });
+
+// ---- Dream Island: Pacific · Address Residences · Danah Bay ----
+const DC = [660, 980];
+const DREAM = roundIsland(DC[0], DC[1], 360, [{ a: deg(140), depth: 120, w: 0.5 }, { a: deg(52), depth: 140, w: 0.55 }, { a: deg(-14), depth: 110, w: 0.45 }]);
+LAND.push(DREAM);
+terrain(DREAM, H, 'dream_island', 0.002, { t0: 0.9, cx: DC[0], cy: DC[1], nodes: 4 });
+loopLine(arcPts(DC[0], DC[1], 200, 0, Math.PI * 2, 48), lineFaint, 'dream_ring_road', H + 0.1, 1.4);
+box(90, 3, 12, 'dream_bridge', 470, 655, 6, deg(50), { points: false, t0: 1.3 });
+for (let i = 0; i < 6; i++) { const a = deg(118 + i * 8.8), r = 250; box(44, 34, 38, 'pacific', DC[0] + r * Math.cos(a), DC[1] + r * Math.sin(a), H + 0.5, a); }
+for (let i = 0; i < 8; i++) { const a = deg(18 + i * 9.1), r = 250; box(46, 46 + (i % 3) * 8, 40, 'address_residences', DC[0] + r * Math.cos(a), DC[1] + r * Math.sin(a), H + 0.5, a, { line: lineGold }); }
+for (let i = 0; i < 14; i++) { const a = deg(-38 + i * 3.2), r = 300; box(14, 10, 12, 'danah_bay_townhouse', DC[0] + r * Math.cos(a), DC[1] + r * Math.sin(a), H + 0.5, a, { points: false, line: lineSoft }); }
+for (const a of [deg(-26), deg(-6)]) box(50, 30, 40, 'danah_bay', DC[0] + 220 * Math.cos(a), DC[1] + 220 * Math.sin(a), H + 0.5, a);
+box(90, 32, 60, 'dream_resort_a', 640, 980, H + 0.5, deg(10)); box(70, 26, 50, 'dream_resort_b', 700, 1045, H + 0.5, deg(-20));
+loopLine(arcPts(660, 925, 40, 0, Math.PI * 2, 24).map(([x, y]) => [x, 925 + (y - 925) * 0.6]), lineSoft, 'dream_pool', H + 0.6, 2.2);
+
+// ---- Oceano — twin curved towers on a shared podium ----
+const OC = [830, 470];
+const OCEANO = arcPts(OC[0], OC[1], 1, 0, Math.PI * 2, 40).map(([x, y]) => [OC[0] + (x - OC[0]) * 170, OC[1] + (y - OC[1]) * 130]);
+LAND.push(OCEANO);
+terrain(OCEANO, H, 'oceano_island', 0.002, { t0: 1.0, cx: OC[0], cy: OC[1], contours: 2 });
+box(100, 3, 12, 'oceano_bridge', 612, 438, 6, deg(20), { points: false, t0: 1.3 });
+box(170, 14, 90, 'oceano_podium', OC[0], OC[1], H + 0.5, 0);
+cylw(26, 95, 14, 'oceano_tower_a', 800, 470, H + 14.5, { line: lineGold, points: dots }); cylw(26, 95, 14, 'oceano_tower_b', 862, 470, H + 14.5, { line: lineGold, points: dots });
+
+// ---- View Island — Wynn Al Marjan Island ----
+const WN = [[990,450],[1100,500],[1250,520],[1400,500]];
+const WYNN = [...WN, ...bayArc([1400,500], [1640,500], 60), [1640,500],[1780,460],[1890,400],[1980,290],[2000,160],[1940,60],[1840,10],[1860,90],[1900,190],[1880,300],[1800,370],[1720,340],[1690,250],[1710,160],[1600,130],[1450,130],[1300,160],[1150,220],[1030,320]];
+LAND.push(WYNN);
+terrain(WYNN, H, 'view_island_wynn', 0.002, { t0: 1.1, cx: 1450, cy: 300, nodes: 3 });
+polyline([[1000,400],[1200,380],[1400,390],[1600,360],[1720,300]], lineFaint, 'wynn_road', H + 0.1, 1.5);
+const TC = [1380, 340], TR = deg(9);
+stepped('wynn_hotel_wing', TC[0], TC[1], TR, [[240, 24, 80], [195, 22, 70], [150, 24, 60], [110, 24, 50]], { points: dotsSmall });
+wire(ext(rrect(76, 34, 12), 305, 8), 'wynn_tower', TC[0], H + 0.6, TC[1], TR, { line: lineTower, points: false, t0: 2.8, dur: 1.5 });
+{
+  const g = new THREE.Group(); g.name = 'tower_mullions'; g.position.set(TC[0], H + 0.6, -TC[1]); g.rotation.y = TR; g.userData.t0 = 2.9; g.userData.dur = 1.5;
+  const mp = []; for (let x = -26; x <= 26; x += 8.6) mp.push(x, 0, 17.05, x, 305, 17.05, x, 0, -17.05, x, 305, -17.05);
+  for (const z of [-8, 0, 8]) mp.push(38.05, 0, z, 38.05, 305, z, -38.05, 0, z, -38.05, 305, z);
+  const m = new THREE.LineSegments(positions(mp), lineSoft); m.name = 'mullions'; g.add(m);
+  const corners = []; for (const [x, z] of [[-38, -17], [38, -17], [38, 17], [-38, 17], [-26, -17], [26, -17], [26, 17], [-26, 17]]) corners.push(new THREE.Vector3(x, 0, z), new THREE.Vector3(x, 305, z));
+  const n = new THREE.Points(new THREE.BufferGeometry().setFromPoints(corners), dotsGold); n.name = 'tower_nodes'; g.add(n);
+  const pts = rrect(76.3, 34.3, 12.1).getPoints(8);
+  for (let f = 96; f < 305; f += 12) { const l = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts.map((p) => W(p.x, f, p.y))), f % 60 === 0 ? lineGold : lineSoft); l.name = 'floor_line'; g.add(l); }
+  model.add(g);
+}
+wire(ext(rrect(62, 26, 9), 6, 8), 'tower_crown', TC[0], H + 305.6, TC[1], TR, { line: lineTower, points: false, t0: 3.4, dur: 0.6 });
+box(200, 16, 100, 'wynn_casino_podium', 1200, 335, H + 0.5, TR, { line: lineGold });
+box(90, 12, 60, 'wynn_theatre', 1090, 380, H + 0.5, TR);
+for (const [x, y, r] of [[1540, 330, 34], [1600, 300, 22]]) loopLine(arcPts(x, y, r, 0, Math.PI * 2, 24).map(([px, py]) => [px, y + (py - y) * 0.7]), lineSoft, 'wynn_pool', H + 0.6, 2.6);
+const MC = [1830, 225];
+for (let i = 0; i < 16; i++) { const a = deg(80 - i * 9.6), r = 160; box(14, 9, 12, 'wynn_villa', MC[0] + r * Math.cos(a), MC[1] + r * Math.sin(a), H + 0.4, a, { points: false, line: lineSoft, t0: 2.4 + i * 0.03, dur: 0.5 }); }
+terrain(arcPts(MC[0], MC[1], 208, deg(88), deg(-78), 20).concat(arcPts(MC[0], MC[1], 220, deg(-78), deg(88), 20)), 4, 'wynn_breakwater', 0.4, { fill: false, line: lineSoft, contours: 1, shallows: false, t0: 1.6 });
+box(120, 4, 12, 'wynn_breakwater_spur', 1775, -12, 0.4, deg(-20), { fill: false, points: false, line: lineSoft, t0: 1.7 });
+const HUB = [1795, 235];
+cylw(50, 1.4, 40, 'marina_hub', HUB[0], HUB[1], 0.3, { points: false, line: lineGold, t0: 2.2 });
+box(48, 1, 6, 'marina_approach', 1722, 238, 0.5, 0, { points: false, line: lineSoft, t0: 2.2 });
+for (const dg of [0, 45, 90, 135, 180, 225, 270, 315]) {
+  const a = deg(dg), dx = Math.cos(a), dy = Math.sin(a);
+  box(54, 0.8, 4, 'marina_finger', HUB[0] + dx * 77, HUB[1] + dy * 77, 0.5, a, { points: false, line: lineSoft, t0: 2.3 });
+  for (const t of [14, 34]) for (const side of [-1, 1]) { if (rnd() < 0.35) continue; box(9, 1.6, 3, 'yacht', HUB[0] + dx * (50 + t) - dy * side * 6.2, HUB[1] + dy * (50 + t) + dx * side * 6.2, 0.2, a + Math.PI / 2, { fill: false, points: false, line: lineSoft, t0: 2.6 + rnd() * 0.4, dur: 0.4 }); }
+}
+for (let x = 1090; x <= 1470; x += 38) { box(4, 0.8, 78, 'south_pier', x, 90, 0.5, 0, { points: false, line: lineSoft, t0: 2.3 + (x - 1090) / 380 * 0.5, dur: 0.6 }); for (const yy of [70, 100]) for (const side of [-1, 1]) { if (rnd() < 0.4) continue; box(11, 1.6, 3.4, 'yacht', x + side * 8, yy, 0.2, deg(90), { fill: false, points: false, line: lineSoft, t0: 2.7 + rnd() * 0.4, dur: 0.4 }); } }
+for (const [mx, my, ry] of [[-900,-200,0.4],[200,150,-0.7],[-1900,300,0.2],[1500,-350,1.1],[600,-500,-0.3],[2200,600,0.9],[-300,1100,0.5]]) box(26, 3, 7, 'yacht_sea', mx, my, -0.4, ry, { fill: false, points: false, line: lineSoft, t0: 2.6, dur: 0.6 });
+
+// ---- fill the land: villas, townhouses, mid-rise — one merged wire set per class ----
+const PATCHES = [
+  // Bab Al Bahr: Mediterranean villa grid
+  { poly: SPINE, cx: -1420, cy: -180, w: 200, h: 200, cell: 26, size: [10, 6, 9], skip: 0.35, rot: deg(49) },
+  // Breeze villas + townhouse rows along the spine
+  { poly: SPINE, cx: -1150, cy: 40, w: 220, h: 200, cell: 30, size: [12, 8, 10], skip: 0.3, rot: deg(45) },
+  { poly: SPINE, cx: -560, cy: 420, w: 320, h: 180, cell: 32, size: [14, 9, 12], skip: 0.25, rot: deg(30) },
+  { poly: SPINE, cx: -180, cy: 550, w: 320, h: 170, cell: 30, size: [12, 8, 12], skip: 0.3, rot: deg(15) },
+  { poly: SPINE, cx: 180, cy: 650, w: 320, h: 140, cell: 28, size: [12, 8, 10], skip: 0.3, rot: deg(5) },
+  // Treasure Island low-rise blocks
+  { poly: SPINE, cx: -830, cy: 260, w: 240, h: 200, cell: 44, size: [22, 24, 18], skip: 0.35, rot: deg(40), line: lineFaint },
+  { poly: SPINE, cx: 460, cy: 380, w: 130, h: 200, cell: 40, size: [20, 22, 16], skip: 0.4, rot: deg(0), line: lineFaint },
+  // Dream Island: villa belt + core mid-rise
+  { poly: DREAM, cx: DC[0], cy: DC[1], w: 720, h: 720, cell: 34, size: [13, 9, 12], skip: 0.32, rot: deg(0), ring: [235, 330] },
+  { poly: DREAM, cx: DC[0], cy: DC[1], w: 380, h: 380, cell: 48, size: [26, 30, 20], skip: 0.45, rot: deg(10), line: lineFaint },
+  // View Island: villa quarter + mid-rise behind the casino
+  { poly: WYNN, cx: 1250, cy: 250, w: 520, h: 200, cell: 30, size: [12, 8, 11], skip: 0.3, rot: deg(9) },
+  { poly: WYNN, cx: 1600, cy: 240, w: 240, h: 220, cell: 44, size: [22, 26, 18], skip: 0.4, rot: deg(9), line: lineFaint },
+  // Mainland: dense Al Hamra fabric
+  { poly: MAIN, cx: -1950, cy: -1050, w: 1700, h: 700, cell: 46, size: [22, 12, 20], skip: 0.35, rot: 0, line: lineFaint, t0: 1.1 },
+  { poly: MAIN, cx: 800, cy: -1250, w: 1600, h: 500, cell: 60, size: [30, 18, 26], skip: 0.5, rot: 0, line: lineFaint, t0: 1.2 },
+];
+const KEEP = [[TC[0], TC[1], 190], [1200, 335, 150], [1090, 380, 70], [HUB[0], HUB[1], 120], [OC[0], OC[1], 200], [-880, 280, 90], [-960, 170, 70], [660, 980, 80], [640, 980, 70], [700, 1045, 60], [470, 470, 60], [500, 340, 55], [450, 230, 45], [-360, 590, 45], [-430, 560, 45], [-600, 470, 40], [-660, 428, 40], [-100, 668, 50], [60, 692, 50], [180, 714, 50], [-1120, 40, 60], [-720, 380, 60], [-220, 612, 60], [320, 702, 60], [1540, 330, 50], [1600, 300, 40]];
+const near = (x, y) => KEEP.some(([kx, ky, r]) => Math.hypot(x - kx, y - ky) < r);
+const edgeOk = (x, y, P) => { const s = 0.965; return inPoly(x, y, P) && [[8, 0], [-8, 0], [0, 8], [0, -8]].every(([dx, dy]) => inPoly(x + dx, y + dy, P)) && s; };
+const boxEdges = (w, h, d) => { const x = w / 2, z = d / 2; const c = [[-x, 0, -z], [x, 0, -z], [x, 0, z], [-x, 0, z], [-x, h, -z], [x, h, -z], [x, h, z], [-x, h, z]]; const e = [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]]; return { c, e }; };
+const fabric = { pos: [], tops: [] }, fabricFaint = { pos: [], tops: [] };
+for (const P of PATCHES) {
+  const set = P.line === lineFaint ? fabricFaint : fabric, cr = Math.cos(P.rot), sr = Math.sin(P.rot);
+  for (let gy = -P.h / 2; gy <= P.h / 2; gy += P.cell) for (let gx = -P.w / 2; gx <= P.w / 2; gx += P.cell) {
+    if (rnd() < P.skip) continue;
+    if (P.ring) { const rr = Math.hypot(gx, gy); if (rr < P.ring[0] || rr > P.ring[1]) continue; }
+    const jx = (rnd() - 0.5) * P.cell * 0.3, jy = (rnd() - 0.5) * P.cell * 0.3;
+    const x = P.cx + (gx + jx) * cr - (gy + jy) * sr, y = P.cy + (gx + jx) * sr + (gy + jy) * cr;
+    if (!edgeOk(x, y, P.poly) || near(x, y)) continue;
+    const [w, hh, d] = P.size, h = hh * (0.8 + rnd() * 0.5), a = P.rot + (P.ring ? Math.atan2(gy, gx) + Math.PI / 2 : 0) + (rnd() - 0.5) * 0.06;
+    const { c, e } = boxEdges(w * (0.85 + rnd() * 0.3), h, d * (0.85 + rnd() * 0.3));
+    const ca = Math.cos(a), sa = Math.sin(a);
+    const tf = ([px, py, pz]) => [x + px * ca + pz * sa, H + 0.4 + py, -(y - px * sa + pz * ca)];
+    for (const [i, j] of e) set.pos.push(...tf(c[i]), ...tf(c[j]));
+    if (rnd() < 0.5) set.tops.push(...tf(c[4 + Math.floor(rnd() * 4)]));
+  }
+}
+for (const [set, m, nm, t0] of [[fabric, lineSoft, 'fabric_villas', 1.9], [fabricFaint, lineFaint, 'fabric_blocks', 1.7]]) {
+  const l = new THREE.LineSegments(positions(set.pos), m); l.name = nm; l.userData.t0 = t0; l.userData.dur = 1.6; model.add(l);
+  const p = new THREE.Points(positions(set.tops), dotsSmall); p.name = nm + '_nodes'; p.userData.t0 = t0 + 0.3; p.userData.dur = 1.6; model.add(p);
+}
+// street grids: faint parallel lines through each patch
+for (const P of PATCHES) {
+  if (!P.poly || P.ring) continue;
+  const cr = Math.cos(P.rot), sr = Math.sin(P.rot), pts = [];
+  for (let gy = -P.h / 2 + P.cell / 2; gy < P.h / 2; gy += P.cell * 2) {
+    let run = [];
+    for (let gx = -P.w / 2; gx <= P.w / 2; gx += 8) {
+      const x = P.cx + gx * cr - gy * sr, y = P.cy + gx * sr + gy * cr;
+      if (edgeOk(x, y, P.poly)) run.push([x, y]); else { if (run.length > 3) pts.push(run); run = []; }
+    }
+    if (run.length > 3) pts.push(run);
+  }
+  for (const run of pts) { const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(run.map((p) => W(p[0], H + 0.12, p[1]))), lineGrid); l.name = 'street'; l.userData.t0 = 1.4; l.userData.dur = 1.2; model.add(l); }
+}
+
+// ---- palms as one merged glyph set ----
+const palmPos = [], palmTops = [];
+const palm = (mx, my, yBase, s = 2.2) => { const x = mx, z = -my, top = yBase + 9 * s; palmPos.push(x, yBase, z, x, top, z); for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) palmPos.push(x, top, z, x + dx * 3.6 * s, top - 1.7 * s, z + dz * 3.6 * s); palmTops.push(W(x, top, my)); };
+const cluster = (cx, cy, n, rad) => { for (let k = 0; k < n; k++) { const t = rnd() * Math.PI * 2, d = rnd() * rad; const x = cx + Math.cos(t) * d, y = cy + Math.sin(t) * d; if (LAND.some((P) => inPoly(x, y, P))) palm(x, y, H + 0.4, 1.8 + rnd() * 0.8); } };
+for (const [x, y] of [[-1340,-120],[-1230,-40],[-960,230],[-1080,110],[-540,470],[-700,350],[-250,520],[0,650],[200,690],[440,300],[480,520],[660,980],[560,1100],[800,1220],[930,900],[830,470],[1150,420],[1400,450],[1600,440],[1250,240],[1500,200]]) cluster(x, y, 5, 55);
+for (const P of [SPINE, DREAM, WYNN]) for (let i = 0; i < P.length; i += 2) { const [x, y] = P[i]; const cx = P === DREAM ? DC[0] : P === WYNN ? 1450 : -500, cy = P === DREAM ? DC[1] : P === WYNN ? 300 : 200; const ix = x + (cx - x) * 0.06, iy = y + (cy - y) * 0.06; if (inPoly(ix, iy, P)) palm(ix, iy, H + 0.4, 1.8 + rnd() * 0.6); }
+for (let i = 0; i < 16; i++) { const a = deg(80 - i * 9.6); palm(MC[0] + 138 * Math.cos(a), MC[1] + 138 * Math.sin(a), H + 0.4, 2); }
+for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; if (Math.abs(a - deg(-14)) < 0.5 || Math.abs(a - deg(52)) < 0.5 || Math.abs(a - deg(140)) < 0.5) continue; palm(DC[0] + 320 * Math.cos(a), DC[1] + 320 * Math.sin(a), H + 0.4, 2.2); }
+for (let x = -2500; x < -1300; x += 110) palm(x + rnd() * 40, -650 - (x + 2800) * 0.045 - 60 - rnd() * 60, 4, 2 + rnd() * 0.6);
+const palms = new THREE.LineSegments(positions(palmPos), lineSoft); palms.name = 'palms'; palms.userData.t0 = 2.6; palms.userData.dur = 1.2; model.add(palms);
+const palmNodes = new THREE.Points(new THREE.BufferGeometry().setFromPoints(palmTops), dotsPalm); palmNodes.name = 'palm_nodes'; palmNodes.userData.t0 = 2.8; palmNodes.userData.dur = 1.2; model.add(palmNodes);
+
+// ---- drawing sheet: grid, frames, sea point-cloud ----
+{
+  const gp = [], X0 = -2900, X1 = 2500, Y0 = -1500, Y1 = 1500;
+  for (let x = X0; x <= X1; x += 200) gp.push(x, 0, -Y0, x, 0, -Y1);
+  for (let y = Y0; y <= Y1; y += 200) gp.push(X0, 0, -y, X1, 0, -y);
+  const grid = new THREE.LineSegments(positions(gp), lineGrid); grid.name = 'sheet_grid'; grid.userData.t0 = 0; grid.userData.dur = 1.4; model.add(grid);
+  const frame = (inset, m) => { const l = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([W(X0 + inset, 0.05, Y0 + inset), W(X1 - inset, 0.05, Y0 + inset), W(X1 - inset, 0.05, Y1 - inset), W(X0 + inset, 0.05, Y1 - inset)]), m); l.name = 'sheet_frame'; l.userData.t0 = 0.1; l.userData.dur = 1.2; model.add(l); };
+  frame(0, lineSoft); frame(60, lineFaint);
+  const sp = []; for (let i = 0; i < 3200; i++) { const x = X0 + rnd() * (X1 - X0), y = Y0 + rnd() * (Y1 - Y0); if (LAND.some((P) => inPoly(x, y, P))) continue; sp.push(x, 0.2, -y); }
+  const sea = new THREE.Points(positions(sp), dotsSea); sea.name = 'sea_nodes'; sea.userData.t0 = 0.2; sea.userData.dur = 1.8; model.add(sea);
+  const sb = [1700, 1, 1300, 2200, 1, 1300, 1700, 1, 1300, 1700, 1, 1330, 2200, 1, 1300, 2200, 1, 1330, 1950, 1, 1300, 1950, 1, 1318];
+  const sbl = new THREE.LineSegments(positions(sb), lineGold); sbl.name = 'scale_bar_500m'; sbl.userData.t0 = 0.5; model.add(sbl);
+}
+
+// scan loop riding the copper core
+const scan = new THREE.Group(); scan.name = 'scan'; scan.position.set(TC[0], H + 0.6, -TC[1]); scan.rotation.y = TR;
+const scanLoop = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(rrect(92, 50, 18).getPoints(10).map((p) => W(p.x, 0, p.y))), scanMat); scanLoop.name = 'scan_line'; scan.add(scanLoop); model.add(scan);
+
+stage.setObject(model);
+
+// ---- camera: the aerial's vantage — from the south-west, high; slow perpetual turntable ----
+stage._ground.visible = false; stage._ground.receiveShadow = false;
+const cam = stage._camera, ctl = stage._controls;
+const target = W(-150, 20, 350);
+const frameCam = () => {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  if (!w || !h) return false;
+  const aspect = Math.min(2.4, Math.max(1.2, w / h));
+  const D = Math.max(2800, 6200 / aspect);
+  ctl.target.copy(target);
+  cam.position.copy(target).add(new THREE.Vector3(-0.3, 0.95, 1).normalize().multiplyScalar(D));
+  cam.near = 5; cam.far = 60000; cam.updateProjectionMatrix();
+  ctl.minDistance = D * 0.18;
+  ctl.maxDistance = D * 1.5;
+  stage._scene.fog = new THREE.Fog(NAVY, D * 1.1, D * 3.2);
+  ctl.update();
+  return true;
+};
+let framed = frameCam();
+ctl.autoRotateSpeed = 0.42;
+ctl.minPolarAngle = 0.3;
+ctl.maxPolarAngle = Math.PI / 2 - 0.16;
+ctl.enablePan = false;
+ctl.update();
+let resume;
+ctl.addEventListener('end', () => { clearTimeout(resume); resume = setTimeout(() => { ctl.autoRotate = true; }, 3200); });
+
+// ---- draw-in choreography ----
+const ease = (t) => 1 - Math.pow(1 - t, 3);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const draws = [];
+model.traverse((o) => {
+  if (!(o.isLine || o.isPoints) || o === scanLoop) return;
+  let p = o, t0 = 1.6, dur = 1.0;
+  while (p && p !== model) { if (p.userData.t0 !== undefined) { t0 = p.userData.t0; dur = p.userData.dur ?? 1.0; break; } p = p.parent; }
+  const total = o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count;
+  o.geometry.setDrawRange(0, 0);
+  draws.push({ g: o.geometry, total, t0, dur, seg: !!o.isLineSegments, done: false });
+});
+const blRect = () => { const r = document.querySelector('.bl').getBoundingClientRect(); return { x0: r.left - 24, y0: r.top - 24, x1: r.right + 24, y1: r.bottom + 24 }; };
+let bl = blRect(); window.addEventListener('resize', () => { bl = blRect(); });
+const lbls = Array.from(document.querySelectorAll('.lbl')).map((el) => { const [x, y, z] = el.getAttribute('data-a').split(',').map(Number); return { el, v: W(x, y, z), w: el.offsetWidth || 160, sx: 0, sy: 0, vis: false, far: false }; });
+const proj = new THREE.Vector3();
+let T = 0, last = null;
+const orig = stage._loop;
+const loop = () => {
+  if (!framed) framed = frameCam();
+  orig();
+  const now = performance.now();
+  if (last !== null) T += Math.min(0.05, (now - last) / 1000);
+  last = now;
+  for (const d of draws) {
+    if (d.done) continue;
+    const t = clamp((T - d.t0) / d.dur, 0, 1);
+    let n = Math.floor(d.total * ease(t)); if (d.seg) n -= n % 2;
+    d.g.setDrawRange(0, n);
+    if (t >= 1) { d.g.setDrawRange(0, d.total); d.done = true; }
+  }
+  const fo = clamp((T - 0.7) / 1.6, 0, 1);
+  if (fillMat.transparent) { fillMat.opacity = fo; if (fo >= 1) fillMat.transparent = false; }
+  const ph = T > 4.2 ? ((T - 4.2) * 0.13) % 1 : 0;
+  scan.position.y = H + 0.6 + ph * 305;
+  scanMat.opacity = T > 4.2 ? 0.7 * Math.sin(ph * Math.PI) : 0;
+  const w = stage.clientWidth, h = stage.clientHeight, cd = cam.position.distanceTo(ctl.target);
+  for (const l of lbls) {
+    proj.copy(l.v).project(cam);
+    l.vis = T > 3.8 && proj.z < 1 && Math.abs(proj.x) < 1.1 && Math.abs(proj.y) < 1.1;
+    l.far = cam.position.distanceTo(l.v) > cd + 900;
+    l.sx = (proj.x * 0.5 + 0.5) * w; l.sy = (-proj.y * 0.5 + 0.5) * h; l.dy = 0;
+    if (!l.w || l.w < 40) l.w = l.el.offsetWidth || 160;
+  }
+  // screen-space collision pass: nearer labels keep their row, later ones step down
+  const vis = lbls.filter((l) => l.vis).sort((a, b) => (a.far - b.far) || (a.sy - b.sy));
+  for (let i = 0; i < vis.length; i++) {
+    const a = vis[i];
+    for (let pass = 0; pass < 4; pass++) {
+      let moved = false;
+      for (let k = 0; k < i; k++) {
+        const b = vis[k];
+        const ay = a.sy + a.dy, by = b.sy + b.dy;
+        const ox = Math.min(a.sx + a.w + 44, b.sx + b.w + 44) - Math.max(a.sx, b.sx);
+        if (ox > 0 && Math.abs(ay - by) < 15) { a.dy = (by + 18) - a.sy; moved = true; }
+      }
+      if (!moved) break;
+    }
+  }
+  for (const l of lbls) {
+    const yy = l.sy + (l.dy || 0), inCopy = l.sx > bl.x0 && l.sx < bl.x1 && yy > bl.y0 && yy < bl.y1;
+    l.el.style.opacity = l.vis && !inCopy ? (l.far ? '0.35' : '1') : '0';
+    l.el.style.transform = 'translate3d(' + l.sx.toFixed(2) + 'px,' + (l.sy + (l.dy || 0)).toFixed(2) + 'px,0)';
+    l.el.classList.toggle('flip', l.sx > w - 300);
+    l.el.classList.toggle('down', l.sy + (l.dy || 0) < 280);
+  }
+};
+stage._loop = loop;
+stage._renderer.setAnimationLoop(loop);
+</script>
+</body>
+</html>
