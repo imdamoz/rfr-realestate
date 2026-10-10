@@ -69,7 +69,7 @@
       const wrap = document.createElement('div');
       wrap.style.cssText = 'position:absolute;left:50%;top:50%;will-change:transform,opacity;pointer-events:none';
       const im = document.createElement('img'); im.alt = ''; im.decoding = 'async';
-      im.style.cssText = 'display:block;width:100%;height:auto;opacity:0;transition:opacity 1.6s ease';
+      im.style.cssText = 'display:block;width:100%;height:auto;opacity:0;transition:opacity 0.35s ease';
       if (c.fade) { const m = 'linear-gradient(90deg,transparent 0,#000 18%,#000 82%,transparent 100%)'; im.style.webkitMaskImage = m; im.style.maskImage = m; }
       im.onload = () => { im.style.opacity = '1'; };
       im.src = c.src;
