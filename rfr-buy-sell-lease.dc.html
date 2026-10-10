@@ -3,13 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="ext-resource-dependency" content="brand/photos/stock/int-apartment-living.jpg" data-resource-id="fb-apt">
+<meta name="ext-resource-dependency" content="brand/photos/stock/ext-villa-pool.jpg" data-resource-id="fb-villa">
+<meta name="ext-resource-dependency" content="brand/photos/stock/rak-marjan-aerial.jpg" data-resource-id="fb-island">
+<meta name="ext-resource-dependency" content="brand/photos/stock/rak-lagoon-palms.jpg" data-resource-id="fb-plot">
+<template id="__bundler_thumbnail" data-bg-color="#071A2B"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#071A2B"></rect><path d="M50 0 C55 32 68 45 100 50 C68 55 55 68 50 100 C45 68 32 55 0 50 C32 45 45 32 50 0 Z" transform="translate(30 30) scale(.4)" fill="#D2B77D"></path></svg></template>
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
   <script src="rfr-data.js"></script>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&amp;display=swap">
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&amp;display=swap">
   <style>
@@ -76,7 +80,7 @@
       <a href="rfr-areas.dc.html#a/al-hamra-village" data-h="1" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 1px solid rgba(243,239,231,.1); font-size: 14px; color: rgba(243,239,231,.88);">Al Hamra Village<span style="color: #D2B77D; font-size: 13px;">↗</span></a>
       <a href="rfr-areas.dc.html#a/downtown-rak" data-h="1" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 1px solid rgba(243,239,231,.1); font-size: 14px; color: rgba(243,239,231,.88);">Downtown RAK<span style="color: #D2B77D; font-size: 13px;">↗</span></a>
     </div>
-    <a href="rfr-market.dc.html" data-h="1" style="display: flex; flex-direction: column; gap: 14px; padding-top: 13px;"><span style="display: block; height: 190px; overflow: hidden; background: #0C2236;"><img src="https://static.wixstatic.com/media/e0d1cd_4bff9bed686c49bbadc1b9a08d89751e~mv2.jpg/v1/fill/w_900,h_560,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/wynn%20image.jpg" alt="Wynn Al Marjan Island, render" loading="lazy" style="display: block; width: 100%; height: 100%; object-fit: cover;"></span><span style="font-size: 10.5px; letter-spacing: .24em; font-weight: 500; color: #D2B77D;">MARKET NOTE · SEPTEMBER 2026</span><span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 1.7vw, 26px); line-height: 1.2; max-width: 26ch; text-wrap: pretty;">What the Wynn opening means for Al Marjan</span></a>
+    <a href="rfr-market.dc.html" data-h="1" style="display: flex; flex-direction: column; gap: 14px; padding-top: 13px;"><span style="display: block; height: 190px; overflow: hidden; background: #0C2236;"><img src="brand/photos/stock/rak-marjan-aerial.jpg" alt="Al Marjan Island from the air" loading="lazy" style="display: block; width: 100%; height: 100%; object-fit: cover;"></span><span style="font-size: 10.5px; letter-spacing: .24em; font-weight: 500; color: #D2B77D;">MARKET NOTE · SEPTEMBER 2026</span><span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 1.7vw, 26px); line-height: 1.2; max-width: 26ch; text-wrap: pretty;">What the Wynn opening means for Al Marjan</span></a>
   </div>
 </div>
 <div id="mega-about" data-mega-panel="about" class="m-hide" style="position: fixed; top: 84px; left: 0; right: 0; z-index: 99; background: #071A2B; color: #F3EFE7; border-top: 1px solid rgba(210,183,125,.22); box-shadow: 0 40px 80px rgba(7,26,43,.28); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity .22s ease, transform .32s cubic-bezier(.22,1,.36,1), visibility 0s linear .32s;">
@@ -172,7 +176,7 @@
               <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 22px; margin-top: 28px;">
                 <sc-for list="{{ cards }}" as="c" hint-placeholder-count="2">
                   <div style="display: flex; flex-direction: column; background: #FFFDF8; border: 1px solid rgba(7,26,43,.08);">
-                    <div style="aspect-ratio: 4 / 3; overflow: hidden; background: #E6DFD2;"><img src="{{ c.img }}" alt="{{ c.title }}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s cubic-bezier(.22,1,.36,1);" style-hover="transform: scale(1.04);"></div>
+                    <div style="aspect-ratio: 4 / 3; overflow: hidden; background: #E6DFD2;"><img src="{{ c.img }}" alt="{{ c.title }}" loading="lazy" onError="{{ c.onErr }}" style="width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s cubic-bezier(.22,1,.36,1);" style-hover="transform: scale(1.04);"></div>
                     <div style="display: flex; flex-direction: column; gap: 6px; padding: 18px 18px 16px; flex: 1;">
                       <span style="font-size: 10.5px; letter-spacing: .22em; font-weight: 500; color: #8A6A33;">{{ c.eyebrow }}</span>
                       <span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">{{ c.title }}</span>
@@ -393,6 +397,17 @@ class Component extends DCLogic {
 
   nice(l) { return l.charAt(0) + l.slice(1).toLowerCase(); }
 
+  // Local stand-in when a listing photo can't load (offline bundle / blocked CDN). Inlined via ext-resource-dependency metas.
+  fb(item, isProject) {
+    const R = window.__resources || {};
+    const pick = (id, path) => R[id] || path;
+    if (isProject || item.offplan) return pick('fb-island', 'brand/photos/stock/rak-marjan-aerial.jpg');
+    const t = String(item.type || '').toLowerCase();
+    if (/plot/.test(t)) return pick('fb-plot', 'brand/photos/stock/rak-lagoon-palms.jpg');
+    if (/villa|townhouse/.test(t)) return pick('fb-villa', 'brand/photos/stock/ext-villa-pool.jpg');
+    return pick('fb-apt', 'brand/photos/stock/int-apartment-living.jpg');
+  }
+
   steps(flow, a, D) {
     const names = D.areas.map((x) => x.name);
     const beds = ['Studio', '1 bed', '2 bed', '3 bed', '4+ bed'];
@@ -438,17 +453,17 @@ class Component extends DCLogic {
       const max = a.rbudget ?? 90000;
       D.L.filter((l) => l.cat === 'rent').forEach((l) => {
         if (l.price > max * 1.1 || (!anywhere && ar && l.area !== ar.slug) || !bedsOk(l.beds)) return;
-        out.push({ key: l.slug, img: l.img, eyebrow: (areaName(l.area) + ' · ' + (l.type || 'Home')).toUpperCase(), title: l.title, price: D.fmt(l.price) + ' / yr' + (l.sqft ? ' · ' + Number(l.sqft).toLocaleString('en-US') + ' sq ft' : ''), href: 'rfr-listings.dc.html#l/' + l.slug, canPick: true });
+        out.push({ key: l.slug, img: l.img, eyebrow: (areaName(l.area) + ' · ' + (l.type || 'Home')).toUpperCase(), title: l.title, price: D.fmt(l.price) + ' / yr' + (l.sqft ? ' · ' + Number(l.sqft).toLocaleString('en-US') + ' sq ft' : ''), href: 'rfr-listings.dc.html#l/' + l.slug, canPick: true, fb: this.fb(l) });
       });
     } else {
       const max = a.budget ?? 2000000;
       if (a.kind !== 'A ready home') D.P.forEach((p) => {
         if (p.from > max || (!anywhere && p.area !== a.area)) return;
-        out.push({ key: p.slug, img: p.img, eyebrow: ('Off-plan · ' + p.area).toUpperCase(), title: p.name, price: 'From ' + D.fmt(p.from) + ' · ' + p.plan + ' plan · Handover ' + p.handover, href: 'rfr-offplan.dc.html', canPick: false });
+        out.push({ key: p.slug, img: p.img, eyebrow: ('Off-plan · ' + p.area).toUpperCase(), title: p.name, price: 'From ' + D.fmt(p.from) + ' · ' + p.plan + ' plan · Handover ' + p.handover, href: 'rfr-offplan.dc.html', canPick: false, fb: this.fb(p, true) });
       });
       if (a.kind !== 'Off-plan') D.L.filter((l) => l.cat === 'buy').forEach((l) => {
         if (l.price > max || (!anywhere && ar && l.area !== ar.slug) || !bedsOk(l.beds)) return;
-        out.push({ key: l.slug, img: l.img, eyebrow: (areaName(l.area) + ' · ' + (l.type || 'Home')).toUpperCase(), title: l.title, price: D.fmt(l.price), href: 'rfr-listings.dc.html#l/' + l.slug, canPick: false });
+        out.push({ key: l.slug, img: l.img, eyebrow: (areaName(l.area) + ' · ' + (l.type || 'Home')).toUpperCase(), title: l.title, price: D.fmt(l.price), href: 'rfr-listings.dc.html#l/' + l.slug, canPick: false, fb: this.fb(l) });
       });
     }
     return out.slice(0, 6);
@@ -489,7 +504,7 @@ class Component extends DCLogic {
     const ok = st.fields.every((f) => f.optional || f.kind === 'range' || (f.id === 'phone' ? String(a.phone || '').replace(/\D/g, '').length >= 7 : String(a[f.id] || '').trim() !== ''));
     const isLast = k === steps.length - 1;
     const cardKind = st.results === 'buy' || st.results === 'rent' ? st.results : null;
-    const cards = cardKind ? this.cards(cardKind, a, D).map((c) => { const on = picks.indexOf(c.key) >= 0; return Object.assign({}, c, { pickLabel: on ? 'ADDED ✓' : 'ADD TO VIEWINGS', pickBg: on ? '#071A2B' : 'transparent', pickFg: on ? '#F3EFE7' : '#071A2B', toggle: () => this.setState((s) => ({ picks: on ? s.picks.filter((x) => x !== c.key) : s.picks.concat([c.key]) })) }); }) : [];
+    const cards = cardKind ? this.cards(cardKind, a, D).map((c) => { const on = picks.indexOf(c.key) >= 0; return Object.assign({}, c, { onErr: (e) => { const t = e.currentTarget || e.target; if (!t || t.getAttribute('data-fb')) return; t.setAttribute('data-fb', '1'); t.src = c.fb; }, pickLabel: on ? 'ADDED ✓' : 'ADD TO VIEWINGS', pickBg: on ? '#071A2B' : 'transparent', pickFg: on ? '#F3EFE7' : '#071A2B', toggle: () => this.setState((s) => ({ picks: on ? s.picks.filter((x) => x !== c.key) : s.picks.concat([c.key]) })) }); }) : [];
     const mk = st.results === 'market' ? this.market(a, D) : null;
     const intro = { buy: 'Hello RFR, here is my buying brief:', sell: 'Hello RFR, I’d like a free property review:', tenant: 'Hello RFR, I’m looking to rent:', landlord: 'Hello RFR, I have a property to let:' }[key];
     const lines = [intro];
