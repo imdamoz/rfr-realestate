@@ -9,6 +9,7 @@
 <x-dc>
 <helmet>
   <script src="rfr-data.js"></script>
+  <script src="rfr-era.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link rel="preconnect" href="https://api.fontshare.com">
@@ -156,7 +157,8 @@
 
 <main id="top">
 
-  <section data-screen-label="Hero" style="position: relative; height: 100svh; min-height: 620px; background: #071A2B; overflow: hidden;">
+  <section id="hero" data-screen-label="Hero" style="position: relative; height: 250svh; background: #071A2B;">
+  <div id="hero-pin" style="position: sticky; top: 0; height: 100svh; min-height: 620px; overflow: hidden;">
     <div id="hero-img" style="position: absolute; inset: 0; transform: scale(1.06); will-change: transform;">
       <picture>
         <source media="(max-aspect-ratio: 1/1)" srcset="brand/photos/hero-poster-m.jpg">
@@ -180,7 +182,7 @@
         <a id="hs-go" href="rfr-listings.dc.html" data-h="1" style="display: flex; align-items: center; gap: 10px; padding: 0 26px; background: #D2B77D; color: #071A2B; font-size: 11px; letter-spacing: .18em; font-weight: 500; white-space: nowrap;">SEARCH <span>↗</span></a>
       </form>
     </div>
-    <div style="position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; background: rgba(7,26,43,.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(210,183,125,.3); color: #F3EFE7;">
+    <div id="hero-tri" style="position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; background: rgba(7,26,43,.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(210,183,125,.3); color: #F3EFE7;">
       <a href="rfr-buy-sell-lease.dc.html#buy" data-tri="0" data-h="1" style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 20px clamp(16px, 2vw, 32px); transition: background .4s ease;" style-hover="background: rgba(210,183,125,.16)">
         <span style="display: flex; align-items: baseline; gap: 12px;"><span style="font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(20px, 1.8vw, 30px);">Buy</span></span>
         <span class="m-trisub" style="font-size: 13.5px; letter-spacing: .02em; color: rgba(243,239,231,.82); white-space: nowrap;">Shortlist in 48 hours <span style="color: #D2B77D;">↗</span></span>
@@ -194,6 +196,26 @@
         <span class="m-trisub" style="font-size: 13.5px; letter-spacing: .02em; color: rgba(243,239,231,.82); white-space: nowrap;">Viewings this week <span style="color: #D2B77D;">↗</span></span>
       </a>
     </div>
+    <div id="hero-palms" aria-hidden="true" style="position: absolute; inset: 0; z-index: 4; pointer-events: none;"></div>
+    <div id="sky" style="position: absolute; inset: 0; z-index: 6; pointer-events: none;">
+      <div id="sky-bg" style="position: absolute; inset: 0; overflow: hidden; background: linear-gradient(180deg, #27313B 0%, #3E4952 26%, #5A5E60 52%, #7A7068 76%, #6A5649 100%);">
+        <img src="brand/photos/hero-poster.jpg" alt="" style="position: absolute; top: -40px; left: -40px; width: calc(100% + 80px); height: calc(100% + 80px); object-fit: cover; object-position: 50% 0; transform: scale(3.2); transform-origin: 50% 0; filter: blur(3px) saturate(1.05); will-change: transform;">
+        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(18,23,29,.72) 0%, rgba(18,23,29,.38) 32%, rgba(18,23,29,.3) 60%, rgba(18,23,29,.12) 100%);"></div>
+      </div>
+      <div id="sky-back" aria-hidden="true" style="position: absolute; inset: 0;"></div>
+      <div id="sky-text" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(18px, 3vh, 30px); padding: 0 6vw 22vh; text-align: center; pointer-events: none; will-change: transform, opacity;">
+        <p style="margin: 0; max-width: 15ch; font-family: 'The Seasons', 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(48px, 7.6vw, 140px); line-height: .95; letter-spacing: -.02em; color: #F3EFE7; text-wrap: balance; text-shadow: 0 2px 40px rgba(20,26,32,.45);">Tax-free island homes from <em style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; color: #E3CC98;">AED 920K.</em></p>
+      </div>
+      <div id="sky-front" aria-hidden="true" style="position: absolute; inset: 0;"></div>
+      <div id="sky-cta" style="position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; padding: 0 6vw 14vh; pointer-events: none; will-change: opacity, transform;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; pointer-events: auto;">
+          <a href="https://wa.me/971585015885?text=Hello%20RFR%2C%20I%27d%20like%20to%20book%20a%20free%2020-minute%20call." target="_blank" rel="noopener" data-h="1" style="padding: 17px 28px; background: #D2B77D; color: #071A2B; font-size: 12px; font-weight: 500; letter-spacing: .18em; transition: background .3s;" style-hover="background: #E3CC98">BOOK A FREE 20-MIN CALL</a>
+          <a href="#listings" data-h="1" style="padding: 16px 27px; border: 1px solid rgba(243,239,231,.6); background: #071A2B; color: #F3EFE7; font-size: 12px; font-weight: 500; letter-spacing: .18em; transition: background .3s;" style-hover="background: #12304A">SEE HOMES</a>
+        </div>
+      </div>
+      <div id="sky-cue" style="position: absolute; left: 50%; bottom: 5vh; transform: translateX(-50%); font-size: 11px; font-weight: 500; letter-spacing: .3em; color: #F3EFE7;">SCROLL</div>
+    </div>
+  </div>
   </section>
 
   <section id="firm" data-screen-label="Statement" style="position: relative; height: 200vh; background: #071A2B; color: #F3EFE7;">
@@ -880,7 +902,7 @@ class Component extends DCLogic {
     // header
     const hdr = document.getElementById('hdr');
     if (hdr) {
-      const wantSolid = sy > vh * 0.72;
+      const wantSolid = sy > (window.__rfrSkyEnd || vh * 0.72);
       if (wantSolid !== this._solid) {
         this._solid = wantSolid;
         hdr.style.background = wantSolid ? 'rgba(243,239,231,.95)' : 'rgba(243,239,231,0)';
@@ -896,7 +918,7 @@ class Component extends DCLogic {
 
     if (!reduced) {
       const heroImg = document.getElementById('hero-img');
-      if (heroImg && sy < vh) {
+      if (heroImg && sy < vh && !window.__rfrSky) {
         heroImg.style.transform = 'scale(1.06) translateY(' + (sy * 0.14 * m).toFixed(1) + 'px)';
         const heroCopy = document.getElementById('hero-copy');
         if (heroCopy) heroCopy.style.opacity = String(Math.max(0, 1 - (sy / vh) * 1.4));
