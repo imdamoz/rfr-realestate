@@ -1,0 +1,8 @@
+# RFR Real Estate — crawling is allowed, including AI answer engines.
+User-agent: *
+Allow: /
+
+# Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+Sitemap: https://www.rfrrealestate.com/sitemap.xml

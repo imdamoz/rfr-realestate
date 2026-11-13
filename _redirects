@@ -1,0 +1,63 @@
+# Permanent redirects to canonical https://www.rfrrealestate.com URLs.
+# Cloudflare static-asset hosting reads this file. Domain and scheme
+# redirects (apex, http) are not supported here — see the pull request.
+/index.html / 301
+/rfr-about.dc /about 301
+/rfr-about.dc.html /about 301
+/about.html /about 301
+/rfr-areas.dc /areas/ 301
+/rfr-areas.dc.html /areas/ 301
+/areas /areas/ 301
+/rfr-listings.dc /listings/ 301
+/rfr-listings.dc.html /listings/ 301
+/listings /listings/ 301
+/rfr-buy-sell-lease.dc /buy-sell-lease 301
+/rfr-buy-sell-lease.dc.html /buy-sell-lease 301
+/buy-sell-lease.html /buy-sell-lease 301
+/rfr-market.dc /market 301
+/rfr-market.dc.html /market 301
+/market.html /market 301
+/rfr-offplan.dc /off-plan/ 301
+/rfr-offplan.dc.html /off-plan/ 301
+/off-plan /off-plan/ 301
+/offplan /off-plan/ 301
+/rfr-services.dc /services 301
+/rfr-services.dc.html /services 301
+/services.html /services 301
+/rfr-island-3d /island 301
+/rfr-island-3d.html /island 301
+/island.html /island 301
+/RFR Website v9.dc / 301
+/RFR%20Website%20v9.dc / 301
+/RFR Website v9.dc.html / 301
+/RFR%20Website%20v9.dc.html / 301
+# Legacy Wix empty pages. Wayback only retained robots.txt for this host;
+# /blank is the Wix placeholder the audit found. blank-1..3 are the usual Wix copies.
+/blank / 301
+/blank-1 / 301
+/blank-2 / 301
+/blank-3 / 301
+/areas/al-marjan-island.html /areas/al-marjan-island 301
+/areas/mina-al-arab.html /areas/mina-al-arab 301
+/areas/al-hamra-village.html /areas/al-hamra-village 301
+/areas/downtown-rak.html /areas/downtown-rak 301
+/listings/duplex-marjan.html /listings/duplex-marjan 301
+/listings/villa-juwais.html /listings/villa-juwais 301
+/listings/onebed-hamra.html /listings/onebed-hamra 301
+/listings/duplex-julphar.html /listings/duplex-julphar 301
+/listings/onebed-falcon.html /listings/onebed-falcon 301
+/listings/plot-mina.html /listings/plot-mina 301
+/listings/address-2bed.html /listings/address-2bed 301
+/listings/nikki-1bed.html /listings/nikki-1bed 301
+/listings/costa-2bed.html /listings/costa-2bed 301
+/listings/manta-studio.html /listings/manta-studio 301
+/listings/masa-1bed.html /listings/masa-1bed 301
+/off-plan/address.html /off-plan/address 301
+/off-plan/nobu.html /off-plan/nobu 301
+/off-plan/jw.html /off-plan/jw 301
+/off-plan/nikki.html /off-plan/nikki 301
+/off-plan/w.html /off-plan/w 301
+/off-plan/costa.html /off-plan/costa 301
+/off-plan/manta.html /off-plan/manta 301
+/off-plan/sora.html /off-plan/sora 301
+/off-plan/masa.html /off-plan/masa 301
