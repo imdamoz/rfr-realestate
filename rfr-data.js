@@ -2,7 +2,34 @@
 (function () {
   const W = 'https://static.wixstatic.com/media/';
   const AM = 'https://al-marjanisland.com/wp-content/uploads/';
-  const wix = (id, name, w, h) => W + id + '/v1/fill/w_' + w + ',h_' + h + ',al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/' + name;
+  const LOCAL_WIX = {
+  "e0d1cd_44d4c7a2994b4e65ac70275785b4a91c~mv2.jpg": "/brand/photos/library/e0d1cd_44d4c7a2994b4e65ac70275785b4a91c_mv2.jpg",
+  "11062b_efd1208e66d941c8b0059ee7fb6fa839~mv2.jpg": "/brand/photos/library/11062b_efd1208e66d941c8b0059ee7fb6fa839_mv2.jpg",
+  "e0d1cd_5ad9ffa7786c4fb4a7e86ef529d13d27~mv2.jpg": "/brand/photos/library/e0d1cd_5ad9ffa7786c4fb4a7e86ef529d13d27_mv2.jpg",
+  "e4ffa40ce0bcf60a1929f7157970f23d.jpg": "/brand/photos/library/e4ffa40ce0bcf60a1929f7157970f23d.jpg",
+  "e0d1cd_4bff9bed686c49bbadc1b9a08d89751e~mv2.jpg": "/brand/photos/library/e0d1cd_4bff9bed686c49bbadc1b9a08d89751e_mv2.jpg",
+  "11062b_0ddd359e3ec74e4ea8619f53b42eebda~mv2.jpg": "/brand/photos/library/11062b_0ddd359e3ec74e4ea8619f53b42eebda_mv2.jpg",
+  "11062b_ee9203816e6d46f78d20eb83d1b183ed~mv2.png": "/brand/photos/library/11062b_ee9203816e6d46f78d20eb83d1b183ed_mv2.jpg",
+  "e0d1cd_4484a53585a444e0808d44244cd472f9~mv2.jpg": "/brand/photos/library/e0d1cd_4484a53585a444e0808d44244cd472f9_mv2.jpg",
+  "e0d1cd_5ace0960ff5e42a5839ee96c8209de1f~mv2.jpg": "/brand/photos/library/e0d1cd_5ace0960ff5e42a5839ee96c8209de1f_mv2.jpg",
+  "e0d1cd_23fb715ad24d4cd1acacda12d23171b6~mv2.jpg": "/brand/photos/library/e0d1cd_23fb715ad24d4cd1acacda12d23171b6_mv2.jpg",
+  "e0d1cd_52ca45a4466e4c4881cd5203cbcd7002~mv2.jpg": "/brand/photos/library/e0d1cd_52ca45a4466e4c4881cd5203cbcd7002_mv2.jpg",
+  "11062b_8146d5b313954fb7a35eb5ac31f9d4e2~mv2.jpg": "/brand/photos/library/11062b_8146d5b313954fb7a35eb5ac31f9d4e2_mv2.jpg",
+  "nsplsh_4fe1f4de2f494096bafde724d1474e71~mv2.jpg": "/brand/photos/library/nsplsh_4fe1f4de2f494096bafde724d1474e71_mv2.jpg",
+  "e0d1cd_e463018c9f524ce0a9fab9a518fec5c4~mv2.jpg": "/brand/photos/library/e0d1cd_e463018c9f524ce0a9fab9a518fec5c4_mv2.jpg",
+  "e0d1cd_9388fe4fb8944483a187fa5509a632d4~mv2.jpg": "/brand/photos/library/e0d1cd_9388fe4fb8944483a187fa5509a632d4_mv2.jpg",
+  "e0d1cd_c1ffe3e6763d42b1b2e0d56040322439~mv2.jpg": "/brand/photos/library/e0d1cd_c1ffe3e6763d42b1b2e0d56040322439_mv2.jpg",
+  "e0d1cd_6dd49399c4f54a22bf4ede2f46e96bfd~mv2.jpg": "/brand/photos/library/e0d1cd_6dd49399c4f54a22bf4ede2f46e96bfd_mv2.jpg",
+  "e0d1cd_ab7dd6ba1ec141c3a6b5f7dc34527529~mv2.jpg": "/brand/photos/library/e0d1cd_ab7dd6ba1ec141c3a6b5f7dc34527529_mv2.jpg",
+  "e0d1cd_91972f9c1bc841cd82b4ca87dff16a6f~mv2.jpg": "/brand/photos/library/e0d1cd_91972f9c1bc841cd82b4ca87dff16a6f_mv2.jpg",
+  "e0d1cd_94294864c04d4eb1943f597443891ecc~mv2.jpg": "/brand/photos/library/e0d1cd_94294864c04d4eb1943f597443891ecc_mv2.jpg",
+  "e0d1cd_bb81d86f97ab495193c432131bc7fd02~mv2.jpg": "/brand/photos/library/e0d1cd_bb81d86f97ab495193c432131bc7fd02_mv2.jpg",
+  "11062b_f2b967d92a3643b68bb61c6d5ac6d111~mv2.jpg": "/brand/photos/library/11062b_f2b967d92a3643b68bb61c6d5ac6d111_mv2.jpg",
+  "11062b_99e34c7611664de7b96ab038079ef56d~mv2.jpg": "/brand/photos/library/11062b_99e34c7611664de7b96ab038079ef56d_mv2.jpg",
+  "11062b_3e7f7bf526db4a8885b8aa2f870faee9~mv2.jpg": "/brand/photos/library/11062b_3e7f7bf526db4a8885b8aa2f870faee9_mv2.jpg",
+  "11062b_b54653b844b143308c6f147e322e3cd1~mv2_d_5123_3780_s_4_2.jpg": "/brand/photos/library/11062b_b54653b844b143308c6f147e322e3cd1_mv2_d_5123_3780_s_4_2.jpg"
+};
+  const wix = (id, name, w, h) => LOCAL_WIX[id] || (W + id + "/v1/fill/w_" + w + ",h_" + h + ",al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/" + (name || "image"));
   const IMG = {
     living: wix('e0d1cd_44d4c7a2994b4e65ac70275785b4a91c~mv2.jpg', '1758366660-image2-plain.jpg', 1400, 1050),
     bedroom: wix('11062b_efd1208e66d941c8b0059ee7fb6fa839~mv2.jpg', 'Modern%20Bedroom%20Design.jpg', 1400, 1050),
