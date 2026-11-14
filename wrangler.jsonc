@@ -1,0 +1,15 @@
+{
+  "name": "rfr-realestate",
+  "account_id": "4ee57409af527a2ae947cf8cc358ece7",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": false,
+  "routes": [
+    { "pattern": "rfrrealestate.com", "custom_domain": true },
+    { "pattern": "www.rfrrealestate.com", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  }
+}
