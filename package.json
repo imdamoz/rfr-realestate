@@ -2,8 +2,8 @@
   "name": "rfr-realestate",
   "private": true,
   "scripts": {
-    "build": "echo static site, nothing to build",
-    "deploy": "wrangler deploy"
+    "build": "node scripts/build.mjs",
+    "deploy": "npm run build && wrangler deploy"
   },
   "devDependencies": {
     "wrangler": "^4"
