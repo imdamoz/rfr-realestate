@@ -1,0 +1,11 @@
+{
+  "name": "rfr-realestate",
+  "private": true,
+  "scripts": {
+    "build": "echo static site, nothing to build",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}
