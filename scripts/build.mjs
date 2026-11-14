@@ -12,6 +12,7 @@ const EXCLUDE = new Set([
   "node_modules",
   "dist",
   "scripts",
+  "src",
   "wrangler.jsonc",
   ".assetsignore",
   "package.json",

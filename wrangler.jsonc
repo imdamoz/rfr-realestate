@@ -1,6 +1,7 @@
 {
   "name": "rfr-realestate",
   "account_id": "4ee57409af527a2ae947cf8cc358ece7",
+  "main": "src/worker.js",
   "compatibility_date": "2026-11-01",
   "workers_dev": false,
   "routes": [
@@ -9,7 +10,9 @@
   ],
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true,
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "none"
+    "not_found_handling": "404-page"
   }
 }
