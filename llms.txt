@@ -28,6 +28,7 @@ A longer plain-text summary of the firm, areas, listings approach and every guid
 - [Off-Plan Property in RAK | RFR](https://www.rfrrealestate.com/off-plan/): Off-plan launches on Al Marjan Island: developers, payment plans, handover dates and starting prices, with RFR.
 - [RAK Property Services | RFR](https://www.rfrrealestate.com/services): Sales, leasing, property management and investment advice in Ras Al Khaimah, with one RFR advisor throughout.
 - [Al Marjan Island Map | RFR](https://www.rfrrealestate.com/island): A study of Al Marjan Island in Ras Al Khaimah, the coast where RFR advises buyers, sellers and tenants.
+- [Editorial policy](https://www.rfrrealestate.com/editorial-policy): Who publishes the site (RFR Real Estate & Advisory FZ-LLC, Ras Al Khaimah), what the guides are, how sources are named and dated when checked, how disagreements between official sources (such as the 5- vs 10-year Golden Visa term) are reported rather than resolved, and what the site does not publish (invented reviews or ratings, the licence number, a street address).
 
 ## Areas
 
