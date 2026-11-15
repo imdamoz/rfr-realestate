@@ -6,3 +6,7 @@ Allow: /
 Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
 Sitemap: https://www.rfrrealestate.com/sitemap.xml
+
+# Plain-text summaries for language models:
+# https://www.rfrrealestate.com/llms.txt
+# https://www.rfrrealestate.com/llms-full.txt

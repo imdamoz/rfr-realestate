@@ -29,9 +29,16 @@
 /island.html /island 301
 /RFR%20Website%20v9.dc / 301
 /RFR%20Website%20v9.dc.html / 301
+# Earlier exports of the single-page site (found in git history; island.html linked v5).
+/RFR%20Website%20v5.dc / 301
+/RFR%20Website%20v5.dc.html / 301
+/RFR%20Website%20v7.dc / 301
+/RFR%20Website%20v7.dc.html / 301
 # Legacy Wix empty pages. Wayback only retained robots.txt for this host;
 # /blank is the Wix placeholder the audit found. blank-1..3 are the usual Wix copies.
 /blank / 301
+/blank/ / 301
+/blank.html / 301
 /blank-1 / 301
 /blank-2 / 301
 /blank-3 / 301

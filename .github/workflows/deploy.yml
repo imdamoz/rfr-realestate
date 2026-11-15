@@ -34,3 +34,69 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: 4ee57409af527a2ae947cf8cc358ece7
+
+      # Best-effort IndexNow ping (Bing, Yandex, Seznam, Naver...). Never fails the deploy.
+      # Submits every URL in the live sitemap plus legacy URLs so their 301s get recrawled.
+      - name: Ping IndexNow
+        if: success()
+        continue-on-error: true
+        timeout-minutes: 3
+        env:
+          INDEXNOW_HOST: www.rfrrealestate.com
+          INDEXNOW_KEY: 7f3c9a1e5b2d4c8f9e0a6b1d3c5e7f90
+        run: |
+          set +e
+          SITE="https://${INDEXNOW_HOST}"
+          KEY_LOCATION="${SITE}/${INDEXNOW_KEY}.txt"
+
+          # Give the new deployment a moment to propagate.
+          sleep 20
+
+          live_key=$(curl -fsS --max-time 20 "$KEY_LOCATION" | tr -d '[:space:]')
+          if [ "$live_key" != "$INDEXNOW_KEY" ]; then
+            echo "::warning::IndexNow key file not served correctly at $KEY_LOCATION; skipping ping."
+            exit 0
+          fi
+
+          curl -fsS --max-time 30 "${SITE}/sitemap.xml" -o sitemap.live.xml
+          if [ ! -s sitemap.live.xml ]; then
+            echo "::warning::Could not fetch live sitemap; skipping ping."
+            exit 0
+          fi
+          grep -o '<loc>[^<]*</loc>' sitemap.live.xml | sed -e 's#<loc>##' -e 's#</loc>##' > urls.txt
+
+          # Legacy URLs that now 301 to canonical pages.
+          cat >> urls.txt <<'LEGACY'
+          https://www.rfrrealestate.com/RFR%20Website%20v9.dc.html
+          https://www.rfrrealestate.com/rfr-about.dc.html
+          https://www.rfrrealestate.com/rfr-areas.dc.html
+          https://www.rfrrealestate.com/rfr-listings.dc.html
+          https://www.rfrrealestate.com/rfr-buy-sell-lease.dc.html
+          https://www.rfrrealestate.com/rfr-market.dc.html
+          https://www.rfrrealestate.com/rfr-offplan.dc.html
+          https://www.rfrrealestate.com/rfr-services.dc.html
+          https://www.rfrrealestate.com/rfr-island-3d.html
+          https://www.rfrrealestate.com/blank
+          LEGACY
+
+          sed -i 's/^[[:space:]]*//; /^$/d' urls.txt
+          sort -u urls.txt -o urls.txt
+          echo "Submitting $(wc -l < urls.txt) URLs to IndexNow"
+
+          payload=$(jq -Rn \
+            --arg host "$INDEXNOW_HOST" \
+            --arg key "$INDEXNOW_KEY" \
+            --arg keyLocation "$KEY_LOCATION" \
+            '{host: $host, key: $key, keyLocation: $keyLocation, urlList: [inputs | select(length > 0)]}' < urls.txt)
+
+          status=$(curl -sS --max-time 30 -o indexnow.out -w '%{http_code}' \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            -X POST 'https://api.indexnow.org/indexnow' \
+            --data "$payload")
+          echo "IndexNow responded HTTP $status"
+          cat indexnow.out 2>/dev/null || true
+          case "$status" in
+            200|202) echo "IndexNow ping accepted." ;;
+            *) echo "::warning::IndexNow ping returned HTTP $status (non-fatal)." ;;
+          esac
+          exit 0

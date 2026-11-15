@@ -1,6 +1,49 @@
-// Canonicalises host/protocol, retires legacy Wix placeholder URLs, then serves
-// static assets with asset-layer redirects upgraded to permanent (301).
+// Canonicalises host/protocol, retires legacy Wix placeholder URLs and old
+// single-page exports, then serves static assets with asset-layer redirects
+// upgraded to permanent (301).
 const ORIGIN = "https://www.rfrrealestate.com";
+
+// Legacy paths -> canonical page. Keys are lower-case, decoded, without a
+// trailing slash. Checked before the asset layer, so these 301 even though
+// copies of some old files still exist in the build. _redirects mirrors them.
+const LEGACY = new Map([
+  ["/rfr-about.dc", "/about"],
+  ["/rfr-about.dc.html", "/about"],
+  ["/rfr-areas.dc", "/areas/"],
+  ["/rfr-areas.dc.html", "/areas/"],
+  ["/rfr-listings.dc", "/listings/"],
+  ["/rfr-listings.dc.html", "/listings/"],
+  ["/rfr-buy-sell-lease.dc", "/buy-sell-lease"],
+  ["/rfr-buy-sell-lease.dc.html", "/buy-sell-lease"],
+  ["/rfr-market.dc", "/market"],
+  ["/rfr-market.dc.html", "/market"],
+  ["/rfr-offplan.dc", "/off-plan/"],
+  ["/rfr-offplan.dc.html", "/off-plan/"],
+  ["/rfr-services.dc", "/services"],
+  ["/rfr-services.dc.html", "/services"],
+  ["/rfr-island-3d", "/island"],
+  ["/rfr-island-3d.html", "/island"],
+  ["/rfr website v5.dc", "/"],
+  ["/rfr website v5.dc.html", "/"],
+  ["/rfr website v7.dc", "/"],
+  ["/rfr website v7.dc.html", "/"],
+  ["/rfr website v9.dc", "/"],
+  ["/rfr website v9.dc.html", "/"],
+]);
+
+function legacyTarget(pathname) {
+  let p;
+  try {
+    p = decodeURIComponent(pathname);
+  } catch {
+    p = pathname;
+  }
+  p = p.toLowerCase().replace(/\+/g, " ");
+  if (p.length > 1) p = p.replace(/\/+$/, "");
+  // Wix placeholders: /blank, /blank-3, /blank.html, /blank-2.html (and slash variants).
+  if (/^\/blank(-\d+)?(\.html)?$/.test(p)) return "/";
+  return LEGACY.get(p) || null;
+}
 
 export default {
   async fetch(request, env) {
@@ -10,8 +53,9 @@ export default {
       return Response.redirect(ORIGIN + url.pathname + url.search, 301);
     }
 
-    if (/^\/blank(-\d+)?\/?$/i.test(url.pathname)) {
-      return Response.redirect(ORIGIN + "/", 301);
+    const legacy = legacyTarget(url.pathname);
+    if (legacy) {
+      return Response.redirect(ORIGIN + legacy + url.search, 301);
     }
 
     const res = await env.ASSETS.fetch(request);

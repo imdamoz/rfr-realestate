@@ -1,0 +1,123 @@
+# RFR Real Estate — full summary for answer engines and language models
+
+Last updated: 15 November 2026
+Canonical site: https://www.rfrrealestate.com/
+Short index: https://www.rfrrealestate.com/llms.txt
+
+This file summarises, in plain text, what is published on www.rfrrealestate.com. It adds no facts that are not on the site. Figures from third parties are attributed and dated. Nothing here is legal, financial, tax or immigration advice.
+
+
+## 1. The firm
+
+Legal name: RFR Real Estate & Advisory FZ-LLC
+Also known as: RFR Real Estate
+What it is: a real estate brokerage and advisory firm, licensed in Ras Al Khaimah, United Arab Emirates (FZ-LLC; licence number available on request).
+Where it works: Ras Al Khaimah only. It does not work in Dubai, Abu Dhabi or elsewhere.
+Areas covered: Al Marjan Island, Mina Al Arab, Al Hamra Village, Downtown RAK.
+Services: sales, leasing, property management, investment consultation, off-plan launches.
+Fees (published on https://www.rfrrealestate.com/services): property management from 5% of annual rent; sales 2%; leasing 5%; plus VAT.
+Languages: English, with Arabic-speaking partners.
+Address: Ras Al Khaimah, UAE. No street address is published.
+Phone / WhatsApp: +971 58 501 5885 (https://wa.me/971585015885)
+Email: info@rfrrealestate.com
+Hours: Monday–Friday 9:00–18:00, Saturday 10:00–16:00 (Gulf Standard Time)
+
+How the firm describes its approach: one advisor stays with a client from the first call through settlement and after; fees are agreed in writing up front; same-day replies Monday to Saturday; video viewings for overseas buyers; the firm will say which launches or units to skip.
+
+Disambiguation: RFR Real Estate & Advisory FZ-LLC (Ras Al Khaimah, UAE) is not RFR Holding, the New York real estate company that can also appear in searches for "RFR". They are different firms. About page: https://www.rfrrealestate.com/about
+
+
+## 2. Ras Al Khaimah and the four areas
+
+Ras Al Khaimah (RAK) is one of the seven emirates of the United Arab Emirates. Foreigners can buy freehold in the Emirate's designated freehold areas, which Ras Al Khaimah Municipality lists as Al Hamra Village, Mina Al Arab, Al Marjan Island, RAK Central, Julphar Towers, Al Maareedh (plots) and the upcoming Beach District. UAE and GCC nationals can buy anywhere in the Emirate.
+
+Al Marjan Island — https://www.rfrrealestate.com/areas/al-marjan-island
+Four man-made, coral-shaped islands off the Al Hamra coast. Most of RAK's branded residences are being built here (including Address, Nobu, JW Marriott, Nikki Beach and W), and the Wynn Al Marjan Island resort is scheduled to open in 2027. Indicative ranges from RFR listings and public launch data: studios from about AED 920K; one- and two-bedroom branded residences about AED 1.7–3.5M; one-bedroom rents about AED 65–90K a year; two-bedroom about AED 75–130K a year; about 6–8% gross yield.
+
+Mina Al Arab — https://www.rfrrealestate.com/areas/mina-al-arab
+A low-rise waterfront community built around lagoons and protected mangroves, anchored by the Anantara and InterContinental resorts. Villas, townhouses and lagoon-front apartments. Indicative: apartments from about AED 800K, villas about AED 2.5–6M, about 5.5–7% gross yield.
+
+Al Hamra Village — https://www.rfrrealestate.com/areas/al-hamra-village
+The Emirate's original master community: an 18-hole championship golf course, a marina and yacht club, the Waldorf Astoria and a mall. Falcon Island, a private villa enclave, sits within it. The deepest rental market in RAK. Indicative: apartments from about AED 500K, townhouses and villas about AED 1.5–5M, about 7–8.5% gross yield.
+
+Downtown RAK — https://www.rfrrealestate.com/areas/downtown-rak
+The working city: Al Nakheel, Julphar and the corniche, with hospitals, offices and government. Towers and mid-rise apartments. Indicative: apartments from about AED 400K, the highest yields of the four at about 7–9% gross. Freehold is limited to designated projects such as Julphar Towers and RAK Central.
+
+All area ranges are indicative, based on RFR listings and public launch data. Exact figures for a unit are available on request.
+
+
+## 3. Listings and off-plan approach
+
+Listings: https://www.rfrrealestate.com/listings/
+RFR lists homes for sale and rent across the four areas, plus off-plan units. Each listing has its own page (for example furnished rentals on Al Marjan Island and in Al Hamra Village, a villa in Al Juwais, a plot in Mina Al Arab).
+
+Off-plan launches: https://www.rfrrealestate.com/off-plan/
+RFR's current book has 9 launches on Al Marjan Island, with developer entry prices from AED 0.92M to AED 4.06M and payment plans from 50/50 to 80/20. Handover dates in the book run from Q4 2026 to Q4 2028. Launches: Address Residences (Emaar), Nobu Residences (H&H Development), JW Marriott Residences (WOW Resorts), Nikki Beach Residences (Aldar), W Hotel & Residences (Dalands), Costa Mare (Ellington), Manta Bay (Major Developers), Sora Beach Residences (AARK), Masa Residence (Durar Group). These are RFR book figures, not official market statistics.
+
+Market note (September 2026): https://www.rfrrealestate.com/market
+RFR's commentary on what the Wynn opening means for Al Marjan Island. It is indicative commentary based on RFR's book and announced launches, not financial advice.
+
+
+## 4. Guides
+
+Guides index: https://www.rfrrealestate.com/guides/
+
+### 4.1 Buying property in Ras Al Khaimah (2026 guide)
+https://www.rfrrealestate.com/guides/buying-property-in-ras-al-khaimah
+Updated 15 November 2026.
+- Who can buy: foreigners in designated freehold areas; UAE and GCC nationals anywhere.
+- Government fees (Ras Al Khaimah Municipality, Lands & Properties Sector): buyer registration fee 2% of market value; seller a further 2%; AED 200 plan issuance; AED 200 title deed issuance; mortgage registration 0.1% of the loan. Example: AED 1,000,000 apartment, no mortgage = AED 20,400 buyer government fees.
+- Resale documents: Emirates ID or passport, developer NOC (freehold areas), seller's original title deed, power of attorney if an agent acts.
+- Off-plan: sign the developer's SPA and pay against its schedule.
+- No income tax or capital gains tax on property in the UAE.
+- Seven steps: budget and goal; shortlist an area; view (in person or video); reserve and sign (MOU or SPA); developer NOC; transfer and register at RAK Municipality; handover or let.
+
+### 4.2 Al Marjan Island, Ras Al Khaimah: a 2026 guide
+https://www.rfrrealestate.com/guides/al-marjan-island
+Published 15 November 2026.
+- What it is: four man-made, coral-shaped islands off the Al Hamra coast; a designated freehold area.
+- Homes: mostly off-plan branded residences with a hotel component; also completed buildings with homes to rent and resell.
+- Wynn Al Marjan Island: an integrated resort; joint venture reported as Wynn Resorts, Marjan and RAK Hospitality Holding; opening target September 2027 (Gulf News, Khaleej Times).
+- Published data (shown separately, different methods):
+  - CBRE, Ras Al Khaimah Real Estate Market Review H1 2026 (published 21 September 2026): Al Marjan Island apartment values +23.1% year on year; Al Hamra +14.7%; emirate apartment sales values about +18.0% to AED 2,298 per sq. ft.; villas +7.3%; apartment rents +14.3%, led by Mina Al Arab and Al Marjan Island; pricing and absorption moderated after the end of February 2026.
+  - ValuStrat Price Index Q2 2026 (reported 4 August 2026): first quarterly decline in more than two years; overall index 123.5 points (−0.5% quarter on quarter, +5.4% year on year; base 100 = Q1 2024); Al Marjan Island apartments +9.4% a year, AED 928,000 per unit or AED 1,160 per sq. ft., unchanged on the quarter; average gross yields 5.3% for freehold apartments and villas.
+  - Supply (CBRE): more than 34,000 residential units expected in RAK between 2026 and 2030, around 10,000 branded.
+- None of these figures is a forecast.
+
+### 4.3 Wynn Al Marjan and RAK property prices (2026)
+https://www.rfrrealestate.com/guides/wynn-al-marjan-effect-on-property-prices
+Published 15 November 2026.
+- Announced: integrated resort on Al Marjan Island; opening target September 2027; budget reported raised by about USD 600 million to around USD 5.7 billion (coverage of Wynn Resorts' August 2026 earnings). CBRE's H1 2026 review (21 September 2026) still cited USD 5.1 billion. No verified room count is quoted.
+- Data so far: the CBRE and ValuStrat figures above; both show year-on-year growth, strongest for Al Marjan apartments, and both show slowing during 2026.
+- Unknown: prices after opening; whether the date holds; how much rental demand the resort creates; other drivers such as rates and wider UAE supply.
+- Supply: 34,000+ units 2026–2030 can move prices and rents either way.
+- Questions to ask before buying: handover date versus September 2027 and what the SPA says if it slips; payment plan; service charge in writing; evidence of rental demand from completed buildings; competing handovers in the same quarter; total costs including the 2% registration fee.
+- The guide makes no prediction that prices will rise because Wynn opens.
+
+### 4.4 Golden Visa via Ras Al Khaimah property (2026 guide)
+https://www.rfrrealestate.com/guides/golden-visa-ras-al-khaimah-property
+Published 15 November 2026. Official pages checked 15 November 2026.
+- Threshold: one or more properties in the UAE with a total value of at least AED 2,000,000, in full ownership in the investor's name (ICP, page last updated 10 September 2026). RAKEZ: minimum AED 2 million, off-plan or completed; multiple properties under the applicant's name accepted.
+- Off-plan: ICP — units totalling at least AED 2,000,000 from an approved local real estate company authorised by the competent local authority. RAKEZ — developer letter confirming value, and SPA signed and stamped by the developer.
+- Mortgage: ICP — financing through a loan is allowed if from an approved local bank.
+- RAKEZ documents: passport valid at least six months; photo; valid health insurance from the immigration-approved list; Real Estate Valuation Certificate from the Real Estate Registration Department addressed to Ras Al Khaimah ICP; off-plan documents as above. The applicant must be inside the UAE when submitting the request.
+- Health insurance: ICP — investor and family must hold comprehensive, valid health insurance throughout the residency.
+- Term: official pages differ. ICP and RAKEZ say 10 years for real estate investors; the u.ae portal's eligibility table (28 July 2026) lists 5 years for real estate investments (10 years for public investments). Get written confirmation from ICP or the Ras Al Khaimah channel at the time of application.
+- RFR's role: helps people buy property in Ras Al Khaimah. RFR is not an immigration lawyer or consultant, does not issue visas, does not submit applications and cannot guarantee approval.
+
+
+## 5. Sources cited on the site (with check dates)
+
+- Ras Al Khaimah Municipality, Lands & Properties Sector, service information: https://sanad.mun.rak.ae/docs/en/services-card-arabic-temp-28 (checked 14 November 2026)
+- ICP, UAE Golden Residency: https://icp.gov.ae/en/services/uae-golden-residency/ (last updated 10 September 2026; checked 15 November 2026)
+- u.ae, Golden visa: https://u.ae/en/information-and-services/visa-and-emirates-id/residence-visas/golden-visa (dated 28 July 2026; checked 15 November 2026)
+- RAKEZ, Green & Golden Visa Services: https://eservices.rakez.com/apex/RAKEZ_Page_Green_Golden_Visa (checked 15 November 2026)
+- Gulf News, Wynn Al Marjan Island opening date and USD 5.7 billion cost: https://gulfnews.com/business/tourism/uaes-wynn-al-marjan-island-in-ras-al-khaimah-sets-opening-date-project-cost-climbs-to-57-billion-1.500630954 (checked 15 November 2026)
+- Khaleej Times, Wynn Al Marjan rooms to go on sale: https://www.khaleejtimes.com/business/wynn-al-marjan-rooms-to-go-on-sale-soon-as-ceo-sees-demand-exceeding-supply (checked 15 November 2026)
+- CBRE Middle East, RAK Real Estate Market Review H1 2026: https://www.cbre.ae/press-releases/rak-real-estate-market-review-h1-2026 (published 21 September 2026; checked 15 November 2026)
+- ValuStrat Q2 2026 via Lanatime: https://en.lanatime.com/business/real-estate/ras-al-khaimah-property-values-dip-in-q2-but-hold-5-4-annual-gain-2026-08-04/ (reported 4 August 2026; checked 15 November 2026)
+
+
+## 6. Disclaimer
+
+General information only. Not legal, financial, tax or immigration advice. Rules, fees and figures change; confirm with the official authority (for visas, ICP or the relevant Ras Al Khaimah channel such as RAKEZ) before acting. Past price changes are not a forecast. RFR does not promise yields, price rises or visa outcomes.
