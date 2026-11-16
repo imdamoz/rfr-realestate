@@ -216,6 +216,7 @@ const BUSINESS = {
     { '@type': 'AdministrativeArea', name: 'Ras Al Khaimah' },
     { '@type': 'Place', name: 'Al Marjan Island' }
   ],
+  sameAs: ['https://www.propertyfinder.ae/en/broker/rfr-real-estate-v2-13173-13173'],
   openingHoursSpecification: [
     { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '18:00' },
     { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '10:00', closes: '16:00' }
