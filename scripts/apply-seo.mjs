@@ -312,13 +312,13 @@ function injectHead(html, meta) {
 const PAGE_META = {
   'index.html': {
     path: '/',
-    title: 'RFR Real Estate | Real Estate Agency in Ras Al Khaimah',
+    title: 'Real Estate Agency in Ras Al Khaimah | RFR Real Estate',
     description: 'RFR is a real estate agency in Ras Al Khaimah. Buy, sell, lease or manage property on Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.',
     crumbs: [{ name: 'Home', path: '/' }]
   },
   'RFR Website v9.dc.html': {
     path: '/',
-    title: 'RFR Real Estate | Real Estate Agency in Ras Al Khaimah',
+    title: 'Real Estate Agency in Ras Al Khaimah | RFR Real Estate',
     description: 'RFR is a real estate agency in Ras Al Khaimah. Buy, sell, lease or manage property on Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.',
     crumbs: [{ name: 'Home', path: '/' }]
   },
@@ -337,8 +337,8 @@ const PAGE_META = {
   },
   'rfr-listings.dc.html': {
     path: '/listings/',
-    title: 'RAK Listings & Al Marjan Island Apartments | RFR',
-    description: 'Property for sale and rent in Ras Al Khaimah, including Al Marjan Island apartments off-plan and to rent, and the off-plan launches RFR lists there.',
+    title: 'Property & Apartments for Sale in Ras Al Khaimah | RFR',
+    description: 'Property and apartments for sale in Ras Al Khaimah: off-plan Al Marjan Island apartments from AED 920,000, a Mina Al Arab plot, and homes to rent.',
     crumbs: [{ name: 'Home', path: '/' }, { name: 'Listings', path: '/listings/' }]
   },
   'rfr-buy-sell-lease.dc.html': {
@@ -355,8 +355,8 @@ const PAGE_META = {
   },
   'rfr-offplan.dc.html': {
     path: '/off-plan/',
-    title: 'Off-Plan Property in RAK | RFR',
-    description: 'Off-plan launches on Al Marjan Island: developers, payment plans, handover dates and starting prices, with RFR.',
+    title: 'Off-Plan Projects in Ras Al Khaimah: 9 Launches | RFR',
+    description: 'Off-plan projects in Ras Al Khaimah: 9 Al Marjan Island launches from AED 920K to AED 4.06M, payment plans 50/50 to 80/20, handover Q4 2026 to Q4 2028.',
     crumbs: [{ name: 'Home', path: '/' }, { name: 'Off-plan', path: '/off-plan/' }]
   },
   'rfr-services.dc.html': {
