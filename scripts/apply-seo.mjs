@@ -201,7 +201,7 @@ const BUSINESS = {
   '@type': ['RealEstateAgent', 'LocalBusiness'],
   '@id': ORIGIN + '/#business',
   name: 'RFR Real Estate & Advisory FZ-LLC',
-  alternateName: 'RFR Real Estate',
+  alternateName: ['RFR', 'RFR Real Estate', 'RFR Real Estate & Advisory'],
   url: ORIGIN + '/',
   logo: ORIGIN + '/brand/logo/rfr-gold.png',
   image: ORIGIN + '/brand/logo/rfr-navy.png',
@@ -214,7 +214,10 @@ const BUSINESS = {
   },
   areaServed: [
     { '@type': 'AdministrativeArea', name: 'Ras Al Khaimah' },
-    { '@type': 'Place', name: 'Al Marjan Island' }
+    { '@type': 'Place', name: 'Al Marjan Island' },
+    { '@type': 'Place', name: 'Mina Al Arab' },
+    { '@type': 'Place', name: 'Al Hamra Village' },
+    { '@type': 'Place', name: 'Downtown Ras Al Khaimah' }
   ],
   sameAs: ['https://www.propertyfinder.ae/en/broker/rfr-real-estate-v2-13173-13173'],
   openingHoursSpecification: [
@@ -309,14 +312,14 @@ function injectHead(html, meta) {
 const PAGE_META = {
   'index.html': {
     path: '/',
-    title: 'Ras Al Khaimah Real Estate | RFR',
-    description: 'Buy, sell and lease property on Al Marjan Island and across Ras Al Khaimah with RFR, a local advisory firm.',
+    title: 'RFR Real Estate | Real Estate Agency in Ras Al Khaimah',
+    description: 'RFR is a real estate agency in Ras Al Khaimah. Buy, sell, lease or manage property on Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.',
     crumbs: [{ name: 'Home', path: '/' }]
   },
   'RFR Website v9.dc.html': {
     path: '/',
-    title: 'Ras Al Khaimah Real Estate | RFR',
-    description: 'Buy, sell and lease property on Al Marjan Island and across Ras Al Khaimah with RFR, a local advisory firm.',
+    title: 'RFR Real Estate | Real Estate Agency in Ras Al Khaimah',
+    description: 'RFR is a real estate agency in Ras Al Khaimah. Buy, sell, lease or manage property on Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.',
     crumbs: [{ name: 'Home', path: '/' }]
   },
   'rfr-about.dc.html': {
@@ -334,8 +337,8 @@ const PAGE_META = {
   },
   'rfr-listings.dc.html': {
     path: '/listings/',
-    title: 'RAK Property Listings | RFR',
-    description: 'Homes for sale and rent in Ras Al Khaimah and on Al Marjan Island, plus off-plan launches listed by RFR.',
+    title: 'RAK Listings & Al Marjan Island Apartments | RFR',
+    description: 'Property for sale and rent in Ras Al Khaimah, including Al Marjan Island apartments off-plan and to rent, and the off-plan launches RFR lists there.',
     crumbs: [{ name: 'Home', path: '/' }, { name: 'Listings', path: '/listings/' }]
   },
   'rfr-buy-sell-lease.dc.html': {
@@ -438,16 +441,26 @@ function shell({ title, description, path, crumbs, image, body, extraLd }) {
     + '</body>\n</html>\n';
 }
 
+// Per-area overrides for commercial queries (e.g. "Al Marjan Island apartments").
+const AREA_SEO = {
+  'al-marjan-island': {
+    title: 'Al Marjan Island Apartments & Property | RFR',
+    description: 'Al Marjan Island apartments from about AED 920K for a studio to AED 1.7–3.5M for 1–2 bed branded homes, with rents, gross yield and RFR’s current listings.',
+    h1: 'Al Marjan Island apartments & property'
+  }
+};
+
 function writeDetailPages(R) {
   const urls = [];
   for (const a of R.AREAS) {
     const pathUrl = '/areas/' + a.slug;
-    const title = clip(a.name + ' Property | RFR', 60);
-    const description = clip(a.tag.replace(/\.$/, '') + ' in Ras Al Khaimah. ' + a.intro, 155);
+    const seo = AREA_SEO[a.slug] || {};
+    const title = seo.title || clip(a.name + ' Property | RFR', 60);
+    const description = seo.description || clip(a.tag.replace(/\.$/, '') + ' in Ras Al Khaimah. ' + a.intro, 155);
     const crumbs = [{ name: 'Home', path: '/' }, { name: 'Areas', path: '/areas/' }, { name: a.name, path: pathUrl }];
     const body = '<section class="hero"><img src="' + esc(a.img) + '" alt="' + esc(a.name) + '"><div class="shade"></div><div class="inner">'
       + '<a href="/areas/" style="letter-spacing:.16em;font-size:12px">← ALL AREAS</a>'
-      + '<h1>' + esc(a.name) + '</h1><p class="tag" style="color:#D2B77D;font-size:clamp(18px,2vw,28px)">' + esc(a.tag) + '</p></div></section>'
+      + '<h1>' + esc(seo.h1 || a.name) + '</h1><p class="tag" style="color:#D2B77D;font-size:clamp(18px,2vw,28px)">' + esc(a.tag) + '</p></div></section>'
       + '<main><div class="wrap"><p class="lede">' + esc(a.intro) + '</p>'
       + '<div class="grid"><div class="stat"><span class="k">TO BUY</span><span class="v">' + esc(a.buy) + '</span></div>'
       + '<div class="stat"><span class="k">TO RENT</span><span class="v">' + esc(a.rent) + '</span></div>'
