@@ -3,26 +3,28 @@
 // upgraded to permanent (301).
 const ORIGIN = "https://www.rfrrealestate.com";
 
-// Legacy paths -> canonical page. Keys are lower-case, decoded, without a
-// trailing slash. Checked before the asset layer, so these 301 even though
-// copies of some old files still exist in the build. _redirects mirrors them.
+// Legacy paths -> canonical page on the current site. Keys are lower-case,
+// decoded, without a trailing slash. Checked before the asset layer, so
+// these 301 even though no matching file exists in the build. _redirects
+// mirrors the rest of the retired URLs (old area/listing/off-plan/guide
+// pages that no longer exist as separate pages).
 const LEGACY = new Map([
   ["/rfr-about.dc", "/about"],
   ["/rfr-about.dc.html", "/about"],
-  ["/rfr-areas.dc", "/areas/"],
-  ["/rfr-areas.dc.html", "/areas/"],
-  ["/rfr-listings.dc", "/listings/"],
-  ["/rfr-listings.dc.html", "/listings/"],
+  ["/rfr-areas.dc", "/areas"],
+  ["/rfr-areas.dc.html", "/areas"],
+  ["/rfr-listings.dc", "/listings"],
+  ["/rfr-listings.dc.html", "/listings"],
   ["/rfr-buy-sell-lease.dc", "/buy-sell-lease"],
   ["/rfr-buy-sell-lease.dc.html", "/buy-sell-lease"],
   ["/rfr-market.dc", "/market"],
   ["/rfr-market.dc.html", "/market"],
-  ["/rfr-offplan.dc", "/off-plan/"],
-  ["/rfr-offplan.dc.html", "/off-plan/"],
+  ["/rfr-offplan.dc", "/off-plan"],
+  ["/rfr-offplan.dc.html", "/off-plan"],
   ["/rfr-services.dc", "/services"],
   ["/rfr-services.dc.html", "/services"],
-  ["/rfr-island-3d", "/island"],
-  ["/rfr-island-3d.html", "/island"],
+  ["/rfr-island-3d", "/areas"],
+  ["/rfr-island-3d.html", "/areas"],
   ["/rfr website v5.dc", "/"],
   ["/rfr website v5.dc.html", "/"],
   ["/rfr website v7.dc", "/"],

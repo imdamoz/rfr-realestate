@@ -1,13 +1,9 @@
 {
-  "name": "rfr-realestate",
+  "name": "rfr-site",
   "account_id": "4ee57409af527a2ae947cf8cc358ece7",
   "main": "src/worker.js",
   "compatibility_date": "2026-11-01",
-  "workers_dev": false,
-  "routes": [
-    { "pattern": "rfrrealestate.com", "custom_domain": true },
-    { "pattern": "www.rfrrealestate.com", "custom_domain": true }
-  ],
+  "workers_dev": true,
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",

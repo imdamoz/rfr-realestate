@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - master
+      - new-site
   workflow_dispatch:
 
 concurrency:
@@ -36,7 +36,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: 4ee57409af527a2ae947cf8cc358ece7
 
       # Best-effort IndexNow ping (Bing, Yandex, Seznam, Naver...). Never fails the deploy.
-      # Submits every URL in the live sitemap plus legacy URLs so their 301s get recrawled.
+      # Submits every URL in the live sitemap so they get recrawled after a change.
       - name: Ping IndexNow
         if: success()
         continue-on-error: true
@@ -64,20 +64,6 @@ jobs:
             exit 0
           fi
           grep -o '<loc>[^<]*</loc>' sitemap.live.xml | sed -e 's#<loc>##' -e 's#</loc>##' > urls.txt
-
-          # Legacy URLs that now 301 to canonical pages.
-          cat >> urls.txt <<'LEGACY'
-          https://www.rfrrealestate.com/RFR%20Website%20v9.dc.html
-          https://www.rfrrealestate.com/rfr-about.dc.html
-          https://www.rfrrealestate.com/rfr-areas.dc.html
-          https://www.rfrrealestate.com/rfr-listings.dc.html
-          https://www.rfrrealestate.com/rfr-buy-sell-lease.dc.html
-          https://www.rfrrealestate.com/rfr-market.dc.html
-          https://www.rfrrealestate.com/rfr-offplan.dc.html
-          https://www.rfrrealestate.com/rfr-services.dc.html
-          https://www.rfrrealestate.com/rfr-island-3d.html
-          https://www.rfrrealestate.com/blank
-          LEGACY
 
           sed -i 's/^[[:space:]]*//; /^$/d' urls.txt
           sort -u urls.txt -o urls.txt
