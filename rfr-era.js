@@ -38,6 +38,8 @@
     });
     return toURL(c);
   };
+  const palmCache = {};
+  const palmURL = (seed, color) => palmCache[seed + color] || (palmCache[seed + color] = palm(seed, color));
 
   const SKY = [ // smoke along the bottom, two clouds veiling the headline edges (second one flipped both ways)
     { src: 'brand/sky/smoke.webp', front: 1, x: -0.12, y: 0.42, w: 1.8, fx: 1, fy: 1, z: 1, dir: 0, fade: 1 },
@@ -93,7 +95,7 @@
       im.style.cssText = 'display:block;width:100%;height:auto;opacity:0;transition:opacity 1.4s ease;' + (o.flip ? 'transform:scaleX(-1);' : '') + (o.kind === 'shade' ? 'filter:blur(5px);' : '');
       im.onload = () => { im.style.opacity = String(o.op || 1); };
       wrap.appendChild(im); parent.appendChild(wrap);
-      palm(o.seed, o.color).then((u) => { if (u) im.src = u; });
+      palmURL(o.seed, o.color).then((u) => { if (u) im.src = u; });
       palms.push(Object.assign({ wrap, el: host }, o));
     });
 
@@ -111,6 +113,8 @@
     measure(); addEventListener('resize', measure);
 
     const loop = (now) => {
+      // hero replaced (re-render): stop this loop and bind again to the new nodes
+      if (!hero.isConnected) { removeEventListener('resize', measure); started = false; tick(); return; }
       requestAnimationFrame(loop);
       if (innerWidth !== lastW || innerHeight !== lastH || hero.offsetHeight !== lastHero || !lastW) measure();
       const vw = innerWidth, vh = innerHeight, t = now / 1000;
