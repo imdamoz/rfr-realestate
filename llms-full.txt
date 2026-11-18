@@ -27,13 +27,13 @@ All figures are indicative, drawn from RFR's own listings and public launch data
 ## Pages
 
 - [RFR Real Estate & Advisory | Ras Al Khaimah](https://www.rfrrealestate.com/): Homepage. Buy, sell and lease homes on Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK. Includes a map of the four areas, current listings, off-plan launches and an FAQ.
-- [About | RFR Real Estate](https://www.rfrrealestate.com/about): Who RFR is, the team (Richard Boswell, Drew Carlyle, Morgan James), and an FAQ on areas covered, buying from abroad, investment and tenant screening.
-- [Areas | RFR Real Estate](https://www.rfrrealestate.com/areas): Guide to Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK, with indicative prices, rents, yields and who lives there.
-- [Listings | RFR Real Estate](https://www.rfrrealestate.com/listings): Current homes to rent and buy, and off-plan units, in Ras Al Khaimah.
-- [Buy, Sell or Lease | RFR Real Estate](https://www.rfrrealestate.com/buy-sell-lease): Short form for buyers, sellers and tenants to tell RFR what they need; same-day advisor response.
-- [Market Note | RFR Real Estate](https://www.rfrrealestate.com/market): What the Wynn Al Marjan Island opening (2027) means for prices, rents and off-plan launches on the island.
-- [Off-Plan | RFR Real Estate](https://www.rfrrealestate.com/off-plan): Nine off-plan launches on Al Marjan Island compared by developer, starting price, payment plan, handover and unit mix.
-- [Services | RFR Real Estate](https://www.rfrrealestate.com/services): Sales and leasing, property management, and investment consultation.
+- [About | RFR Real Estate](https://www.rfrrealestate.com/about): Who RFR is, the team (Richard Boswell, Drew Carlyle, Morgan James), an FAQ on areas covered, buying from abroad, investment and tenant screening, and the official-website / RFR Holding disambiguation.
+- [Areas | RFR Real Estate](https://www.rfrrealestate.com/areas): Guide to Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK, with indicative prices, rents, yields, who lives there, and an FAQ comparing the four areas.
+- [Listings | RFR Real Estate](https://www.rfrrealestate.com/listings): Current homes to rent and buy, and off-plan units, in Ras Al Khaimah, with an FAQ on buying as a foreigner and off-plan payment plans.
+- [Buy, Sell or Lease | RFR Real Estate](https://www.rfrrealestate.com/buy-sell-lease): Short form for buyers, sellers and tenants to tell RFR what they need; a step-by-step buying guide; an FAQ on foreign ownership, Golden Visa and fees.
+- [Market Note | RFR Real Estate](https://www.rfrrealestate.com/market): What the Wynn Al Marjan Island opening (2027) means for prices, rents and off-plan launches on the island, with an FAQ including Golden Visa and whether RAK is a good place to buy.
+- [Off-Plan | RFR Real Estate](https://www.rfrrealestate.com/off-plan): Nine off-plan launches on Al Marjan Island compared by developer, starting price, payment plan, handover and unit mix, with an FAQ on off-plan buying.
+- [Services | RFR Real Estate](https://www.rfrrealestate.com/services): Sales and leasing, property management, investment consultation, and a glossary of Ras Al Khaimah property terms.
 
 ## Current listings (as published on /listings)
 
@@ -72,6 +72,11 @@ All figures are indicative, drawn from RFR's own listings and public launch data
 - What off-plan launches does RFR list, and how do they compare? Nine launches, all on Al Marjan Island, from nine different developers; starting prices AED 920,000 to AED 4,060,000; payment plans 50/50 to 80/20; handovers Q4 2026 to Q4 2028. Page: https://www.rfrrealestate.com/off-plan
 - What does Wynn Al Marjan Island mean for property prices? The resort is due to open in 2027; the market note sets out what that could mean for prices, rents and off-plan launches on the island, without making price predictions. Page: https://www.rfrrealestate.com/market
 - What services does RFR offer? Sales and leasing, property management, and investment consultation, with one advisor throughout. Page: https://www.rfrrealestate.com/services
+- Does buying property in Ras Al Khaimah give a Golden Visa? It can: a property investment of AED 2 million or more can qualify for the UAE's 10-year Golden Visa, subject to the usual approval process. Pages: https://www.rfrrealestate.com/buy-sell-lease , https://www.rfrrealestate.com/market
+- What government fees apply when buying in Ras Al Khaimah? A property registration fee is paid to the RAK Land Department on top of the purchase price; RFR confirms the exact figure for any specific unit. Pages: https://www.rfrrealestate.com/areas , https://www.rfrrealestate.com/buy-sell-lease
+- Which area of Ras Al Khaimah has the highest rental yield, and which is cheapest to buy into? Downtown RAK and Al Hamra Village show the highest indicative gross yields (about 7-9%); Downtown RAK has the lowest entry prices, with apartments from around AED 400,000. Page: https://www.rfrrealestate.com/areas
+- Is this RFR's official website, and is it the same company as RFR Holding in New York? Yes, www.rfrrealestate.com is the only official site for RFR Real Estate & Advisory FZ-LLC of Ras Al Khaimah; it is not RFR Holding, the New York real estate company of the same initials. Page: https://www.rfrrealestate.com/about
+- What do property terms like freehold, off-plan, payment plan, handover, service charge, NOC, gross/net yield or branded residence mean? A glossary of Ras Al Khaimah property terms is on the services page. Page: https://www.rfrrealestate.com/services
 
 ## Key facts
 
