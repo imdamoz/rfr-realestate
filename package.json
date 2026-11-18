@@ -2,10 +2,13 @@
   "name": "rfr-site",
   "private": true,
   "scripts": {
-    "build": "node scripts/build.mjs",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
     "deploy": "npm run build && wrangler deploy"
   },
   "devDependencies": {
+    "astro": "^7.4.12",
     "wrangler": "^4"
   }
 }

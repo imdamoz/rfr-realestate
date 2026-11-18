@@ -1,0 +1,43 @@
+---
+// Shared full-screen nav drawer, opened by the header's hamburger button.
+// `page` drives the same two things as Header: the home link ("#top" on
+// the homepage, "index.html" elsewhere) and which item gets is-current.
+const { page } = Astro.props;
+
+const isHome = page === "home";
+const homeHref = isHome ? "#top" : "index.html";
+const items = [
+  ["01", "Home", homeHref, "home"],
+  ["02", "Listings", "listings.html", "listings"],
+  ["03", "Off-Plan", "off-plan.html", "off-plan"],
+  ["04", "Areas", "areas.html", "areas"],
+  ["05", "Services", "services.html", "services"],
+  ["06", "About", "about.html", "about"],
+  ["07", "Market Note", "market.html", "market"],
+  ["08", "Contact", "#contact", null],
+];
+---
+<div class="side" id="side" aria-hidden="true">
+  <div class="side-scrim" data-close></div>
+  <aside class="side-panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="side-top"><img src="media/rfr-logo-gold.webp" alt="RFR" width="93" height="38"><button class="side-close" type="button" data-close><span class="roll">Close &#10005;</span></button></div>
+    <ul class="side-nav">
+      {items.map(([n, label, href, slug]) => {
+        const current = !isHome && slug && slug === page;
+        return (
+          <li><a href={href} class:list={["roll-host", { "is-current": current }]} {...(current ? { "aria-current": "page" } : {})}><small>{n}</small><b><span class="roll">{label}</span></b></a></li>
+        );
+      })}
+    </ul>
+    <div class="side-contact">
+      <p class="kicker">Advisory enquiries</p>
+      <span>+971 58 501 5885</span>
+      <span>info@rfrrealestate.com</span>
+      <span>Ras Al Khaimah, UAE</span>
+      <span>Mon&ndash;Fri 9&ndash;6 &middot; Sat 10&ndash;4</span>
+      <a class="tlink" style="margin-top:14px;align-self:start;color:var(--gold)" href="https://wa.me/971585015885" target="_blank" rel="noopener"><span class="roll">WhatsApp &#8599;</span></a>
+    </div>
+    <p class="side-tag">Wherever you call home.</p>
+  </aside>
+</div>
+<div class="peek" id="peek" aria-hidden="true"><img alt=""></div>

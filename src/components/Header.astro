@@ -1,0 +1,78 @@
+---
+// Shared site header. `page` drives the three things that differ between
+// the homepage and every other page in the original static HTML:
+//  - the logo link (home scrolls to "#top", subpages link to "index.html")
+//  - which mega-menu nav-item gets the `is-current` class
+//  - two attributes that only exist on subpage headers, not the homepage's:
+//    `target="_blank" rel="noopener"` on the WhatsApp tool, and the
+//    `<span class="tool-n" hidden></span>` badge after the shortlist tool.
+const { page } = Astro.props;
+
+const isHome = page === "home";
+const logoHref = isHome ? "#top" : "index.html";
+const listingsCurrent = ["listings", "areas", "market", "off-plan"].includes(page);
+const aboutCurrent = ["about", "services"].includes(page);
+---
+<header class="hdr" id="hdr">
+  <a class="hdr-logo" href={logoHref} aria-label="RFR Real Estate &amp; Advisory, home"><img src="media/rfr-logo-gold.webp" alt="RFR &mdash; Real Estate &amp; Advisory" width="107" height="44"></a>
+  <nav class="hdr-nav" aria-label="Primary">
+    <a href="buy-sell-lease.html#buy"><span class="roll">Buy</span></a>
+    <a href="buy-sell-lease.html#sell"><span class="roll">Sell</span></a>
+    <a href="buy-sell-lease.html#lease"><span class="roll">Lease</span></a>
+    <div class:list={["nav-item", { "is-current": listingsCurrent }]}>
+      <a href="listings.html"><span class="roll">Listings</span> <svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></a>
+      <div class="mega"><div class="mega-in">
+        <div class="mega-list">
+          <a href="listings.html" class="roll-host"><b><span class="roll">All listings</span></b><small>To buy, rent or off-plan</small></a>
+          <a href="off-plan.html" class="roll-host"><b><span class="roll">Off-Plan</span></b><small>Nine launches on Al Marjan</small></a>
+          <a href="areas.html" class="roll-host"><b><span class="roll">Areas</span></b><small>The four we know best</small></a>
+          <a href="market.html" class="roll-host"><b><span class="roll">Market Note</span></b><small>Prices and launches, monthly</small></a>
+        </div>
+        <div class="mega-col"><h5>Areas</h5><ul>
+          <li><a class="ulink" href="areas.html#al-marjan-island">Al Marjan Island &#8599;</a></li>
+          <li><a class="ulink" href="areas.html#mina-al-arab">Mina Al Arab &#8599;</a></li>
+          <li><a class="ulink" href="areas.html#al-hamra-village">Al Hamra Village &#8599;</a></li>
+          <li><a class="ulink" href="areas.html#downtown-rak">Downtown RAK &#8599;</a></li>
+        </ul></div>
+        <a class="mega-card roll-host" href="market.html"><figure class="media"><img src="media/hd/tower.jpg" alt="" loading="lazy"></figure><div><small>Market Note &middot; September 2026</small><b>What the Wynn opening means for Al Marjan</b></div></a>
+      </div></div>
+    </div>
+    <div class:list={["nav-item", { "is-current": aboutCurrent }]}>
+      <a href="about.html"><span class="roll">About</span> <svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></a>
+      <div class="mega"><div class="mega-in">
+        <div class="mega-list">
+          <a href="about.html" class="roll-host"><b><span class="roll">About RFR</span></b><small>A small team, only in RAK</small></a>
+          <a href="services.html" class="roll-host"><b><span class="roll">Services</span></b><small>Management, investment, sales</small></a>
+          <a href="about.html#faq" class="roll-host"><b><span class="roll">Common questions</span></b><small>Areas, overseas buyers, tenants</small></a>
+        </div>
+        <div class="mega-col"><h5>Services</h5><ul>
+          <li><a class="ulink" href="services.html#management">Property management &#8599;</a></li>
+          <li><a class="ulink" href="services.html#investment">Investment consultation &#8599;</a></li>
+          <li><a class="ulink" href="services.html#sales">Sales &amp; leasing &#8599;</a></li>
+        </ul></div>
+        <div class="mega-card"><figure class="media"><img src="media/hd/lounge.jpg" alt="" loading="lazy"></figure><div><small>Talk to an advisor</small><b>Same-day replies, Monday to Saturday.</b><div class="actions"><a class="ulink" href="https://wa.me/971585015885" target="_blank" rel="noopener">WhatsApp &#8599;</a><span>+971 58 501 5885</span></div></div></div>
+      </div></div>
+    </div>
+  </nav>
+  <div class="hdr-tools">
+    <div class="cur-wrap"><button class="cur" type="button" id="cur-btn" aria-label="Currency: AED">AED</button><div class="cur-menu" id="cur-menu" role="menu" hidden></div></div>
+    <button class="tool" type="button" id="find-btn" title="Search" aria-label="Search homes">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+    </button>
+    <a class="tool" href="listings.html#shortlist" title="Shortlist" aria-label="Shortlist" id="sl-tool">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>{!isHome && <span class="tool-n" hidden></span>}
+    </a>
+    {isHome ? (
+      <a class="tool" href="https://wa.me/971585015885" title="Talk to an advisor" aria-label="Talk to an advisor on WhatsApp">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5h15a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1h-9L6 20v-3.5H4.5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></svg>
+      </a>
+    ) : (
+      <a class="tool" href="https://wa.me/971585015885" target="_blank" rel="noopener" title="Talk to an advisor" aria-label="Talk to an advisor on WhatsApp">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5h15a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1h-9L6 20v-3.5H4.5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></svg>
+      </a>
+    )}
+    <button class="tool" type="button" id="menu-btn" title="Menu" aria-label="Menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h16M4 12h16M4 16.5h16"/></svg>
+    </button>
+  </div>
+</header>

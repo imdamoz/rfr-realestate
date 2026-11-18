@@ -1,0 +1,53 @@
+---
+// Shared site footer. `page` marks the matching link in the Navigate list
+// with aria-current="page" (home and buy-sell-lease have no match, same as
+// the original markup).
+const { page } = Astro.props;
+const current = (slug) => (page === slug ? { "aria-current": "page" } : {});
+---
+<footer class="foot" id="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <img src="media/rfr-logo-gold.webp" alt="RFR" width="137" height="56">
+        <p>Wherever you call home.</p>
+      </div>
+      <div>
+        <h4>Navigate</h4>
+        <ul>
+          <li><a class="ulink" href="listings.html" {...current("listings")}>Listings</a></li>
+          <li><a class="ulink" href="off-plan.html" {...current("off-plan")}>Off-Plan</a></li>
+          <li><a class="ulink" href="areas.html" {...current("areas")}>Areas</a></li>
+          <li><a class="ulink" href="services.html" {...current("services")}>Services</a></li>
+          <li><a class="ulink" href="about.html" {...current("about")}>About</a></li>
+          <li><a class="ulink" href="market.html" {...current("market")}>Market Note</a></li>
+          <li><a class="ulink" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li>+971 58 501 5885</li>
+          <li>info@rfrrealestate.com</li>
+          <li>Ras Al Khaimah, United Arab Emirates</li>
+          <li>Mon&ndash;Fri 9&ndash;6 &middot; Sat 10&ndash;4</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <ul>
+          <li><a class="ulink" href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a class="ulink" href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a class="ulink" href="https://wa.me/971585015885" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li style="margin-top:14px"><a class="tlink" href="#top"><span class="roll">Back to top &uarr;</span></a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="foot-mark" aria-hidden="true">Wherever <em>you call home.</em></p>
+    <div class="foot-legal">
+      <span>&copy; 2026 RFR Real Estate &amp; Advisory FZ-LLC &middot; Licensed in Ras Al Khaimah &middot; Licence no. on request</span>
+      <nav aria-label="Legal"><button class="ulink foot-cr-btn" type="button" aria-expanded="false" aria-controls="credits">Photo credits</button></nav>
+    </div>
+    <p class="foot-credits" id="credits">Photos via Wikimedia Commons, cropped: <a href="https://commons.wikimedia.org/wiki/File:Aerial_View_Al_Marjan_Island.jpg" target="_blank" rel="noopener">Al Marjan Island</a> by almarjanisland.com; <a href="https://commons.wikimedia.org/wiki/File:Treasure_Island1.jpg" target="_blank" rel="noopener">Treasure Island</a>, <a href="https://commons.wikimedia.org/wiki/File:View_Island.jpg" target="_blank" rel="noopener">View Island</a>, <a href="https://commons.wikimedia.org/wiki/File:Dream_Island.jpg" target="_blank" rel="noopener">Dream Island</a> and <a href="https://commons.wikimedia.org/wiki/File:Breeze_Island.jpg" target="_blank" rel="noopener">Breeze Island</a> by ELPHNT; <a href="https://commons.wikimedia.org/wiki/File:Sea_view,_Marjan_island,_Ras_al_Khaimah,_UAE.jpg" target="_blank" rel="noopener">Marjan Island sea view</a> by Tashmetova808 (all <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>); <a href="https://commons.wikimedia.org/wiki/File:Al_Hamra_Village_Ras_Al_Khaimah.jpg" target="_blank" rel="noopener">Al Hamra Village</a> by Bob McCaffrey (<a href="https://creativecommons.org/licenses/by-sa/2.0/" target="_blank" rel="noopener">CC BY-SA 2.0</a>).</p>
+  </div>
+</footer>

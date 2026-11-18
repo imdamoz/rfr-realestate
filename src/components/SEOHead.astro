@@ -1,0 +1,28 @@
+---
+// Common <head> SEO tags: title, description, canonical/OG/Twitter, and one
+// <script type="application/ld+json"> per entry in `ldJson`. og:image,
+// og:locale, og:site_name, og:type, twitter:card and the Bing verification
+// tag are identical on every page of the original site, so they're fixed
+// here rather than passed as props.
+const { title, description, path, ldJson = [] } = Astro.props;
+const canonical = new URL(path, "https://www.rfrrealestate.com/").href;
+const ogImage = "https://www.rfrrealestate.com/media/hero-1030-poster.jpg";
+---
+<title>{title}</title>
+<meta name="description" content={description}>
+<link rel="canonical" href={canonical}>
+<meta name="msvalidate.01" content="57B6F67FD5CB1AE2FADB70967DFFD32A" />
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={canonical}>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RFR Real Estate">
+<meta property="og:locale" content="en_AE">
+<meta property="og:image" content={ogImage}>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content={title}>
+<meta name="twitter:description" content={description}>
+<meta name="twitter:image" content={ogImage}>
+{ldJson.map((block) => (
+  <script type="application/ld+json" set:html={JSON.stringify(block)} />
+))}
