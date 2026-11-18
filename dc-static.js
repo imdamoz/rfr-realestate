@@ -88,8 +88,22 @@
   // Boot on DOMContentLoaded: it fires after every deferred script, including
   // rfr-data.js (window.RFR, used by componentDidMount). readyState is already
   // "interactive" while deferred scripts run, so it cannot be used to skip the wait.
-  let booted = false;
-  const once = () => { if (!booted) { booted = true; boot(); } };
+  // Perf (LCP): the static first frame (sky + headline) is painted before this runs. Wiring the page (style-* rules over every element)
+  // forces a full-page style + layout, so wait for the paint-timing entry (rAF where unsupported);
+  // the timeout covers background tabs, which never paint.
+  const afterFirstPaint = (fn) => {
+    let done = false; const go = () => { if (!done) { done = true; fn(); } };
+    try {
+      if (performance.getEntriesByType('paint').length) setTimeout(go, 0);
+      else if ((PerformanceObserver.supportedEntryTypes || []).indexOf('paint') >= 0) {
+        const po = new PerformanceObserver(() => { po.disconnect(); setTimeout(go, 0); });
+        po.observe({ type: 'paint', buffered: true });
+      } else requestAnimationFrame(() => setTimeout(go, 0));
+    } catch (e) { requestAnimationFrame(() => setTimeout(go, 0)); }
+    setTimeout(go, 1500);
+  };
+  let booted = false, queued = false;
+  const once = () => { if (queued) return; queued = true; afterFirstPaint(() => { if (!booted) { booted = true; boot(); } }); };
   if (document.readyState === 'complete') once();
   else { document.addEventListener('DOMContentLoaded', once); window.addEventListener('load', once); }
 })();

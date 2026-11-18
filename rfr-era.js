@@ -157,5 +157,19 @@
     return true;
   };
   const tick = () => { if (!start()) setTimeout(tick, 150); };
-  tick();
+  // Perf (LCP): the static first frame (sky + headline) is painted before this runs. Drawing the palm crowns and the first measure()
+  // forces a full-page style + layout, so wait for the paint-timing entry (rAF where unsupported);
+  // the timeout covers background tabs, which never paint.
+  const afterFirstPaint = (fn) => {
+    let done = false; const go = () => { if (!done) { done = true; fn(); } };
+    try {
+      if (performance.getEntriesByType('paint').length) setTimeout(go, 0);
+      else if ((PerformanceObserver.supportedEntryTypes || []).indexOf('paint') >= 0) {
+        const po = new PerformanceObserver(() => { po.disconnect(); setTimeout(go, 0); });
+        po.observe({ type: 'paint', buffered: true });
+      } else requestAnimationFrame(() => setTimeout(go, 0));
+    } catch (e) { requestAnimationFrame(() => setTimeout(go, 0)); }
+    setTimeout(go, 1500);
+  };
+  afterFirstPaint(tick);
 })();
