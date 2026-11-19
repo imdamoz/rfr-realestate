@@ -143,3 +143,29 @@ function injectJsonLd(file, data) {
     itemListElement: items.map((item, i) => ({ "@type": "ListItem", position: i + 1, item })),
   });
 }
+
+// /areas: one Place per area section on the page. Description is the first sentence of the
+// visible "Living in ..." answer, so the structured data says nothing the page doesn't.
+{
+  const html = readFileSync(path.join(distDir, "areas.html"), "utf8");
+  const plain = (s) => s.replace(/<[^>]+>/g, "").replace(/&rsquo;/g, "’").replace(/&ndash;/g, "–").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+  const RAK = { "@type": "AdministrativeArea", name: "Ras Al Khaimah", containedInPlace: { "@type": "Country", name: "United Arab Emirates" } };
+  const places = [];
+  for (const a of R.areas) {
+    const m = html.match(new RegExp(`<div class="ans" id="living-${a.slug}">\\s*<h3>[^<]*</h3>\\s*<p>([\\s\\S]*?)</p>`));
+    if (!html.includes(`id="${a.slug}"`) || !m) { console.warn(`build: area ${a.slug} has no section or answer on areas.html, left out of Place list`); continue; }
+    const node = {
+      "@type": "Place",
+      "@id": `${SITE}/areas#${a.slug}`,
+      name: a.name,
+      url: `${SITE}/areas#${a.slug}`,
+      description: plain(m[1]).split(/(?<=\.)\s/)[0],
+      containedInPlace: RAK,
+    };
+    if (a.slug === "downtown-rak") node.alternateName = "Downtown Ras Al Khaimah";
+    if (typeof a.lat === "number" && typeof a.lng === "number") node.geo = { "@type": "GeoCoordinates", latitude: a.lat, longitude: a.lng };
+    if (a.img) node.image = absUrl(a.img);
+    places.push(node);
+  }
+  injectJsonLd("areas.html", { "@context": "https://schema.org", "@graph": places });
+}
