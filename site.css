@@ -1822,4 +1822,7 @@ main #grid.list-sec { scroll-margin-top: calc(var(--hdr-h) + var(--lf-dock-h)); 
 .ans-table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
 .ans-table th, .ans-table td { text-align: left; vertical-align: top; padding: 12px 16px 12px 0; border-bottom: 1px solid var(--rule); }
 .ans-table th { font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+.ans p + h3 { margin-top: 26px; }
+.ans .ans-table { margin: 18px 0 14px; }
+.sec .ans ol + p, .sec .ans ul + p { margin-top: 10px; }
 @media (max-width: 900px) { .ans-grid { grid-template-columns: minmax(0, 1fr); } }
