@@ -1,0 +1,218 @@
+  <section class="phx hx" aria-labelledby="lst-t">
+    <div class="phx-bg" aria-hidden="true"><img class="is-on" src="media/rfr/apartment-living.jpg" alt="" fetchpriority="high"></div>
+    <div class="wrap hx-in">
+      <h1 class="giant sand hx-t" id="lst-t" data-split>Available now</h1>
+      <div class="hx-block">
+        <p class="hx-label">Listings &middot; Ras Al Khaimah</p>
+        <p class="hx-text">We&rsquo;d show any of these to a friend. Save the ones you like and ask to see them all in one message.</p>
+      </div>
+      <!-- v67: one bar for the whole page: deal type, community or building, every filter, grid or map. It sits under the
+           heading here and docks under the header once the page scrolls (filters open and close from it) -->
+      <div class="lf-slot">
+      <form class="hsearch lfind" id="lf-form" role="search" aria-label="Find a home in Ras Al Khaimah" autocomplete="off" novalidate>
+        <div class="lf-in">
+          <div class="hs-tabs lf-tabs" role="group" aria-label="Buy, lease or off-plan">
+            <button class="hs-tab on" type="button" data-f="cat" data-v="all" aria-pressed="true">All</button>
+            <button class="hs-tab" type="button" data-f="cat" data-v="buy" aria-pressed="false">Buy</button>
+            <button class="hs-tab" type="button" data-f="cat" data-v="rent" aria-pressed="false">Lease</button>
+            <button class="hs-tab" type="button" data-f="cat" data-v="offplan" aria-pressed="false">Off-plan</button>
+          </div>
+          <div class="hs-box">
+            <div class="hs-field">
+              <svg class="hs-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+              <input class="hs-input" id="lf-q" type="text" placeholder="Community or building" aria-label="Community or building" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="lf-list" spellcheck="false">
+              <button class="lf-clear" id="lf-clear" type="button" aria-label="Clear community" hidden><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>
+              <ul class="hs-list" id="lf-list" role="listbox" aria-label="Suggestions" hidden></ul>
+            </div>
+            <button class="hs-filters" id="lf-filters" type="button" aria-expanded="false" aria-controls="lf-panel"><svg class="lf-sl" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h8.5M15.5 6H17M3 14h2.5M9.5 14H17"/><circle cx="13.5" cy="6" r="2"/><circle cx="7.5" cy="14" r="2"/></svg><span class="lf-ft">Filters</span><b class="lf-n" id="lf-n" hidden></b><svg class="lf-chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
+            <div class="lf-view view-sw" role="group" aria-label="View">
+              <button type="button" data-view="grid" aria-pressed="true" aria-label="Grid view" title="Grid"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="5.5" height="5.5"/><rect x="11.5" y="3" width="5.5" height="5.5"/><rect x="3" y="11.5" width="5.5" height="5.5"/><rect x="11.5" y="11.5" width="5.5" height="5.5"/></svg></button>
+              <button type="button" data-view="map" aria-pressed="false" aria-label="Map view" title="Map"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2.5 5.2l5-2 5 2 5-2v11.6l-5 2-5-2-5 2z"/><path d="M7.5 3.2v11.6M12.5 5.2v11.6"/></svg></button>
+            </div>
+            <button class="hs-go" type="submit" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button>
+          </div>
+          <div class="hs-panel lf-panel" id="lf-panel" hidden>
+            <div class="lf-areas" role="group" aria-label="Area"><span class="lf-lab">Area</span><div class="lf-chips"><button class="lf-chip" type="button" data-f="area" data-v="all" aria-pressed="true">All areas</button><button class="lf-chip" type="button" data-f="area" data-v="al-marjan-island" aria-pressed="false">Al Marjan Island</button><button class="lf-chip" type="button" data-f="area" data-v="mina-al-arab" aria-pressed="false">Mina Al Arab</button><button class="lf-chip" type="button" data-f="area" data-v="al-hamra-village" aria-pressed="false">Al Hamra Village</button><button class="lf-chip" type="button" data-f="area" data-v="downtown-rak" aria-pressed="false">Downtown RAK</button></div></div>
+            <label><span>Type</span><select id="f-type"><option value="">Any</option><option value="apartment">Apartment</option><option value="villa">Villa</option><option value="plot">Plot</option></select></label>
+            <label><span>Min budget</span><select id="f-min"></select></label>
+            <label><span>Max budget</span><select id="f-max"></select></label>
+            <label><span>Beds</span><select id="f-beds"><option value="">Any</option><option value="0">Studio</option><option value="1">1</option><option value="2">2</option><option value="3">3+</option></select></label>
+            <label><span>Sort</span><select id="f-sort"><option value="new">Newest</option><option value="asc">Price, low to high</option><option value="desc">Price, high to low</option></select></label>
+            <div class="lf-foot">
+              <button class="lf-reset" type="button" id="f-reset"><span class="roll">Reset</span></button>
+              <button class="hs-apply lf-show" type="button" id="lf-show">Show <span id="lcount" aria-live="polite">11 properties</span></button>
+            </div>
+          </div>
+        </div>
+      </form>
+      </div>
+    </div>
+
+    <a class="hx-down" href="#grid" aria-label="Scroll down"><span aria-hidden="true">&darr;</span></a>
+  </section>
+
+  <section class="sec light-2 list-sec" id="grid" aria-label="Listings">
+    <div class="wrap">
+      <div class="lgrid three" id="lgrid">
+        <article class="lcard rv" data-slug="duplex-marjan" data-type="apartment" data-cat="rent" data-area="al-marjan-island" data-beds="2" data-price="75960" data-order="0">
+          <a class="lcard-link roll-host" href="#duplex-marjan" data-open="duplex-marjan">
+            <figure class="media lgal" data-gallery="duplex"><img src="media/rfr/duplex-1.jpg" alt="Furnished 2-bed duplex, Al Marjan Island" loading="lazy"><span class="ltag">Available</span></figure>
+            <p class="lmeta">Rent &mdash; Al Marjan Island</p>
+            <h3 class="lname"><span class="roll">Furnished 2-bed duplex</span></h3>
+            <p class="lprice"><span class="price" data-aed="75960">AED 75,960</span> <small>/ yr</small></p>
+            <p class="lfacts">2 bed &middot; 3 bath &middot; 1,860 sq ft</p>
+          </a>
+          <button class="save" type="button" data-save="duplex-marjan" aria-pressed="false" aria-label="Save Furnished 2-bed duplex"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Save</span></button>
+        </article>
+        <article class="lcard rv" data-slug="villa-juwais" data-type="villa" data-cat="rent" data-area="mina-al-arab" data-beds="3" data-price="84850" data-order="1">
+          <a class="lcard-link roll-host" href="#villa-juwais" data-open="villa-juwais">
+            <figure class="media lgal" data-gallery="villa"><img src="media/rfr/villa-1.jpg" alt="3-bed villa, ready to move into, Mina Al Arab" loading="lazy"><span class="ltag">New</span></figure>
+            <p class="lmeta">Rent &mdash; Mina Al Arab</p>
+            <h3 class="lname"><span class="roll">3-bed villa, ready to move into</span></h3>
+            <p class="lprice"><span class="price" data-aed="84850">AED 84,850</span> <small>/ yr</small></p>
+            <p class="lfacts">3 bed &middot; 4 bath &middot; 2,410 sq ft</p>
+          </a>
+          <button class="save" type="button" data-save="villa-juwais" aria-pressed="false" aria-label="Save 3-bed villa, ready to move into"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Save</span></button>
+        </article>
+        <article class="lcard rv" data-slug="onebed-hamra" data-type="apartment" data-cat="rent" data-area="al-marjan-island" data-beds="1" data-price="85250" data-order="2">
+          <a class="lcard-link roll-host" href="#onebed-hamra" data-open="onebed-hamra">
+            <figure class="media lgal" data-gallery="onebed"><img src="media/rfr/onebed-1.jpg" alt="1-bed, utilities included, Al Marjan Island" loading="lazy"><span class="ltag">Available</span></figure>
+            <p class="lmeta">Rent &mdash; Al Marjan Island</p>
+            <h3 class="lname"><span class="roll">1-bed, utilities included</span></h3>
+            <p class="lprice"><span class="price" data-aed="85250">AED 85,250</span> <small>/ yr</small></p>
+            <p class="lfacts">1 bed &middot; 1 bath &middot; 780 sq ft</p>
+          </a>
+          <button class="save" type="button" data-save="onebed-hamra" aria-pressed="false" aria-label="Save 1-bed, utilities included"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Save</span></button>
+        </article>
+        <article class="lcard rv" data-slug="duplex-julphar" data-type="apartment" data-cat="rent" data-area="downtown-rak" data-beds="2" data-price="93580" data-order="3">
+          <a class="lcard-link roll-host" href="#duplex-julphar" data-open="duplex-julphar">
+            <figure class="media"><img src="media/rfr/apartment-living.jpg" alt="Furnished 2-bed duplex, Downtown RAK" loading="lazy"><span class="ltag">Under offer</span></figure>
+            <p class="lmeta">Rent &mdash; Downtown RAK</p>
+            <h3 class="lname"><span class="roll">Furnished 2-bed duplex</span></h3>
+            <p class="lprice"><span class="price" data-aed="93580">AED 93,580</span> <small>/ yr</small></p>
+            <p class="lfacts">2 bed &middot; 3 bath &middot; 1,720 sq ft</p>
+          </a>
+          <button class="save" type="button" data-save="duplex-julphar" aria-pressed="false" aria-label="Save Furnished 2-bed duplex"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Save</span></button>
+        </article>
+        <article class="lcard rv" data-slug="onebed-falcon" data-type="apartment" data-cat="rent" data-area="al-hamra-village" data-beds="1" data-price="65500" data-order="4">
+          <a class="lcard-link roll-host" href="#onebed-falcon" data-open="onebed-falcon">
+            <figure class="media lgal" data-gallery="falcon"><img src="media/rfr/falcon-1.jpg" alt="Furnished 1-bed apartment, Al Hamra Village" loading="lazy"><span class="ltag">Available</span></figure>
+            <p class="lmeta">Rent &mdash; Al Hamra Village</p>
+            <h3 class="lname"><span class="roll">Furnished 1-bed apartment</span></h3>
+            <p class="lprice"><span class="price" data-aed="65500">AED 65,500</span> <small>/ yr</small></p>
+            <p class="lfacts">1 bed &middot; 1 bath &middot; 820 sq ft</p>
+          </a>
+          <button class="save" type="button" data-save="onebed-falcon" aria-pressed="false" aria-label="Save Furnished 1-bed apartment"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Save</span></button>
+        </article>
+        <article class="lcard rv" data-slug="plot-mina" data-type="plot" data-cat="buy" data-area="mina-al-arab" data-beds="0" data-price="0" data-order="5">
+          <a class="lcard-link roll-host" href="#plot-mina" data-open="plot-mina">
+            <figure class="media"><img src="media/rfr/lagoon-palms.jpg" alt="Residential plot near the community pool, Mina Al Arab" loading="lazy"><span class="ltag">Last units</span></figure>
+            <p class="lmeta">Buy &mdash; Mina Al Arab</p>
+            <h3 class="lname"><span class="roll">Residential plot near the community pool</span></h3>
+            <p class="lprice"><span>Price on request</span></p>
+            <p class="lfacts">6,540 sq ft</p>
+          </a>
+          <button class="save" type="button" data-save="plot-mina" aria-pressed="false" aria-label="Save Residential plot near the community pool"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Save</span></button>
+        </article>
+        <article class="lcard rv" data-slug="address-2bed" data-type="apartment" data-cat="offplan" data-area="al-marjan-island" data-beds="2" data-price="2400000" data-order="6">
+          <a class="lcard-link roll-host" href="#address-2bed" data-open="address-2bed">
+            <figure class="media"><img src="media/projects/address.jpg" alt="2-bed at Address Residences, Al Marjan Island" loading="lazy"><span class="ltag">Launch</span></figure>
+            <p class="lmeta">Off-plan &mdash; Al Marjan Island</p>
+            <h3 class="lname"><span class="roll">2-bed at Address Residences</span></h3>
+            <p class="lprice"><span class="price" data-aed="2400000">AED 2,400,000</span></p>
+            <p class="lfacts">2 bed &middot; 3 bath &middot; 1,290 sq ft</p>
+          </a>
+          <button class="save" type="button" data-save="address-2bed" aria-pressed="false" aria-label="Save 2-bed at Address Residences"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Save</span></button>
+        </article>
+        <article class="lcard rv" data-slug="nikki-1bed" data-type="apartment" data-cat="offplan" data-area="al-marjan-island" data-beds="1" data-price="1750000" data-order="7">
+          <a class="lcard-link roll-host" href="#nikki-1bed" data-open="nikki-1bed">
+            <figure class="media"><img src="media/projects/nikki.jpg" alt="1-bed at Nikki Beach Residences, Al Marjan Island" loading="lazy"><span class="ltag">Launch</span></figure>
+            <p class="lmeta">Off-plan &mdash; Al Marjan Island</p>
+            <h3 class="lname"><span class="roll">1-bed at Nikki Beach Residences</span></h3>
+            <p class="lprice"><span class="price" data-aed="1750000">AED 1,750,000</span></p>
+            <p class="lfacts">1 bed &middot; 2 bath &middot; 880 sq ft</p>
+          </a>
+          <button class="save" type="button" data-save="nikki-1bed" aria-pressed="false" aria-label="Save 1-bed at Nikki Beach Residences"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Save</span></button>
+        </article>
+        <article class="lcard rv" data-slug="costa-2bed" data-type="apartment" data-cat="offplan" data-area="al-marjan-island" data-beds="2" data-price="2100000" data-order="8">
+          <a class="lcard-link roll-host" href="#costa-2bed" data-open="costa-2bed">
+            <figure class="media"><img src="media/projects/costa.jpg" alt="2-bed at Costa Mare, Al Marjan Island" loading="lazy"><span class="ltag">Launch</span></figure>
+            <p class="lmeta">Off-plan &mdash; Al Marjan Island</p>
+            <h3 class="lname"><span class="roll">2-bed at Costa Mare</span></h3>
+            <p class="lprice"><span class="price" data-aed="2100000">AED 2,100,000</span></p>
+            <p class="lfacts">2 bed &middot; 2 bath &middot; 1,180 sq ft</p>
+          </a>
+          <button class="save" type="button" data-save="costa-2bed" aria-pressed="false" aria-label="Save 2-bed at Costa Mare"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Save</span></button>
+        </article>
+        <article class="lcard rv" data-slug="manta-studio" data-type="apartment" data-cat="offplan" data-area="al-marjan-island" data-beds="0" data-price="1200000" data-order="9">
+          <a class="lcard-link roll-host" href="#manta-studio" data-open="manta-studio">
+            <figure class="media"><img src="media/projects/manta.jpg" alt="Studio at Manta Bay, Al Marjan Island" loading="lazy"><span class="ltag">Handover Q4 2026</span></figure>
+            <p class="lmeta">Off-plan &mdash; Al Marjan Island</p>
+            <h3 class="lname"><span class="roll">Studio at Manta Bay</span></h3>
+            <p class="lprice"><span class="price" data-aed="1200000">AED 1,200,000</span></p>
+            <p class="lfacts">Studio &middot; 1 bath &middot; 480 sq ft</p>
+          </a>
+          <button class="save" type="button" data-save="manta-studio" aria-pressed="false" aria-label="Save Studio at Manta Bay"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Save</span></button>
+        </article>
+        <article class="lcard rv" data-slug="masa-1bed" data-type="apartment" data-cat="offplan" data-area="al-marjan-island" data-beds="1" data-price="920000" data-order="10">
+          <a class="lcard-link roll-host" href="#masa-1bed" data-open="masa-1bed">
+            <figure class="media"><img src="media/projects/masa.jpg" alt="1-bed at Masa Residence, Al Marjan Island" loading="lazy"><span class="ltag">Handover Q4 2026</span></figure>
+            <p class="lmeta">Off-plan &mdash; Al Marjan Island</p>
+            <h3 class="lname"><span class="roll">1-bed at Masa Residence</span></h3>
+            <p class="lprice"><span class="price" data-aed="920000">AED 920,000</span></p>
+            <p class="lfacts">1 bed &middot; 1 bath &middot; 760 sq ft</p>
+          </a>
+          <button class="save" type="button" data-save="masa-1bed" aria-pressed="false" aria-label="Save 1-bed at Masa Residence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Save</span></button>
+        </article>
+      </div>
+      <div class="lempty" id="lempty" hidden>
+        <p class="title sm">Nothing matches <em>just yet.</em></p>
+        <p class="lede">Loosen a filter, or send us your brief: plenty of what we sell never gets listed.</p>
+        <div class="actions"><button class="pill" type="button" id="f-reset2"><span class="roll">Reset filters</span><i class="pill-arrow" aria-hidden="true"></i></button></div>
+      </div>
+      <div class="lmap" id="lmap" hidden>
+        <div class="lmap-stage" id="lmap-stage"></div>
+        <p class="lmap-note">Schematic map of the Ras Al Khaimah coast, not to scale. Tap a pin to see the home.</p>
+      </div>
+
+      <div class="lfoot rv">
+        <h2 class="title sm">Plenty of what we sell <em>never gets listed.</em></h2>
+        <div class="actions" style="margin:0">
+          <a class="btn solid" href="buy-sell-lease.html#buy"><span class="roll">Send your brief &#8599;</span></a>
+          <a class="tlink" href="https://wa.me/971585015885?text=Hello%20RFR%2C%20here%20is%20what%20I%27m%20looking%20for%3A%20" target="_blank" rel="noopener"><span class="roll">Or WhatsApp us &#8599;</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec light" id="faq" aria-labelledby="faq-t">
+    <div class="wrap faq-wrap">
+      <div class="rv">
+        <p class="kicker">( FAQ )</p>
+        <h2 class="title" id="faq-t">Common <em>questions.</em></h2>
+      </div>
+      <div class="faq rv">
+        <details><summary>What property is for sale in Ras Al Khaimah with RFR?<span class="pm" aria-hidden="true"></span></summary><p>Ready homes and off-plan units on Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK, updated as our book changes.</p></details>
+        <details><summary>Can foreigners buy property in Ras Al Khaimah?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Foreign buyers can own freehold property outright in Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.</p></details>
+        <details><summary>Which areas of Ras Al Khaimah does RFR cover?<span class="pm" aria-hidden="true"></span></summary><p>Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK. We don&rsquo;t work outside Ras Al Khaimah.</p></details>
+        <details><summary>How do off-plan payment plans work in Ras Al Khaimah?<span class="pm" aria-hidden="true"></span></summary><p>Buyers pay in instalments as the building is constructed, typically on a schedule between 50/50 and 80/20, with the balance due on or near handover.</p></details>
+        <details><summary>Do I need to be in the UAE to buy property in Ras Al Khaimah?<span class="pm" aria-hidden="true"></span></summary><p>No. Many of our buyers live overseas. We run video viewings and can handle the paperwork and management once you own it.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec dark cta-band" id="contact" aria-labelledby="cta-t">
+    <div class="wrap cta-in">
+      <div class="rv">
+        <p class="kicker">Have a property in mind?</p>
+        <h2 class="title" id="cta-t">Send us <em>a message.</em></h2>
+        <p class="lede">A line or two is plenty. An advisor will reply the same day with a clear next step.</p>
+      </div>
+      <div class="cta-side rv">
+        <div class="cline"><span>Call</span><b>+971 58 501 5885</b></div>
+        <div class="cline"><span>WhatsApp</span><a class="ulink" href="https://wa.me/971585015885?text=Hello%20RFR%2C%20I%20have%20a%20question%20about%20a%20property%20in%20Ras%20Al%20Khaimah." target="_blank" rel="noopener">Message directly &#8599;</a></div>
+        <div class="cline"><span>Email</span><b>info@rfrrealestate.com</b></div>
+        <div class="actions"><a class="pill on-dark" href="https://wa.me/971585015885?text=Hello%20RFR%2C%20I%20have%20a%20question%20about%20a%20property%20in%20Ras%20Al%20Khaimah." target="_blank" rel="noopener"><span class="roll">WhatsApp an advisor</span><i class="pill-arrow" aria-hidden="true"></i></a></div>
+      </div>
+    </div>
+  </section>

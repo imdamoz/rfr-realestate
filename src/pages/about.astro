@@ -1,95 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import mainHtml from "../about-main.html?raw";
 const ldJson = [
-  {"@context": "https://schema.org", "@graph": [{"@type": ["RealEstateAgent", "LocalBusiness"], "@id": "https://www.rfrrealestate.com/#business", "name": "RFR Real Estate & Advisory FZ-LLC", "alternateName": ["RFR", "RFR Real Estate", "RFR Real Estate & Advisory"], "url": "https://www.rfrrealestate.com/", "logo": "https://www.rfrrealestate.com/media/rfr-logo-gold.webp", "image": "https://www.rfrrealestate.com/media/rfr-logo-gold.webp", "email": "info@rfrrealestate.com", "telephone": "+971585015885", "address": {"@type": "PostalAddress", "addressLocality": "Ras Al Khaimah", "addressRegion": "Ras Al Khaimah", "addressCountry": "AE"}, "areaServed": [{"@type": "AdministrativeArea", "name": "Ras Al Khaimah"}, {"@type": "Place", "name": "Al Marjan Island"}, {"@type": "Place", "name": "Mina Al Arab"}, {"@type": "Place", "name": "Al Hamra Village"}, {"@type": "Place", "name": "Downtown Ras Al Khaimah"}], "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "09:00", "closes": "18:00"}, {"@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:00", "closes": "16:00"}], "priceRange": "AED 65,000/yr - AED 4,060,000", "currenciesAccepted": "AED", "knowsAbout": ["Ras Al Khaimah real estate", "Al Marjan Island", "Off-plan property", "Property management", "UAE Golden Visa property investment"], "description": "RFR Real Estate & Advisory FZ-LLC is a licensed real estate brokerage and advisory firm in Ras Al Khaimah, UAE. It works only in Ras Al Khaimah: Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.", "disambiguatingDescription": "A Ras Al Khaimah (UAE) real estate agency. Not RFR Holding, the New York real estate company.", "sameAs": ["https://www.propertyfinder.ae/en/broker/rfr-real-estate-v2-13173-13173"]}, {"@type": "WebSite", "@id": "https://www.rfrrealestate.com/#website", "name": "RFR Real Estate", "url": "https://www.rfrrealestate.com/", "publisher": {"@id": "https://www.rfrrealestate.com/#business"}, "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.rfrrealestate.com/"}, {"@type": "ListItem", "position": 2, "name": "About", "item": "https://www.rfrrealestate.com/about"}]}]},
-  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Which areas do you cover?", "acceptedAnswer": {"@type": "Answer", "text": "Mainly Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK. We don’t work outside Ras Al Khaimah."}}, {"@type": "Question", "name": "Do you work with both buyers and tenants?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, and owners too. You keep the same contact whatever you need."}}, {"@type": "Question", "name": "Can you help if I’m buying from abroad?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, many of our clients live overseas. We view properties for you on video and can manage the place once you own it."}}, {"@type": "Question", "name": "Is Ras Al Khaimah a good area for property investment?", "acceptedAnswer": {"@type": "Answer", "text": "Often, yes. Prices are well below Dubai, Wynn opens in 2027 and beachfront is limited. We’ll tell you if it doesn’t suit you."}}, {"@type": "Question", "name": "How do you screen tenants?", "acceptedAnswer": {"@type": "Answer", "text": "We check ID, visa, income and past landlord references. You approve every tenant."}}, {"@type": "Question", "name": "How do I get started?", "acceptedAnswer": {"@type": "Answer", "text": "Call, WhatsApp or email. It’s free, there’s no commitment, and we’ll suggest a next step."}}]}
+  {"@context":"https://schema.org","@graph":[{"@type":["RealEstateAgent","LocalBusiness","Organization"],"@id":"https://www.rfrrealestate.com/#business","name":"RFR Real Estate & Advisory FZ-LLC","alternateName":["RFR","RFR Real Estate","RFR Real Estate & Advisory"],"url":"https://www.rfrrealestate.com/","logo":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","image":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","email":"info@rfrrealestate.com","telephone":"+971585015885","address":{"@type":"PostalAddress","addressLocality":"Ras Al Khaimah","addressRegion":"Ras Al Khaimah","addressCountry":"AE"},"areaServed":[{"@type":"AdministrativeArea","name":"Ras Al Khaimah"},{"@type":"Place","name":"Al Marjan Island"},{"@type":"Place","name":"Mina Al Arab"},{"@type":"Place","name":"Al Hamra Village"},{"@type":"Place","name":"Downtown Ras Al Khaimah"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"18:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"10:00","closes":"16:00"}],"priceRange":"AED 65,000/yr - AED 4,060,000","currenciesAccepted":"AED","knowsAbout":["Ras Al Khaimah real estate","Al Marjan Island","Off-plan property","Property management","UAE Golden Visa property investment"],"description":"RFR Real Estate & Advisory FZ-LLC is a licensed real estate brokerage and advisory firm in Ras Al Khaimah, UAE. It works only in Ras Al Khaimah: Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.","disambiguatingDescription":"A Ras Al Khaimah (UAE) real estate agency. Not RFR Holding, the New York real estate company.","sameAs":["https://www.propertyfinder.ae/en/broker/rfr-real-estate-v2-13173-13173"],"employee":{"@id":"https://www.rfrrealestate.com/about#richard-boswell"}},{"@type":"WebSite","@id":"https://www.rfrrealestate.com/#website","name":"RFR Real Estate","url":"https://www.rfrrealestate.com/","publisher":{"@id":"https://www.rfrrealestate.com/#business"},"inLanguage":"en"},{"@type":"AboutPage","@id":"https://www.rfrrealestate.com/about#page","url":"https://www.rfrrealestate.com/about","name":"About | RFR Real Estate","mainEntity":{"@id":"https://www.rfrrealestate.com/#business"}},{"@type":"Person","@id":"https://www.rfrrealestate.com/about#richard-boswell","name":"Richard Boswell","jobTitle":"Founder, Real Estate Advisor","worksFor":{"@id":"https://www.rfrrealestate.com/#business"},"sameAs":["https://www.propertyfinder.ae/en/agent/richard-boswell-357444"]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.rfrrealestate.com/"},{"@type":"ListItem","position":2,"name":"About","item":"https://www.rfrrealestate.com/about"}]}]},
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which areas do you cover?","acceptedAnswer":{"@type":"Answer","text":"Mainly Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK. We don’t work outside Ras Al Khaimah."}},{"@type":"Question","name":"Do you work with both buyers and tenants?","acceptedAnswer":{"@type":"Answer","text":"Yes, and owners too. You keep the same contact whatever you need."}},{"@type":"Question","name":"Can you help if I’m buying from abroad?","acceptedAnswer":{"@type":"Answer","text":"Yes, many of our clients live overseas. We view properties for you on video and can manage the place once you own it."}},{"@type":"Question","name":"Is Ras Al Khaimah a good area for property investment?","acceptedAnswer":{"@type":"Answer","text":"Often, yes. Prices are well below Dubai, Wynn opens in 2027 and beachfront is limited. We’ll tell you if it doesn’t suit you."}},{"@type":"Question","name":"How do you screen tenants?","acceptedAnswer":{"@type":"Answer","text":"We check ID, visa, income and past landlord references. You approve every tenant."}},{"@type":"Question","name":"How do I get started?","acceptedAnswer":{"@type":"Answer","text":"Call, WhatsApp or email. It’s free, there’s no commitment, and we’ll suggest a next step."}},{"@type":"Question","name":"Is this RFR's official website?","acceptedAnswer":{"@type":"Answer","text":"Yes. www.rfrrealestate.com is the only official website for RFR Real Estate & Advisory FZ-LLC in Ras Al Khaimah. We don’t use any other domain."}},{"@type":"Question","name":"Are you the same company as RFR Holding in New York?","acceptedAnswer":{"@type":"Answer","text":"No. We are RFR Real Estate & Advisory FZ-LLC, a small agency based only in Ras Al Khaimah, UAE. We are not connected to RFR Holding, the New York real estate company of the same initials."}}]}
 ];
 ---
 <BaseLayout page="about" title="About | RFR Real Estate" description="RFR is a real estate advisory and brokerage that only works in Ras Al Khaimah." path="/about" ldJson={ldJson}>
-  <section class="phx hx" aria-labelledby="ab-t">
-    <div class="phx-bg" aria-hidden="true"><img class="is-on" src="media/hd/beach.jpg" alt="" fetchpriority="high"></div>
-    <div class="wrap hx-in">
-      <h1 class="giant sand hx-t" id="ab-t" data-split>About RFR</h1>
-      <div class="hx-block">
-        <p class="hx-label">RFR Real Estate &amp; Advisory</p>
-        <p class="hx-text">We only work in Ras Al Khaimah. That focus is why we can tell you which buildings hold their value, which launches to skip and what a fair price looks like.</p>
-        <a class="pill solid" href="#team"><span class="roll">Meet the team</span><i class="pill-arrow" aria-hidden="true"></i></a>
-      </div>
-    </div>
-
-    <a class="hx-down" href="#story" aria-label="Scroll down"><span aria-hidden="true">&darr;</span></a>
-  </section>
-
-  <section class="sec light" id="story" aria-labelledby="exp-t">
-    <div class="wrap">
-      <div class="facts rv">
-        <div><span>Licensed</span><p>FZ-LLC &middot; licence no. on request</p></div>
-        <div><span>Languages</span><p>English &middot; Arabic-speaking partners</p></div>
-        <div><span>Specialisms</span><p>Al Marjan &middot; Mina Al Arab &middot; Al Hamra &middot; off-plan</p></div>
-      </div>
-    </div>
-    <div class="wrap exp">
-      <figure class="media rv"><img src="media/rak/rak-al-hamra-village.jpg" alt="Al Hamra Village from the water" loading="lazy"></figure>
-      <div class="rv">
-        <p class="kicker">Experience</p>
-        <h2 class="title sm" id="exp-t">We&rsquo;ve worked every side <em>of a deal here.</em></h2>
-        <p class="body-t" style="margin-top:20px;max-width:52ch">Sales, rentals, off-plan launches and property management. We&rsquo;ve done all of it in this market, so we know where deals tend to go wrong.</p>
-        <ul class="exp-pts">
-          <li><b>We&rsquo;ll tell you what to skip</b><p>Even when it&rsquo;s the one you liked best.</p></li>
-          <li><b>Fees in writing, up front</b><p>You&rsquo;ll know what we charge before anything starts.</p></li>
-          <li><b>Same-day replies</b><p>Monday to Saturday, from the person looking after you.</p></li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec light-2 team-sec" id="team" aria-labelledby="team-t">
-    <div class="wrap">
-      <div class="team-head rv">
-        <div>
-          <p class="kicker">( Team )</p>
-          <h2 class="title sm" id="team-t">There are <em>three of us.</em></h2>
-        </div>
-        <p class="lede">No call centre. Whoever picks up your first call stays with you through settlement and after.</p>
-      </div>
-      <div class="team">
-        <article class="person rv"><div class="portrait has-photo"><img src="media/rfr/team-richard.jpg" alt="Richard Boswell" loading="lazy"></div><span class="no">01</span><h3>Richard Boswell</h3><span class="role">Founder &middot; Real estate advisor</span><p class="line">Buying, selling and leasing, start to finish.</p></article>
-        <article class="person rv"><div class="portrait has-photo"><img src="media/rfr/team-drew.jpg" alt="Drew Carlyle" loading="lazy"></div><span class="no">02</span><h3>Drew Carlyle</h3><span class="role">Property &amp; asset management</span><p class="line">Tenanting, renewals and reporting for owners abroad.</p></article>
-        <article class="person rv"><div class="portrait has-photo"><img src="media/rfr/team-morgan.jpg" alt="Morgan James" loading="lazy"></div><span class="no">03</span><h3>Morgan James</h3><span class="role">Investment advisory</span><p class="line">Yields, payment plans and which launch to skip.</p></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec light" id="faq" aria-labelledby="faq-t">
-    <div class="wrap faq-wrap">
-      <div class="rv">
-        <p class="kicker">( FAQ )</p>
-        <h2 class="title" id="faq-t">Common <em>questions.</em></h2>
-      </div>
-      <div class="faq rv">
-        <details><summary>Which areas do you cover?<span class="pm" aria-hidden="true"></span></summary><p>Mainly Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK. We don’t work outside Ras Al Khaimah.</p></details>
-        <details><summary>Do you work with both buyers and tenants?<span class="pm" aria-hidden="true"></span></summary><p>Yes, and owners too. You keep the same contact whatever you need.</p></details>
-        <details><summary>Can you help if I’m buying from abroad?<span class="pm" aria-hidden="true"></span></summary><p>Yes, many of our clients live overseas. We view properties for you on video and can manage the place once you own it.</p></details>
-        <details><summary>Is Ras Al Khaimah a good area for property investment?<span class="pm" aria-hidden="true"></span></summary><p>Often, yes. Prices are well below Dubai, Wynn opens in 2027 and beachfront is limited. We’ll tell you if it doesn’t suit you.</p></details>
-        <details><summary>How do you screen tenants?<span class="pm" aria-hidden="true"></span></summary><p>We check ID, visa, income and past landlord references. You approve every tenant.</p></details>
-        <details><summary>How do I get started?<span class="pm" aria-hidden="true"></span></summary><p>Call, WhatsApp or email. It’s free, there’s no commitment, and we’ll suggest a next step.</p></details>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec dark cta-band" id="contact" aria-labelledby="cta-t">
-    <div class="wrap cta-in">
-      <div class="rv">
-        <p class="kicker">Have a property in mind?</p>
-        <h2 class="title" id="cta-t">Send us <em>a message.</em></h2>
-        <p class="lede">A line or two is plenty. An advisor will reply the same day with a clear next step.</p>
-      </div>
-      <div class="cta-side rv">
-        <div class="cline"><span>Call</span><b>+971 58 501 5885</b></div>
-        <div class="cline"><span>WhatsApp</span><a class="ulink" href="https://wa.me/971585015885?text=Hello%20RFR%2C%20I%20have%20a%20question%20about%20a%20property%20in%20Ras%20Al%20Khaimah." target="_blank" rel="noopener">Message directly &#8599;</a></div>
-        <div class="cline"><span>Email</span><b>info@rfrrealestate.com</b></div>
-        <div class="actions"><a class="pill on-dark" href="https://wa.me/971585015885?text=Hello%20RFR%2C%20I%20have%20a%20question%20about%20a%20property%20in%20Ras%20Al%20Khaimah." target="_blank" rel="noopener"><span class="roll">WhatsApp an advisor</span><i class="pill-arrow" aria-hidden="true"></i></a></div>
-      </div>
-    </div>
-  </section>
+<Fragment set:html={mainHtml} />
 </BaseLayout>
