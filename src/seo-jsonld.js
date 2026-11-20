@@ -1,68 +1,36 @@
-import { readdirSync, rmSync, cpSync, readFileSync, writeFileSync, existsSync } from "node:fs";
-import vm from "node:vm";
-import { fileURLToPath } from "node:url";
+// Build-time structured data for /listings, /off-plan and /areas, generated
+// from data.js so it can't drift from the cards actually on the page. This
+// mirrors the old static site's scripts/build.mjs injectors exactly; the
+// difference is only that it runs in each page's Astro frontmatter and takes
+// that page's <main> HTML (the ?raw partial) as input instead of reading the
+// built file. Only items whose card is on the page are included, and only
+// with the price that card shows.
+import { existsSync } from "node:fs";
 import path from "node:path";
+import { RFR as R } from "./data.js";
 
-const rootDir = path.resolve(fileURLToPath(import.meta.url), "../..");
-const distDir = path.join(rootDir, "dist");
+// A project render exists if public/media/projects/<slug>.jpg is present.
+// Resolved from the project root (cwd during `astro build`) rather than
+// import.meta.url, which Vite virtualises at build time.
+const projectImageExists = (slug) =>
+  existsSync(path.join(process.cwd(), "public/media/projects", `${slug}.jpg`));
 
-const EXCLUDE = new Set([
-  ".git",
-  ".github",
-  ".wrangler",
-  "node_modules",
-  "dist",
-  "scripts",
-  "src",
-  "wrangler.jsonc",
-  ".assetsignore",
-  "package.json",
-  "package-lock.json",
-  ".gitignore",
-]);
-
-rmSync(distDir, { recursive: true, force: true });
-
-for (const entry of readdirSync(rootDir)) {
-  if (EXCLUDE.has(entry)) continue;
-  cpSync(path.join(rootDir, entry), path.join(distDir, entry), { recursive: true });
-}
-
-/* ---------- ItemList JSON-LD for /listings and /off-plan, generated from data.js ----------
-   Built here (not hand-written in the HTML) so the structured data can't drift from data.js.
-   Only items whose card is actually on the page are included, and only with the price that
-   card shows. Injected into dist/ only; the source HTML is untouched. */
 const SITE = "https://www.rfrrealestate.com";
 const BUSINESS = { "@id": `${SITE}/#business` };
 const SELL = "http://purl.org/goodrelations/v1#Sell";
 const LEASE_OUT = "http://purl.org/goodrelations/v1#LeaseOut";
-
-const sandbox = { window: {} };
-vm.runInNewContext(readFileSync(path.join(rootDir, "data.js"), "utf8"), sandbox);
-const R = sandbox.window.RFR;
-if (!R || !Array.isArray(R.listings) || !Array.isArray(R.projects)) throw new Error("build: data.js has no RFR.listings / RFR.projects");
 
 const areaName = (slug) => (R.areas.find((a) => a.slug === slug) || {}).name;
 const prop = (name, value) => ({ "@type": "PropertyValue", name, value });
 const absUrl = (p) => `${SITE}/${p.replace(/^\/+/, "")}`;
 const aed = (n) => "AED " + Number(n).toLocaleString("en-US");
 
-function injectJsonLd(file, data) {
-  const fp = path.join(distDir, file);
-  const html = readFileSync(fp, "utf8");
-  if (!html.includes("</head>")) throw new Error(`build: no </head> in ${file}`);
-  // JSON.stringify output is valid JSON; escape "<" so no string can close the <script>
-  const json = JSON.stringify(data).replace(/</g, "\\u003c");
-  writeFileSync(fp, html.replace("</head>", `<script type="application/ld+json">${json}</script>\n</head>`));
-}
-
-// /listings: one node per listing card on the page
-{
-  const html = readFileSync(path.join(distDir, "listings.html"), "utf8");
+// /listings: one Product node per listing card on the page.
+export function listingsItemList(html) {
   const items = [];
   for (const l of R.listings) {
     const area = areaName(l.area);
-    if (!area || !html.includes(`data-slug="${l.slug}"`)) { console.warn(`build: listing ${l.slug} not on listings.html, left out of ItemList`); continue; }
+    if (!area || !html.includes(`data-slug="${l.slug}"`)) continue;
     const rent = l.cat === "rent";
     const kind = rent ? "For rent" : l.offplan ? "Off-plan, for sale" : "For sale";
     const props = [prop("Listing type", kind), prop("Property type", l.type), prop("Area", `${area}, Ras Al Khaimah`)];
@@ -87,15 +55,14 @@ function injectJsonLd(file, data) {
     };
     if (l.imgs && l.imgs[0]) node.image = absUrl(l.imgs[0]);
     if (l.price != null) {
-      // only state a price the card visibly shows
-      if (!html.includes(`data-aed="${l.price}">${aed(l.price)}<`)) throw new Error(`build: listing ${l.slug} price ${l.price} not shown on listings.html`);
+      if (!html.includes(`data-aed="${l.price}">${aed(l.price)}<`)) throw new Error(`seo: listing ${l.slug} price ${l.price} not shown`);
       const offer = { "@type": "Offer", price: l.price, priceCurrency: "AED", businessFunction: rent ? LEASE_OUT : SELL, url: node.url, offeredBy: BUSINESS };
       if (rent) offer.priceSpecification = { "@type": "UnitPriceSpecification", price: l.price, priceCurrency: "AED", unitCode: "ANN", unitText: "per year" };
       node.offers = offer;
     }
     items.push(node);
   }
-  injectJsonLd("listings.html", {
+  return {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "@id": `${SITE}/listings#itemlist`,
@@ -103,15 +70,14 @@ function injectJsonLd(file, data) {
     url: `${SITE}/listings`,
     numberOfItems: items.length,
     itemListElement: items.map((item, i) => ({ "@type": "ListItem", position: i + 1, item })),
-  });
+  };
 }
 
-// /off-plan: one node per launch card. The page states all nine launches are on Al Marjan Island.
-{
-  const html = readFileSync(path.join(distDir, "off-plan.html"), "utf8");
+// /off-plan: one Product node per launch card on the page.
+export function offPlanItemList(html, hasImage = projectImageExists) {
   const items = [];
   for (const p of R.projects) {
-    if (!html.includes(`id="${p.slug}" data-p="${p.slug}"`)) { console.warn(`build: project ${p.slug} not on off-plan.html, left out of ItemList`); continue; }
+    if (!html.includes(`id="${p.slug}" data-p="${p.slug}"`)) continue;
     const props = [prop("Location", "Al Marjan Island, Ras Al Khaimah")];
     if (p.dev) props.push(prop("Developer", p.dev));
     if (p.handover) props.push(prop("Handover", p.handover));
@@ -126,14 +92,14 @@ function injectJsonLd(file, data) {
       additionalProperty: props,
     };
     if (p.note) node.description = `Off-plan launch on Al Marjan Island${p.dev ? ` by ${p.dev}` : ""}. ${p.note}`;
-    if (existsSync(path.join(rootDir, "media/projects", `${p.slug}.jpg`))) node.image = `${SITE}/media/projects/${p.slug}.jpg`;
+    if (hasImage(p.slug)) node.image = `${SITE}/media/projects/${p.slug}.jpg`;
     if (p.from != null) {
-      if (!html.includes(`data-aed="${p.from}">${p.fromTxt}<`)) throw new Error(`build: project ${p.slug} price ${p.from} not shown on off-plan.html`);
+      if (!html.includes(`data-aed="${p.from}">${p.fromTxt}<`)) throw new Error(`seo: project ${p.slug} price ${p.from} not shown`);
       node.offers = { "@type": "AggregateOffer", lowPrice: p.from, priceCurrency: "AED", businessFunction: SELL, url: node.url, offeredBy: BUSINESS };
     }
     items.push(node);
   }
-  injectJsonLd("off-plan.html", {
+  return {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "@id": `${SITE}/off-plan#itemlist`,
@@ -141,19 +107,18 @@ function injectJsonLd(file, data) {
     url: `${SITE}/off-plan`,
     numberOfItems: items.length,
     itemListElement: items.map((item, i) => ({ "@type": "ListItem", position: i + 1, item })),
-  });
+  };
 }
 
-// /areas: one Place per area section on the page. Description is the first sentence of the
-// visible "Living in ..." answer, so the structured data says nothing the page doesn't.
-{
-  const html = readFileSync(path.join(distDir, "areas.html"), "utf8");
+// /areas: one Place per area section on the page. Description is the first
+// sentence of the visible "Living in ..." answer.
+export function areasPlaces(html) {
   const plain = (s) => s.replace(/<[^>]+>/g, "").replace(/&rsquo;/g, "’").replace(/&ndash;/g, "–").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
   const RAK = { "@type": "AdministrativeArea", name: "Ras Al Khaimah", containedInPlace: { "@type": "Country", name: "United Arab Emirates" } };
   const places = [];
   for (const a of R.areas) {
     const m = html.match(new RegExp(`<div class="ans" id="living-${a.slug}">\\s*<h3>[^<]*</h3>\\s*<p>([\\s\\S]*?)</p>`));
-    if (!html.includes(`id="${a.slug}"`) || !m) { console.warn(`build: area ${a.slug} has no section or answer on areas.html, left out of Place list`); continue; }
+    if (!html.includes(`id="${a.slug}"`) || !m) continue;
     const node = {
       "@type": "Place",
       "@id": `${SITE}/areas#${a.slug}`,
@@ -167,5 +132,5 @@ function injectJsonLd(file, data) {
     if (a.img) node.image = absUrl(a.img);
     places.push(node);
   }
-  injectJsonLd("areas.html", { "@context": "https://schema.org", "@graph": places });
+  return { "@context": "https://schema.org", "@graph": places };
 }
