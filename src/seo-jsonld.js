@@ -54,7 +54,25 @@ export function listingsItemList(html) {
       additionalProperty: props,
     };
     if (l.imgs && l.imgs[0]) node.image = absUrl(l.imgs[0]);
-    if (l.price != null) {
+    if (l.price == null) {
+      // No price shown on the card (price on request). A Product without
+      // offers/review/aggregateRating is an invalid product snippet, and we
+      // never invent a price, so describe it as a RealEstateListing instead
+      // (no Product-only properties, no offer).
+      const listing = {
+        "@type": "RealEstateListing",
+        "@id": node["@id"],
+        name: node.name,
+        description: node.description,
+        url: node.url,
+        contentLocation: { "@type": "Place", name: `${area}, Ras Al Khaimah` },
+        provider: BUSINESS,
+      };
+      if (node.image) listing.image = node.image;
+      items.push(listing);
+      continue;
+    }
+    {
       if (!html.includes(`data-aed="${l.price}">${aed(l.price)}<`)) throw new Error(`seo: listing ${l.slug} price ${l.price} not shown`);
       const offer = { "@type": "Offer", price: l.price, priceCurrency: "AED", businessFunction: rent ? LEASE_OUT : SELL, url: node.url, offeredBy: BUSINESS };
       if (rent) offer.priceSpecification = { "@type": "UnitPriceSpecification", price: l.price, priceCurrency: "AED", unitCode: "ANN", unitText: "per year" };
