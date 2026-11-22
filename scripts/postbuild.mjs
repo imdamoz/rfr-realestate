@@ -14,7 +14,7 @@ import path from "node:path";
 import { transform } from "esbuild";
 
 const DIST = path.resolve("dist");
-const PAGES = ["about", "al-marjan-island", "areas", "buy-sell-lease", "listings", "manta-bay", "market", "off-plan", "services"];
+const PAGES = ["about", "al-marjan-island", "areas", "buy-sell-lease", "listings", "manta-bay", "market", "off-plan", "ras-al-khaimah-property-investment-guide", "services"];
 const pageRe = new RegExp(`href="(?:\\./|/)?(index|${PAGES.join("|")})\\.html(#[^"]*)?"`, "g");
 
 let linkCount = 0;
