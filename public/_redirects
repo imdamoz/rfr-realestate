@@ -13,6 +13,7 @@
 /market.html /market 301
 /buy-sell-lease.html /buy-sell-lease 301
 /manta-bay.html /manta-bay 301
+/al-marjan-island.html /al-marjan-island 301
 
 # Pages that existed on the previous site and no longer have a page of
 # their own on this one: send them to the closest current equivalent so
@@ -25,8 +26,8 @@
 /island.html /areas 301
 
 /areas/ /areas 301
-/areas/al-marjan-island /areas 301
-/areas/al-marjan-island.html /areas 301
+/areas/al-marjan-island /al-marjan-island 301
+/areas/al-marjan-island.html /al-marjan-island 301
 /areas/mina-al-arab /areas 301
 /areas/mina-al-arab.html /areas 301
 /areas/al-hamra-village /areas 301
@@ -82,7 +83,7 @@
 /guides/ / 301
 /guides/buying-property-in-ras-al-khaimah /buy-sell-lease 301
 /guides/can-foreigners-buy-property-in-ras-al-khaimah /buy-sell-lease 301
-/guides/al-marjan-island /areas 301
+/guides/al-marjan-island /al-marjan-island 301
 /guides/wynn-al-marjan-effect-on-property-prices /market 301
 /guides/golden-visa-ras-al-khaimah-property /buy-sell-lease 301
 /guides/mina-al-arab /areas 301

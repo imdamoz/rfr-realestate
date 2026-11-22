@@ -10,7 +10,7 @@ const { page } = Astro.props;
 
 const isHome = page === "home";
 const logoHref = isHome ? "#top" : "index.html";
-const listingsCurrent = ["listings", "areas", "market", "off-plan", "manta-bay"].includes(page);
+const listingsCurrent = ["listings", "areas", "market", "off-plan", "manta-bay", "al-marjan-island"].includes(page);
 const aboutCurrent = ["about", "services"].includes(page);
 ---
 <header class="hdr" id="hdr">
@@ -29,7 +29,7 @@ const aboutCurrent = ["about", "services"].includes(page);
           <a href="market.html" class="roll-host"><b><span class="roll">Market Note</span></b><small>Prices and launches, monthly</small></a>
         </div>
         <div class="mega-col"><h5>Areas</h5><ul>
-          <li><a class="ulink" href="areas.html#al-marjan-island">Al Marjan Island &#8599;</a></li>
+          <li><a class="ulink" href="al-marjan-island.html">Al Marjan Island &#8599;</a></li>
           <li><a class="ulink" href="areas.html#mina-al-arab">Mina Al Arab &#8599;</a></li>
           <li><a class="ulink" href="areas.html#al-hamra-village">Al Hamra Village &#8599;</a></li>
           <li><a class="ulink" href="areas.html#downtown-rak">Downtown RAK &#8599;</a></li>
