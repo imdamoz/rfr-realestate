@@ -1811,7 +1811,7 @@ main #grid.list-sec { scroll-margin-top: calc(var(--hdr-h) + var(--lf-dock-h)); 
 /* ===== Answer blocks: short, quotable answers on areas, buying guide and market note ===== */
 .ans-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 clamp(32px, 5vw, 80px); border-top: 1px solid var(--rule); }
 .ans { padding: 28px 0 30px; border-bottom: 1px solid var(--rule); }
-.ans h3 { margin: 0 0 12px; font-family: var(--display); font-weight: 400; font-size: clamp(24px, 2.1vw, 32px); line-height: 1.15; }
+.ans h2, .ans h3 { margin: 0 0 12px; font-family: var(--display); font-weight: 400; font-size: clamp(24px, 2.1vw, 32px); line-height: 1.15; }
 .sec .ans p { font-size: 16px; line-height: 1.65; color: var(--ink-2); max-width: 62ch; }
 .sec .ans p + p { margin-top: 10px; }
 .ans ol, .ans ul { margin: 0; padding-left: 1.2em; font-size: 16px; line-height: 1.65; color: var(--ink-2); }

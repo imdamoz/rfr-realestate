@@ -12,6 +12,7 @@
 /services.html /services 301
 /market.html /market 301
 /buy-sell-lease.html /buy-sell-lease 301
+/manta-bay.html /manta-bay 301
 
 # Pages that existed on the previous site and no longer have a page of
 # their own on this one: send them to the closest current equivalent so
