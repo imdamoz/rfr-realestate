@@ -1824,5 +1824,8 @@ main #grid.list-sec { scroll-margin-top: calc(var(--hdr-h) + var(--lf-dock-h)); 
 .ans-table th { font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
 .ans p + h3 { margin-top: 26px; }
 .ans .ans-table { margin: 18px 0 14px; }
+/* Wide (many-column) answer tables scroll sideways on small screens instead of squashing. */
+.ans-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.ans-scroll .ans-table { min-width: 760px; }
 .sec .ans ol + p, .sec .ans ul + p { margin-top: 10px; }
 @media (max-width: 900px) { .ans-grid { grid-template-columns: minmax(0, 1fr); } }
