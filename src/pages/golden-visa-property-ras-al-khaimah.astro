@@ -1,0 +1,69 @@
+---
+// "Can you get a UAE Golden Visa by buying property in Ras Al Khaimah?" guide.
+// Copy lives in ../golden-visa-property-ras-al-khaimah-main.html. The Golden
+// Visa facts come only from the two official ICP pages (Golden Residency Guide,
+// last updated 10 September 2026, and the service "Issue entry permit for
+// residence of a real estate investor") and the u.ae Golden visa page (updated
+// 28 July 2026), all checked on 24 November 2026. Do not add numbers that are
+// not on those pages. The steps and FAQ below are rendered into the page AND
+// into HowTo / FAQPage JSON-LD from the same arrays, so the visible text and
+// the structured data can't drift apart.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import rawHtml from "../golden-visa-property-ras-al-khaimah-main.html?raw";
+
+const SITE = "https://www.rfrrealestate.com";
+const PATH = "/golden-visa-property-ras-al-khaimah";
+const PAGE = `${SITE}${PATH}`;
+const TITLE = "Golden Visa by Buying Property in Ras Al Khaimah | RFR";
+const H1 = "Can you get a UAE Golden Visa by buying property in Ras Al Khaimah?";
+const DESCRIPTION = "Yes. Own UAE property worth AED 2,000,000 or more, including in Ras Al Khaimah, and you can apply to ICP for a Golden Visa. Rules, steps, documents and term.";
+const IMAGE = `${SITE}/media/rak/rak-marjan-aerial.jpg`;
+const PUBLISHED = "2026-11-24";
+const MODIFIED = "2026-11-24";
+
+// [step name, step HTML]. JSON-LD gets the same text with tags stripped.
+const steps = [
+  ["Choose property worth AED 2,000,000 or more in total", "Pick one or more properties in a Ras Al Khaimah freehold area with a total value of at least AED 2,000,000. See our guides to <a href=\"/al-marjan-island\">Al Marjan Island</a>, <a href=\"/al-hamra-village\">Al Hamra Village</a> and <a href=\"/mina-al-arab\">Mina Al Arab</a>, the <a href=\"/off-plan\">off-plan projects in Ras Al Khaimah</a> (including <a href=\"/manta-bay\">Manta Bay</a>), and <a href=\"/can-foreigners-buy-property-in-ras-al-khaimah\">can foreigners buy property in Ras Al Khaimah?</a>"],
+  ["Buy and register the property in your name", "Complete the purchase and register the property with Ras Al Khaimah Municipality, Lands &amp; Properties Sector. ICP asks for full ownership registered in the investor&rsquo;s name."],
+  ["Get the land registration letter", "Ask the land registration department for a letter confirming that you own one or more properties with a total value of at least AED 2,000,000. This is the document ICP lists for real estate investors."],
+  ["Arrange health insurance", "ICP requires comprehensive, valid health insurance for you and your family members, valid inside the UAE."],
+  ["Apply to ICP", "Apply through the ICP smart app or the ICP smart services website, with your passport (valid for at least 6 months), a personal photo and the land registration letter. ICP issues the visa; RFR does not."],
+];
+
+// [question, answer HTML]. JSON-LD gets the same answer with tags stripped.
+const faq = [
+  ["Can I get a UAE Golden Visa by buying property in Ras Al Khaimah?", "Yes. The Golden Visa is a federal UAE programme run by ICP, so property in Ras Al Khaimah counts the same as property anywhere in the UAE. ICP asks for one or more UAE properties with a total value of at least AED 2,000,000, registered in your name, plus health insurance for you and your family."],
+  ["Can I get a Golden Visa with a mortgage?", "Yes, according to ICP. The ICP Golden Residency Guide says the property may be financed through a loan, provided the financing is obtained from an approved local bank. The property must still be registered in your name and the total value must be at least AED 2,000,000."],
+  ["Does off-plan property count for the Golden Visa?", "Yes, according to ICP. The ICP guide accepts one or more off-plan property units with a total value of at least AED 2,000,000, provided the purchase is made from an approved local real estate company authorised by the competent local authority. See the <a class=\"ulink\" href=\"/off-plan\">off-plan projects in Ras Al Khaimah</a> we sell."],
+  ["Can I combine several properties to reach AED 2 million?", "Yes. ICP&rsquo;s wording is &ldquo;one or more properties in the UAE with a total value of at least AED 2,000,000&rdquo;, so it is the total that counts."],
+  ["Is the property Golden Visa for 5 or 10 years?", "Official pages differ. The ICP Golden Residency Guide (last updated 10 September 2026) lists 10 years for investors in the UAE&rsquo;s real estate sector. The UAE Government portal u.ae (updated 28 July 2026) still lists 5 years for real estate investments. The permit ICP issues states its own validity, so confirm the term with ICP when you apply."],
+  ["Can my family be included in a Golden Visa?", "Yes. ICP says Golden Residency holders can obtain residence permits for their spouse and children, regardless of the children&rsquo;s age, and for their parents. Your family members also need health insurance."],
+  ["Do I need to live in the UAE to apply for a Golden Visa?", "ICP says eligible applicants who are outside the UAE are granted a six-month, multiple-entry entry visa, renewable for a further six months, to complete the Golden Residency procedures. ICP lists its entry-permit service for real estate investors for visitors and residents. Confirm with ICP where you need to be when you apply."],
+  ["Who issues the Golden Visa?", "The Federal Authority for Identity, Citizenship, Customs and Port Security (ICP), which calls it the Golden Residency. RFR Real Estate helps you find and buy qualifying property in Ras Al Khaimah; RFR does not issue visas or give legal or immigration advice."],
+  ["What documents does ICP ask a property investor for?", "For its service &ldquo;Issue entry permit for residence of a real estate investor&rdquo;, ICP lists a passport, a personal photo, and a letter from the land registration department of the emirate confirming that the investor owns one or more properties with a total value of at least AED 2,000,000. Its conditions are valid health insurance inside the UAE, a passport valid for at least 6 months and a property fully owned by the investor."],
+];
+
+const toText = (html) => html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&rsquo;/g, "’").replace(/&ldquo;/g, "“").replace(/&rdquo;/g, "”").replace(/\s+/g, " ").trim();
+const stepsHtml = steps
+  .map(([name, text]) => `            <li><b>${name}.</b> ${text}</li>`)
+  .join("\n");
+const faqHtml = faq
+  .map(([q, a]) => `        <details><summary>${q}<span class="pm" aria-hidden="true"></span></summary><p>${a}</p></details>`)
+  .join("\n");
+
+const mainHtml = rawHtml.replace("<!--RFR:STEPS-->", stepsHtml).replace("<!--RFR:FAQ-->", faqHtml);
+if (mainHtml.includes("<!--RFR:")) throw new Error("golden-visa-property: placeholder not replaced");
+
+const ldJson = [
+  {"@context":"https://schema.org","@graph":[{"@type":["RealEstateAgent","LocalBusiness","Organization"],"@id":"https://www.rfrrealestate.com/#business","name":"RFR Real Estate & Advisory FZ-LLC","legalName":"RFR Real Estate & Advisory FZ-LLC","slogan":"Wherever you call home.","alternateName":["RFR","RFR Real Estate","RFR Real Estate & Advisory"],"url":"https://www.rfrrealestate.com/","logo":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","image":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","email":"info@rfrrealestate.com","telephone":"+971585015885","address":{"@type":"PostalAddress","addressLocality":"Ras Al Khaimah","addressRegion":"Ras Al Khaimah","addressCountry":"AE"},"areaServed":[{"@type":"AdministrativeArea","name":"Ras Al Khaimah"},{"@type":"Place","name":"Al Marjan Island"},{"@type":"Place","name":"Mina Al Arab"},{"@type":"Place","name":"Al Hamra Village"},{"@type":"Place","name":"Downtown Ras Al Khaimah"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"18:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"10:00","closes":"16:00"}],"priceRange":"AED 65,000/yr - AED 4,060,000","currenciesAccepted":"AED","knowsAbout":["Ras Al Khaimah real estate","Al Marjan Island","Off-plan property","Property management","UAE Golden Visa property investment"],"description":"RFR Real Estate & Advisory FZ-LLC is a licensed real estate brokerage and advisory firm in Ras Al Khaimah, UAE. It works only in Ras Al Khaimah: Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.","disambiguatingDescription":"A Ras Al Khaimah (UAE) real estate agency. Not RFR Holding, the New York real estate company.","sameAs":["https://www.propertyfinder.ae/en/broker/rfr-real-estate-v2-13173-13173"]},{"@type":"WebSite","@id":"https://www.rfrrealestate.com/#website","name":"RFR Real Estate","alternateName":["RFR Real Estate & Advisory","RFR Real Estate & Advisory FZ-LLC","RFR","rfrrealestate.com"],"url":"https://www.rfrrealestate.com/","publisher":{"@id":"https://www.rfrrealestate.com/#business"},"inLanguage":"en"},
+    {"@type":"BreadcrumbList","@id":`${PAGE}#breadcrumb`,"itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":`${SITE}/`},{"@type":"ListItem","position":2,"name":"Ras Al Khaimah Property Investment Guide","item":`${SITE}/ras-al-khaimah-property-investment-guide`},{"@type":"ListItem","position":3,"name":"Golden Visa by Buying Property in Ras Al Khaimah","item":PAGE}]},
+    {"@type":"WebPage","@id":`${PAGE}#webpage`,"url":PAGE,"name":H1,"isPartOf":{"@id":`${SITE}/#website`},"publisher":{"@id":`${SITE}/#business`},"inLanguage":"en","datePublished":PUBLISHED,"dateModified":MODIFIED,"primaryImageOfPage":{"@type":"ImageObject","url":IMAGE},"breadcrumb":{"@id":`${PAGE}#breadcrumb`}},
+    {"@type":"Article","@id":`${PAGE}#article`,"headline":H1,"description":"Whether buying property in Ras Al Khaimah can qualify you for a UAE Golden Visa: the AED 2,000,000 rule, mortgages and off-plan, 5 or 10 years, benefits, the steps and the documents ICP asks for, with official sources.","image":IMAGE,"datePublished":PUBLISHED,"dateModified":MODIFIED,"author":{"@id":`${SITE}/#business`},"publisher":{"@id":`${SITE}/#business`},"mainEntityOfPage":{"@id":`${PAGE}#webpage`},"inLanguage":"en","about":"UAE Golden Visa (Golden Residency) through property investment in Ras Al Khaimah","citation":["https://icp.gov.ae/en/services/uae-golden-residency/","https://icp.gov.ae/services-details/?serviceid=68e34eea5ae59b00117383d5","https://u.ae/en/information-and-services/visa-and-emirates-id/residence-visas/golden-visa"]}]},
+  {"@context":"https://schema.org","@type":"HowTo","@id":`${PAGE}#how-to-apply`,"name":"How to get a UAE Golden Visa through property in Ras Al Khaimah","url":`${PAGE}#steps`,"step":steps.map(([name, text], i) => ({"@type":"HowToStep","position":i + 1,"name":name,"text":toText(text),"url":`${PAGE}#steps`}))},
+  {"@context":"https://schema.org","@type":"FAQPage","@id":`${PAGE}#faq`,"mainEntity":faq.map(([q, a]) => ({"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":toText(a)}}))},
+];
+---
+<BaseLayout page="golden-visa-property-ras-al-khaimah" title={TITLE} description={DESCRIPTION} path={PATH} ldJson={ldJson}>
+<Fragment set:html={mainHtml} />
+<script slot="pre-script" src="data.js" is:inline></script>
+</BaseLayout>
