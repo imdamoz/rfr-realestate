@@ -15,6 +15,7 @@
 /manta-bay.html /manta-bay 301
 /al-marjan-island.html /al-marjan-island 301
 /al-hamra-village.html /al-hamra-village 301
+/mina-al-arab.html /mina-al-arab 301
 /ras-al-khaimah-property-investment-guide.html /ras-al-khaimah-property-investment-guide 301
 /can-foreigners-buy-property-in-ras-al-khaimah.html /can-foreigners-buy-property-in-ras-al-khaimah 301
 
@@ -31,8 +32,8 @@
 /areas/ /areas 301
 /areas/al-marjan-island /al-marjan-island 301
 /areas/al-marjan-island.html /al-marjan-island 301
-/areas/mina-al-arab /areas 301
-/areas/mina-al-arab.html /areas 301
+/areas/mina-al-arab /mina-al-arab 301
+/areas/mina-al-arab.html /mina-al-arab 301
 /areas/al-hamra-village /al-hamra-village 301
 /areas/al-hamra-village.html /al-hamra-village 301
 /areas/downtown-rak /areas 301
@@ -89,7 +90,7 @@
 /guides/al-marjan-island /al-marjan-island 301
 /guides/wynn-al-marjan-effect-on-property-prices /market 301
 /guides/golden-visa-ras-al-khaimah-property /can-foreigners-buy-property-in-ras-al-khaimah 301
-/guides/mina-al-arab /areas 301
+/guides/mina-al-arab /mina-al-arab 301
 /guides/al-hamra-village /al-hamra-village 301
 /guides/off-plan-payment-plans-ras-al-khaimah /off-plan 301
 /guides/al-marjan-island-vs-al-hamra-village-vs-mina-al-arab /areas 301
