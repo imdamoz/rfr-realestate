@@ -152,3 +152,21 @@ export function areasPlaces(html) {
   }
   return { "@context": "https://schema.org", "@graph": places };
 }
+
+// FAQPage built from the visible <details> FAQ in a page's #faq section, so
+// the JSON-LD answers always match the text on the page word for word.
+export function faqFromHtml(html) {
+  const plain = (s) => s.replace(/<[^>]+>/g, "")
+    .replace(/&rsquo;/g, "’").replace(/&lsquo;/g, "‘").replace(/&ldquo;/g, "“").replace(/&rdquo;/g, "”")
+    .replace(/&ndash;/g, "–").replace(/&mdash;/g, "—").replace(/&middot;/g, "·").replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+  const sec = (html.match(/<section[^>]*id="faq"[\s\S]*?<\/section>/) || [""])[0];
+  const qa = [...sec.matchAll(/<details><summary>([\s\S]*?)<span class="pm"[^>]*><\/span><\/summary><p>([\s\S]*?)<\/p><\/details>/g)];
+  if (!qa.length) throw new Error("seo: no FAQ found in #faq");
+  if (qa.length !== (sec.match(/<details/g) || []).length) throw new Error("seo: an FAQ item in #faq does not match the expected markup");
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: qa.map((m) => ({ "@type": "Question", name: plain(m[1]), acceptedAnswer: { "@type": "Answer", text: plain(m[2]) } })),
+  };
+}
