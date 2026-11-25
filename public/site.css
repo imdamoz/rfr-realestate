@@ -1829,3 +1829,8 @@ main #grid.list-sec { scroll-margin-top: calc(var(--hdr-h) + var(--lf-dock-h)); 
 .ans-scroll .ans-table { min-width: 760px; }
 .sec .ans ol + p, .sec .ans ul + p { margin-top: 10px; }
 @media (max-width: 900px) { .ans-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* /buy-sell-lease hero: the H1 is a full query-length line, so it runs smaller than the two-word giants and may wrap. */
+.bsl-hero h1.giant.hx-t { font-size: clamp(34px, min(5.4vw, 9vh), 96px); line-height: .92; white-space: normal; max-width: 22ch; padding-top: 0; margin-top: 0; }
+.bsl-hero .hx-kick { margin: 0 0 clamp(12px, 1.6vw, 22px) !important; }
+.bsl-short { margin-bottom: clamp(28px, 4vw, 56px); }
