@@ -1,11 +1,64 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import mainHtml from "../listings-main.html?raw";
+import rawHtml from "../listings-main.html?raw";
 import afterMenuHtml from "../listings-aftermenu.html?raw";
-import { listingsItemList } from "../seo-jsonld.js";
+import { listingsItemList, faqFromHtml } from "../seo-jsonld.js";
+import { RFR as R } from "../data.js";
+
+// "What property is for sale in Ras Al Khaimah?" summary, table and FAQs are
+// rendered from data.js (R.listings, the same data as the cards), counting
+// only listings whose card is on the page, so the copy can't drift from it.
+const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const aed = (n) => "AED " + Number(n).toLocaleString("en-US");
+const price = (n) => `<span class="price" data-aed="${n}">${aed(n)}</span>`;
+const listNames = (arr) => arr.length < 2 ? arr.join("") : `${arr.slice(0, -1).join(", ")} and ${arr[arr.length - 1]}`;
+const NUM = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+const num = (n) => NUM[n] ?? String(n);
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const areaOf = (slug) => R.areas.find((a) => a.slug === slug);
+const areaHref = (slug) => (slug === "downtown-rak" ? "/areas#downtown-rak" : `/${slug}`);
+const areaLink = (slug) => `<a href="${areaHref(slug)}">${esc(areaOf(slug).name)}</a>`;
+const beds = (l) => (/plot/i.test(l.type) ? "plot" : l.beds ? `${num(l.beds)}-bedroom` : "studio");
+const L = R.listings.filter((l) => rawHtml.includes(`data-slug="${l.slug}"`) && areaOf(l.area));
+const sale = L.filter((l) => l.cat !== "rent");
+const rent = L.filter((l) => l.cat === "rent");
+const offplan = sale.filter((l) => l.offplan);
+const plots = sale.filter((l) => /plot/i.test(l.type));
+const priced = sale.filter((l) => l.price != null);
+if (!offplan.length || !rent.length || !priced.length || offplan.length + plots.length !== sale.length || plots.some((l) => l.price != null) || offplan.some((l) => l.price == null) || rent.some((l) => l.price == null))
+  throw new Error("listings: the mix of listings changed; update the 'for sale' summary copy in listings.astro");
+const byPrice = (arr) => [...arr].sort((a, b) => a.price - b.price);
+const sLow = byPrice(priced)[0], sHigh = byPrice(priced).at(-1), rLow = byPrice(rent)[0], rHigh = byPrice(rent).at(-1);
+const uniq = (arr) => [...new Set(arr)];
+const offplanAreas = uniq(offplan.map((l) => l.area));
+const plotText = plots.length ? `, and ${plots.length === 1 ? "a residential plot" : `${num(plots.length)} residential plots`} in ${listNames(uniq(plots.map((l) => l.area)).map(areaLink))} (price on request)` : "";
+const pl = (n, w) => `${num(n)} ${w}${n === 1 ? "" : "s"}`;
+const sizes = (arr) => { const order = ["studio", "one-bedroom", "two-bedroom", "three-bedroom", "four-bedroom"]; const have = uniq(arr.map(beds)).sort((a, b) => order.indexOf(a) - order.indexOf(b)); return have.length > 1 ? `from ${have[0]}s to ${have.at(-1)}s` : `${have[0]}s`; };
+
+const saleSummary = `RFR Real Estate currently lists ${pl(sale.length, "property").replace("propertys", "properties")} for sale in Ras Al Khaimah: ${pl(offplan.length, "off-plan apartment")} on ${listNames(offplanAreas.map(areaLink))}, ${sizes(offplan)}, priced from ${price(sLow.price)} to ${price(sHigh.price)}${plotText}. ${cap(pl(rent.length, "more home"))} ${rent.length === 1 ? "is" : "are"} for rent, from ${price(rLow.price)} to ${price(rHigh.price)} a year.`;
+const sizeCell = (l) => (/plot/i.test(l.type) ? `${l.sqft.toLocaleString("en-US")} sq ft` : `${l.beds ? `${l.beds} bed` : "Studio"} &middot; ${l.baths} bath &middot; ${l.sqft.toLocaleString("en-US")} sq ft`);
+const listingName = (l) => (l.project === "manta" ? `<a href="#${l.slug}">Studio</a> at <a href="/manta-bay">Manta Bay</a>` : `<a href="#${l.slug}">${esc(l.title)}</a>`);
+const saleRows = sale.map((l) => `              <tr><td>${listingName(l)}</td><td>${esc(areaOf(l.area).name)}</td><td>${l.offplan ? "Off-plan" : "For sale"} &middot; ${esc(l.type)}</td><td>${sizeCell(l)}</td><td>${esc(l.handover ?? "—")}</td><td>${l.price != null ? price(l.price) : "Price on request"}</td></tr>`).join("\n");
+const rentSummary = `${cap(pl(rent.length, "home"))} on this page ${rent.length === 1 ? "is" : "are"} for rent, from ${price(rLow.price)} a year (${esc(rLow.title.charAt(0).toLowerCase() + rLow.title.slice(1))}, ${esc(areaOf(rLow.area).name)}) to ${price(rHigh.price)} a year (${esc(rHigh.title.charAt(0).toLowerCase() + rHigh.title.slice(1))}, ${esc(areaOf(rHigh.area).name)}). They are in ${listNames(uniq(rent.map((l) => l.area)).map((a) => esc(areaOf(a).name)))}. <a href="#cat-rent">Show homes for rent</a>.`;
+const areaCounts = R.areas.map((a) => [a, L.filter((l) => l.area === a.slug).length]).filter(([, n]) => n);
+const areaSummary = `By area, the listings on this page are: ${listNames(areaCounts.map(([a, n], i) => `${areaLink(a.slug)} (${num(n)}${i ? "" : " listings"})`))}. All of our off-plan listings are on ${listNames(offplanAreas.map((a) => esc(areaOf(a).name)))}, where the <a href="/off-plan">off-plan projects in Ras Al Khaimah</a> we list are being built.`;
+const faqItem = (q, a) => `        <details><summary>${q}<span class="pm" aria-hidden="true"></span></summary><p>${a}</p></details>`;
+const lower = (t) => t.charAt(0).toLowerCase() + t.slice(1);
+const types = uniq(L.map((l) => l.type.toLowerCase()));
+const listingFaqs = [
+  faqItem("How much does property for sale in Ras Al Khaimah cost?", `The priced homes for sale on this page run from ${aed(sLow.price)} (${esc(lower(sLow.title))}) to ${aed(sHigh.price)} (${esc(lower(sHigh.title))}), all off-plan on ${listNames(offplanAreas.map((a) => esc(areaOf(a).name)))}.${plots.length ? " The residential plot in " + listNames(uniq(plots.map((l) => l.area)).map((a) => esc(areaOf(a).name))) + " is price on request." : ""} Homes for rent run from ${aed(rLow.price)} to ${aed(rHigh.price)} a year.`),
+  faqItem("What types of property does RFR list in Ras Al Khaimah?", `Right now: ${listNames(types.map((t) => esc(t === "villa" ? "a villa" : t === "residential plot" ? "a residential plot" : t + "s")))}. ${cap(num(sale.length))} are for sale and ${num(rent.length)} are for rent.`),
+].join("\n");
+const mainHtml = rawHtml
+  .replace("<!--RFR:SALE_SUMMARY-->", saleSummary)
+  .replace("<!--RFR:SALE_ROWS-->", saleRows)
+  .replace("<!--RFR:RENT_SUMMARY-->", rentSummary)
+  .replace("<!--RFR:AREA_SUMMARY-->", cap(areaSummary))
+  .replace("<!--RFR:LISTING_FAQS-->", listingFaqs);
+if (mainHtml.includes("<!--RFR:")) throw new Error("listings: placeholder not replaced");
 const ldJson = [
-  {"@context":"https://schema.org","@graph":[{"@type":["RealEstateAgent","LocalBusiness","Organization"],"@id":"https://www.rfrrealestate.com/#business","name":"RFR Real Estate & Advisory FZ-LLC","legalName":"RFR Real Estate & Advisory FZ-LLC","slogan":"Wherever you call home.","alternateName":["RFR","RFR Real Estate","RFR Real Estate & Advisory"],"url":"https://www.rfrrealestate.com/","logo":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","image":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","email":"info@rfrrealestate.com","telephone":"+971585015885","address":{"@type":"PostalAddress","addressLocality":"Ras Al Khaimah","addressRegion":"Ras Al Khaimah","addressCountry":"AE"},"areaServed":[{"@type":"AdministrativeArea","name":"Ras Al Khaimah"},{"@type":"Place","name":"Al Marjan Island"},{"@type":"Place","name":"Mina Al Arab"},{"@type":"Place","name":"Al Hamra Village"},{"@type":"Place","name":"Downtown Ras Al Khaimah"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"18:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"10:00","closes":"16:00"}],"priceRange":"AED 65,000/yr - AED 4,060,000","currenciesAccepted":"AED","knowsAbout":["Ras Al Khaimah real estate","Al Marjan Island","Off-plan property","Property management","UAE Golden Visa property investment"],"description":"RFR Real Estate & Advisory FZ-LLC is a licensed real estate brokerage and advisory firm in Ras Al Khaimah, UAE. It works only in Ras Al Khaimah: Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.","disambiguatingDescription":"A Ras Al Khaimah (UAE) real estate agency. Not RFR Holding, the New York real estate company.","sameAs":["https://www.propertyfinder.ae/en/broker/rfr-real-estate-v2-13173-13173"]},{"@type":"WebSite","@id":"https://www.rfrrealestate.com/#website","name":"RFR Real Estate","alternateName":["RFR Real Estate & Advisory","RFR Real Estate & Advisory FZ-LLC","RFR","rfrrealestate.com"],"url":"https://www.rfrrealestate.com/","publisher":{"@id":"https://www.rfrrealestate.com/#business"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.rfrrealestate.com/"},{"@type":"ListItem","position":2,"name":"Listings","item":"https://www.rfrrealestate.com/listings"}]}]},
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What property is for sale in Ras Al Khaimah with RFR?","acceptedAnswer":{"@type":"Answer","text":"Ready homes and off-plan units on Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK, updated as our book changes."}},{"@type":"Question","name":"Can foreigners buy property in Ras Al Khaimah?","acceptedAnswer":{"@type":"Answer","text":"Yes, in the designated freehold areas. Al Marjan Island, Mina Al Arab and Al Hamra Village are all freehold, so foreign buyers can own outright there. In Downtown RAK, freehold is limited to designated projects such as Julphar Towers and RAK Central."}},{"@type":"Question","name":"Which areas of Ras Al Khaimah does RFR cover?","acceptedAnswer":{"@type":"Answer","text":"Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK. We don’t work outside Ras Al Khaimah."}},{"@type":"Question","name":"How do off-plan payment plans work in Ras Al Khaimah?","acceptedAnswer":{"@type":"Answer","text":"Buyers pay in instalments as the building is constructed, typically on a schedule between 50/50 and 80/20, with the balance due on or near handover."}},{"@type":"Question","name":"Do I need to be in the UAE to buy property in Ras Al Khaimah?","acceptedAnswer":{"@type":"Answer","text":"No. Many of our buyers live overseas. We run video viewings and can handle the paperwork and management once you own it."}}]},
+  {"@context":"https://schema.org","@graph":[{"@type":["RealEstateAgent","LocalBusiness","Organization"],"@id":"https://www.rfrrealestate.com/#business","name":"RFR Real Estate & Advisory FZ-LLC","legalName":"RFR Real Estate & Advisory FZ-LLC","slogan":"Wherever you call home.","alternateName":["RFR","RFR Real Estate","RFR Real Estate & Advisory"],"url":"https://www.rfrrealestate.com/","logo":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","image":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","email":"info@rfrrealestate.com","telephone":"+971585015885","address":{"@type":"PostalAddress","addressLocality":"Ras Al Khaimah","addressRegion":"Ras Al Khaimah","addressCountry":"AE"},"areaServed":[{"@type":"AdministrativeArea","name":"Ras Al Khaimah"},{"@type":"Place","name":"Al Marjan Island"},{"@type":"Place","name":"Mina Al Arab"},{"@type":"Place","name":"Al Hamra Village"},{"@type":"Place","name":"Downtown Ras Al Khaimah"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"18:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"10:00","closes":"16:00"}],"priceRange":"AED 65,000/yr - AED 4,060,000","currenciesAccepted":"AED","knowsAbout":["Ras Al Khaimah real estate","Al Marjan Island","Off-plan property","Property management","UAE Golden Visa property investment"],"description":"RFR Real Estate & Advisory FZ-LLC is a licensed real estate brokerage and advisory firm in Ras Al Khaimah, UAE. It works only in Ras Al Khaimah: Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.","disambiguatingDescription":"A Ras Al Khaimah (UAE) real estate agency. Not RFR Holding, the New York real estate company.","sameAs":["https://www.propertyfinder.ae/en/broker/rfr-real-estate-v2-13173-13173"]},{"@type":"WebSite","@id":"https://www.rfrrealestate.com/#website","name":"RFR Real Estate","alternateName":["RFR Real Estate & Advisory","RFR Real Estate & Advisory FZ-LLC","RFR","rfrrealestate.com"],"url":"https://www.rfrrealestate.com/","publisher":{"@id":"https://www.rfrrealestate.com/#business"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.rfrrealestate.com/"},{"@type":"ListItem","position":2,"name":"Listings","item":"https://www.rfrrealestate.com/listings"}]},{"@type":"WebPage","@id":"https://www.rfrrealestate.com/listings#webpage","url":"https://www.rfrrealestate.com/listings","name":"Property for sale and rent in Ras Al Khaimah","isPartOf":{"@id":"https://www.rfrrealestate.com/#website"},"publisher":{"@id":"https://www.rfrrealestate.com/#business"},"inLanguage":"en","dateModified":"2026-11-25","mainEntity":{"@id":"https://www.rfrrealestate.com/listings#itemlist"}}]},
+  faqFromHtml(mainHtml),
   listingsItemList(mainHtml),
 ];
 ---
