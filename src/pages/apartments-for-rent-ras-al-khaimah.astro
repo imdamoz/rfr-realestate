@@ -1,0 +1,121 @@
+---
+// "Apartments for rent in Ras Al Khaimah" answer page. Copy lives in
+// ../apartments-for-rent-ras-al-khaimah-main.html. The rents-by-area table,
+// the "available to rent now" cards and the data-driven FAQ answers are
+// rendered here from data.js at build time, so they stay in sync with /areas
+// and /listings. The renting steps and the leasing / management fees are the
+// ones published on /buy-sell-lease. Do not add deposit, Ejari, utility or
+// legal facts that are not already on the site. The FAQ is rendered into the
+// page AND into FAQPage JSON-LD from the same array.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import rawHtml from "../apartments-for-rent-ras-al-khaimah-main.html?raw";
+import { RFR as R } from "../data.js";
+
+const SITE = "https://www.rfrrealestate.com";
+const PATH = "/apartments-for-rent-ras-al-khaimah";
+const PAGE = `${SITE}${PATH}`;
+const TITLE = "Apartments for Rent in Ras Al Khaimah | RFR Real Estate";
+const H1 = "Apartments for rent in Ras Al Khaimah";
+const DESCRIPTION = "Rent an apartment in Ras Al Khaimah: 1-beds from ~AED 45–65K a year in Al Hamra Village, rents by area, the homes RFR has to rent now, and how viewings work.";
+const IMAGE = `${SITE}/media/rfr/onebed-1.jpg`;
+const PUBLISHED = "2026-11-26";
+const MODIFIED = "2026-11-26";
+
+// Area guide pages that exist. Downtown RAK has none, so no link.
+const AREA_PAGES = { "al-marjan-island": "/al-marjan-island", "mina-al-arab": "/mina-al-arab", "al-hamra-village": "/al-hamra-village" };
+
+const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const aed = (n) => "AED " + Number(n).toLocaleString("en-US");
+const areaBy = (slug) => R.areas.find((a) => a.slug === slug);
+const SAVE_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
+
+// The short answer and meta description quote these ranges. Fail the build
+// if data.js changes, so the copy gets updated too.
+const QUOTED = {
+  "al-hamra-village": ["1-bed ~AED 45–65K"],
+  "al-marjan-island": ["1-bed ~AED 65–90K", "2-bed ~AED 75–130K"],
+  "downtown-rak": ["2-bed ~AED 50–95K"],
+  "mina-al-arab": ["2-bed apt ~AED 60–95K"],
+};
+for (const [slug, parts] of Object.entries(QUOTED)) {
+  const a = areaBy(slug);
+  if (!a || parts.some((p) => !a.rent.includes(p))) throw new Error(`apartments-for-rent: rent for ${slug} in data.js changed; update the short answer and meta description`);
+}
+
+const rentals = R.listings.filter((l) => l.cat === "rent");
+if (!rentals.length) throw new Error("apartments-for-rent: no rent listings in data.js");
+if (rentals.some((l) => !areaBy(l.area) || l.price == null)) throw new Error("apartments-for-rent: rent listing without area or price");
+
+// Rents by area table.
+const rentRows = R.areas
+  .map((a) => {
+    const name = AREA_PAGES[a.slug] ? `<a href="${AREA_PAGES[a.slug]}">${esc(a.name)}</a>` : esc(a.name);
+    return `              <tr><th scope="row">${name}</th><td>${esc(a.rent)}</td><td>${esc(a.tag)}</td></tr>`;
+  })
+  .join("\n");
+
+// Listing cards: same markup as /listings and the area guides.
+function listingCard(l) {
+  const area = areaBy(l.area);
+  const price = `<span class="price" data-aed="${l.price}">${aed(l.price)}</span> <small>/ yr</small>`;
+  const facts = [l.beds ? `${l.beds} bed` : "Studio", l.baths ? `${l.baths} bath` : null, l.sqft ? `${Number(l.sqft).toLocaleString("en-US")} sq ft` : null].filter(Boolean).join(" &middot; ");
+  const extra = [l.type, l.furnishing && l.furnishing !== "—" ? l.furnishing : null].filter(Boolean).map(esc).join(" &middot; ");
+  const gal = l.gkey ? ` lgal" data-gallery="${esc(l.gkey)}` : "";
+  return `        <article class="lcard rv" id="${esc(l.slug)}" data-slug="${esc(l.slug)}">
+          <a class="lcard-link roll-host" href="listings.html#${esc(l.slug)}">
+            <figure class="media${gal}"><img src="${esc(l.imgs[0])}" alt="${esc(l.title)}, ${esc(area.name)}" loading="lazy"><span class="ltag">${esc(l.status)}</span></figure>
+            <p class="lmeta">Rent &mdash; ${esc(area.name)}</p>
+            <h3 class="lname"><span class="roll">${esc(l.title)}</span></h3>
+            <p class="lprice">${price}</p>
+            <p class="lfacts">${facts}</p>
+            <p class="lfacts">${extra}</p>
+          </a>
+          <button class="save" type="button" data-save="${esc(l.slug)}" aria-pressed="false" aria-label="Save ${esc(l.title)}">${SAVE_SVG}<span>Save</span></button>
+        </article>`;
+}
+
+// FAQ answers built from data.js where they quote it.
+const plain = (s) => s.replace(/~/g, "about ").replace(/ \/ yr/g, "").replace(/ · /g, ", ");
+const rentByArea = R.areas.map((a) => `${a.name}: ${plain(a.rent)}`).join("; ");
+const prices = rentals.map((l) => l.price);
+const furnished = rentals.filter((l) => l.furnishing === "Furnished");
+const listPhrase = (arr) => (arr.length < 2 ? arr.join("") : `${arr.slice(0, -1).join(", ")} and ${arr[arr.length - 1]}`);
+const where = (slug) => (/island/i.test(areaBy(slug).name) ? "on " : "in ") + areaBy(slug).name;
+const furnishedList = listPhrase(furnished.map((l) => `${l.title.charAt(0).toLowerCase()}${l.title.slice(1)} ${where(l.area)} (${aed(l.price)} a year)`));
+const tag = (slug) => areaBy(slug).tag.replace(/\.$/, "");
+const lower = (s) => s.charAt(0).toLowerCase() + s.slice(1);
+
+// [question, answer HTML]. JSON-LD gets the same answer with tags stripped.
+const faq = [
+  ["How much is rent for an apartment in Ras Al Khaimah?", `Indicative yearly rents by area: ${esc(rentByArea)}. The homes we list to rent right now range from ${aed(Math.min(...prices))} to ${aed(Math.max(...prices))} a year. Ranges are indicative, not a valuation; we send exact figures for any unit.`],
+  ["Which area of Ras Al Khaimah is best for renting?", `It depends on how you will live. <a class="ulink" href="/al-hamra-village">Al Hamra Village</a> (${esc(lower(tag("al-hamra-village")))}). <a class="ulink" href="/al-marjan-island">Al Marjan Island</a> (${esc(lower(tag("al-marjan-island")))}). <a class="ulink" href="/mina-al-arab">Mina Al Arab</a> (${esc(lower(tag("mina-al-arab")))}). Downtown RAK (${esc(lower(tag("downtown-rak")))}). Compare them on our <a class="ulink" href="/areas#best-areas">best areas in Ras Al Khaimah</a> guide.`],
+  ["Are furnished apartments available to rent in Ras Al Khaimah?", `Yes. ${furnished.length} of the ${rentals.length} homes we list to rent right now are furnished: ${esc(furnishedList)}. Furnished island units move fast, so ask for a viewing early. <a class="ulink" href="/listings#cat-rent">See our rentals</a>.`],
+  ["What does RFR charge to let an apartment?", `Our leasing fee is 5% + VAT, in writing up front. If you want us to manage the apartment too, management is from 5% of the annual rent, covering rent, repairs and a clear statement every quarter. We check tenants&rsquo; ID, visa, income and references, and you approve every tenant. <a class="ulink" href="/buy-sell-lease#guide">How letting works</a>.`],
+  ["How do I arrange a viewing?", `Send us your budget and move-in date and we&rsquo;ll line up viewings this week, in person or on video. Call +971 58 501 5885, email info@rfrrealestate.com or <a class="ulink" href="https://wa.me/971585015885?text=Hello%20RFR%2C%20I%27m%20looking%20for%20an%20apartment%20to%20rent%20in%20Ras%20Al%20Khaimah." target="_blank" rel="noopener">WhatsApp an advisor</a>.`],
+];
+
+const toText = (html) => html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&rsquo;/g, "’").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
+const faqHtml = faq
+  .map(([q, a]) => `        <details><summary>${q}<span class="pm" aria-hidden="true"></span></summary><p>${a}</p></details>`)
+  .join("\n");
+
+const mainHtml = rawHtml
+  .replace("<!--RFR:RENT_ROWS-->", rentRows)
+  .replace("<!--RFR:LISTING_CARDS-->", rentals.map(listingCard).join("\n"))
+  .replace("<!--RFR:FAQ-->", faqHtml);
+if (mainHtml.includes("<!--RFR:")) throw new Error("apartments-for-rent: placeholder not replaced");
+
+const listItem = (i, name, url) => ({ "@type": "ListItem", position: i + 1, name, url });
+
+const ldJson = [
+  {"@context":"https://schema.org","@graph":[{"@type":["RealEstateAgent","LocalBusiness","Organization"],"@id":"https://www.rfrrealestate.com/#business","name":"RFR Real Estate & Advisory FZ-LLC","legalName":"RFR Real Estate & Advisory FZ-LLC","slogan":"Wherever you call home.","alternateName":["RFR","RFR Real Estate","RFR Real Estate & Advisory"],"url":"https://www.rfrrealestate.com/","logo":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","image":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","email":"info@rfrrealestate.com","telephone":"+971585015885","address":{"@type":"PostalAddress","addressLocality":"Ras Al Khaimah","addressRegion":"Ras Al Khaimah","addressCountry":"AE"},"areaServed":[{"@type":"AdministrativeArea","name":"Ras Al Khaimah"},{"@type":"Place","name":"Al Marjan Island"},{"@type":"Place","name":"Mina Al Arab"},{"@type":"Place","name":"Al Hamra Village"},{"@type":"Place","name":"Downtown Ras Al Khaimah"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"18:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"10:00","closes":"16:00"}],"priceRange":"AED 65,000/yr - AED 4,060,000","currenciesAccepted":"AED","knowsAbout":["Ras Al Khaimah real estate","Al Marjan Island","Off-plan property","Property management","UAE Golden Visa property investment"],"description":"RFR Real Estate & Advisory FZ-LLC is a licensed real estate brokerage and advisory firm in Ras Al Khaimah, UAE. It works only in Ras Al Khaimah: Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.","disambiguatingDescription":"A Ras Al Khaimah (UAE) real estate agency. Not RFR Holding, the New York real estate company.","sameAs":["https://www.propertyfinder.ae/en/broker/rfr-real-estate-v2-13173-13173"]},{"@type":"WebSite","@id":"https://www.rfrrealestate.com/#website","name":"RFR Real Estate","alternateName":["RFR Real Estate & Advisory","RFR Real Estate & Advisory FZ-LLC","RFR","rfrrealestate.com"],"url":"https://www.rfrrealestate.com/","publisher":{"@id":"https://www.rfrrealestate.com/#business"},"inLanguage":"en"},
+    {"@type":"BreadcrumbList","@id":`${PAGE}#breadcrumb`,"itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":`${SITE}/`},{"@type":"ListItem","position":2,"name":H1,"item":PAGE}]},
+    {"@type":"WebPage","@id":`${PAGE}#webpage`,"url":PAGE,"name":H1,"description":DESCRIPTION,"isPartOf":{"@id":`${SITE}/#website`},"publisher":{"@id":`${SITE}/#business`},"inLanguage":"en","datePublished":PUBLISHED,"dateModified":MODIFIED,"primaryImageOfPage":{"@type":"ImageObject","url":IMAGE},"breadcrumb":{"@id":`${PAGE}#breadcrumb`},"mainEntity":{"@id":`${PAGE}#listings`}}]},
+  {"@context":"https://schema.org","@type":"FAQPage","@id":`${PAGE}#faq`,"mainEntity":faq.map(([q, a]) => ({"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":toText(a)}}))},
+  {"@context":"https://schema.org","@type":"ItemList","@id":`${PAGE}#listings`,"name":"Homes for rent in Ras Al Khaimah listed by RFR","url":`${PAGE}#available-now`,"numberOfItems":rentals.length,"itemListElement":rentals.map((l, i) => listItem(i, `${l.title}, ${areaBy(l.area).name}`, `${SITE}/listings#${l.slug}`))},
+];
+---
+<BaseLayout page="apartments-for-rent-ras-al-khaimah" title={TITLE} description={DESCRIPTION} path={PATH} ldJson={ldJson}>
+<Fragment set:html={mainHtml} />
+<script slot="pre-script" src="data.js" is:inline></script>
+</BaseLayout>
