@@ -1,0 +1,161 @@
+---
+// Downtown Ras Al Khaimah area guide. Copy lives in
+// ../downtown-ras-al-khaimah-main.html; prices, rents, yields, the comparison
+// table, the listing cards and the FAQ are built here from data.js at build
+// time, so they can't drift from the rest of the site.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import rawHtml from "../downtown-ras-al-khaimah-main.html?raw";
+import { RFR as R } from "../data.js";
+
+const SITE = "https://www.rfrrealestate.com";
+const PATH = "/downtown-ras-al-khaimah";
+const PAGE = `${SITE}${PATH}`;
+const AREA = "downtown-rak";
+const TITLE = "Downtown Ras Al Khaimah Property Guide | RFR Real Estate";
+const DESCRIPTION = "Downtown Ras Al Khaimah: apartments from ~AED 400K, 2-bed rents ~AED 50–95K a year, 7–9% indicative yields, freehold rules, RFR listings and an FAQ.";
+const PUBLISHED = "2026-11-27";
+const MODIFIED = "2026-11-27";
+if (TITLE.length > 60) throw new Error("downtown-ras-al-khaimah: title over 60 chars");
+if (DESCRIPTION.length > 160) throw new Error("downtown-ras-al-khaimah: meta description over 160 chars");
+
+// Area guide pages, for the comparison table and FAQ links.
+const AREA_PAGES = { "al-marjan-island": "/al-marjan-island", "mina-al-arab": "/mina-al-arab", "al-hamra-village": "/al-hamra-village", "downtown-rak": PATH };
+// Freehold status per area, worded as on /areas and the foreigners guide.
+const FREEHOLD = {
+  "al-marjan-island": "Yes. Designated freehold area",
+  "al-hamra-village": "Yes. Designated freehold area",
+  "mina-al-arab": "Yes. Designated freehold area",
+  "downtown-rak": "Only in designated projects such as Julphar Towers and RAK Central",
+};
+
+const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const aed = (n) => "AED " + Number(n).toLocaleString("en-US");
+const areaBy = (slug) => R.areas.find((a) => a.slug === slug);
+const listPhrase = (arr) => (arr.length < 2 ? arr.join("") : `${arr.slice(0, -1).join(", ")} and ${arr[arr.length - 1]}`);
+const onIn = (a) => (/island/i.test(a.name) ? "on " : "in ") + a.name;
+const SAVE_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
+
+const area = areaBy(AREA);
+if (!area) throw new Error("downtown-ras-al-khaimah: downtown-rak missing from data.js");
+const marjan = areaBy("al-marjan-island");
+
+// The short answer, meta description and FAQ quote these strings. Fail the
+// build if data.js changes, so the copy gets updated too.
+const QUOTED = [
+  [area.buy, "Apartments from ~AED 400K"],
+  [area.rent, "2-bed ~AED 50–95K"],
+  [area.yield, "7–9% gross"],
+  [marjan.buy, "From ~AED 920K (studio)"],
+  [marjan.buy, "AED 1.7–3.5M for 1–2 bed branded"],
+  [marjan.rent, "2-bed ~AED 75–130K"],
+];
+for (const [have, want] of QUOTED) if (!have.includes(want)) throw new Error(`downtown-ras-al-khaimah: "${want}" no longer in data.js; update the copy`);
+
+// Indicative apartment "from" price (in AED thousands) and yield range per area.
+function aptFromK(a) {
+  const m = a.buy.match(/from ~AED ([\d.]+)K/i);
+  if (!m) throw new Error(`downtown-ras-al-khaimah: cannot read an apartment "from" price for ${a.slug}`);
+  return Number(m[1]);
+}
+function yieldRange(a) {
+  const m = a.yield.match(/([\d.]+)–([\d.]+)%/);
+  if (!m) throw new Error(`downtown-ras-al-khaimah: cannot read a yield range for ${a.slug}`);
+  return { lo: Number(m[1]), hi: Number(m[2]), txt: `${m[1]}–${m[2]}%` };
+}
+const byPrice = [...R.areas].sort((x, y) => aptFromK(x) - aptFromK(y));
+if (byPrice[0].slug !== AREA) throw new Error("downtown-ras-al-khaimah: Downtown RAK is no longer the lowest entry price in data.js; update the copy");
+const byYield = [...R.areas].sort((x, y) => yieldRange(y).hi - yieldRange(x).hi || yieldRange(y).lo - yieldRange(x).lo);
+if (byYield[0].slug !== AREA || byYield[1].slug !== "al-hamra-village") throw new Error("downtown-ras-al-khaimah: yield order in data.js changed; update the copy");
+const others = R.areas.filter((a) => a.slug !== AREA);
+const yTxt = (a) => yieldRange(a).txt;
+const areaLink = (a, text = a.name) => `<a class="ulink" href="${AREA_PAGES[a.slug]}">${esc(text)}</a>`;
+const nd = (s) => esc(s).replace(/–/g, "&ndash;");
+
+// Short answer: 40–70 words.
+const shortAnswer = `Downtown Ras Al Khaimah is the working city around Al Nakheel, Julphar and the corniche, with the shortest commutes to RAKEZ, the hospitals and government. It has the lowest entry prices of the four areas we cover: apartments from about AED ${aptFromK(area)}K, two-bedrooms renting for about AED 50&ndash;95K a year, and indicative gross yields of ${nd(yTxt(area))}. Freehold is limited to designated projects such as Julphar Towers and RAK Central.`;
+const words = shortAnswer.replace(/<[^>]+>/g, "").split(/\s+/).filter(Boolean).length;
+if (words < 40 || words > 70) throw new Error(`downtown-ras-al-khaimah: short answer is ${words} words, needs 40-70`);
+
+// Listings in Downtown RAK, same card markup as /listings and the other area guides.
+const listings = R.listings.filter((l) => l.area === AREA);
+function listingCard(l) {
+  const cat = l.offplan ? "Off-plan" : l.cat === "rent" ? "Rent" : "Buy";
+  const price = l.price == null
+    ? "<span>Price on request</span>"
+    : `<span class="price" data-aed="${l.price}">${aed(l.price)}</span>${l.cat === "rent" ? " <small>/ yr</small>" : ""}`;
+  const facts = [l.beds ? `${l.beds} bed` : "Studio", l.baths ? `${l.baths} bath` : null, l.sqft ? `${Number(l.sqft).toLocaleString("en-US")} sq ft` : null].filter(Boolean).join(" &middot; ");
+  const gal = l.gkey ? ` lgal" data-gallery="${esc(l.gkey)}` : "";
+  return `        <article class="lcard rv" id="${esc(l.slug)}" data-slug="${esc(l.slug)}">
+          <a class="lcard-link roll-host" href="listings.html#${esc(l.slug)}">
+            <figure class="media${gal}"><img src="${esc(l.imgs[0])}" alt="${esc(l.title)}, ${esc(area.name)}" loading="lazy"><span class="ltag">${esc(l.status)}</span></figure>
+            <p class="lmeta">${cat} &mdash; ${esc(area.name)}</p>
+            <h3 class="lname"><span class="roll">${esc(l.title)}</span></h3>
+            <p class="lprice">${price}</p>
+            <p class="lfacts">${facts}</p>
+          </a>
+          <button class="save" type="button" data-save="${esc(l.slug)}" aria-pressed="false" aria-label="Save ${esc(l.title)}">${SAVE_SVG}<span>Save</span></button>
+        </article>`;
+}
+const listingsHtml = listings.length
+  ? `      <div class="lgrid three">\n${listings.map(listingCard).join("\n")}\n      </div>`
+  : `      <p class="body-t rv">We have nothing listed in Downtown RAK on the site today. Ask us what is coming up to buy or rent.</p>`;
+
+// One-line description of a listing for running text ("the furnished 2-bed duplex we list (AED 93,580 a year, under offer)").
+const listingPhrase = (l) => {
+  const p = l.price == null ? "price on request" : `${aed(l.price)}${l.cat === "rent" ? " a year" : ""}`;
+  return `${esc(l.title.charAt(0).toLowerCase() + l.title.slice(1))} (${p}, ${esc(l.status.toLowerCase())})`;
+};
+const rentals = listings.filter((l) => l.cat === "rent");
+const listedText = listings.length
+  ? ` What we list there now: the ${listPhrase(listings.map(listingPhrase))}.`
+  : "";
+
+const pricesText = `Apartments start from about AED ${aptFromK(area)}K, the lowest entry price of the four areas we cover, and a two-bedroom rents for about AED 50&ndash;95K a year. Indicative gross yields are ${nd(yTxt(area))}; with Al Hamra Village (${nd(yTxt(areaBy("al-hamra-village")))}), Downtown RAK shows the highest indicative gross yields in our book.${listedText}`;
+
+// Comparison table and text.
+const compareRows = [area, ...others]
+  .map((a) => `              <tr><th scope="row">${a.slug === AREA ? esc(a.name) : `<a href="${AREA_PAGES[a.slug]}">${esc(a.name)} guide</a>`}</th><td>${nd(a.buy)}</td><td>${nd(a.rent)}</td><td>${nd(a.yield)}</td><td>${esc(FREEHOLD[a.slug])}</td></tr>`)
+  .join("\n");
+const compareText = `Downtown RAK has the lowest entry price of the four, ahead of ${listPhrase(byPrice.slice(1).map((a) => `${esc(a.name)} (from about AED ${aptFromK(a)}K${/\(studio\)/i.test(a.buy) ? " for a studio" : ""})`))}. On indicative gross yields it sits with ${esc(byYield[1].name)} at the top, ahead of ${listPhrase(byYield.slice(2).map((a) => `${esc(a.name)} (${nd(yTxt(a))})`))}. The trade-off is ownership: the other three are designated freehold areas, while in Downtown RAK only designated projects are.`;
+
+// FAQ: the visible list and the FAQPage JSON-LD come from this one array.
+const faq = [
+  ["Is Downtown RAK cheaper than Al Marjan Island?", `Yes. Apartments in Downtown RAK start from about AED ${aptFromK(area)}K, against about AED ${aptFromK(marjan)}K for a studio on Al Marjan Island, where 1&ndash;2 bed branded homes run AED 1.7&ndash;3.5M. To rent, a two-bedroom costs about AED 50&ndash;95K a year in Downtown RAK and AED 75&ndash;130K on Al Marjan Island. Ranges are indicative, not a valuation. More in our ${areaLink(marjan, "Al Marjan Island guide")}.`],
+  ["Can foreigners buy in Downtown Ras Al Khaimah?", `Only in designated projects. In Downtown RAK, freehold is limited to designated projects such as Julphar Towers and RAK Central, both on the Ras Al Khaimah Municipality list of freehold areas, so check the exact building before you pay a deposit. UAE and GCC nationals can buy anywhere in the Emirate. Full answer: <a class="ulink" href="/can-foreigners-buy-property-in-ras-al-khaimah">can foreigners buy property in Ras Al Khaimah?</a>`],
+  ["What rental yield can I expect in Downtown RAK?", `Indicative gross yields are ${nd(yTxt(area))}. With ${esc(byYield[1].name)} (${nd(yTxt(byYield[1]))}), Downtown RAK shows the highest indicative gross yields in our book, ahead of ${listPhrase(byYield.slice(2).map((a) => `${esc(a.name)} (${nd(yTxt(a))})`))}. Yields are indicative and gross, not a forecast.`],
+  ["How much does it cost to rent in Downtown RAK?", `A two-bedroom rents for about AED 50&ndash;95K a year.${rentals.length ? ` We list the ${listPhrase(rentals.map(listingPhrase))}.` : ""} Ranges are indicative; we send exact figures for any unit.`],
+  ["Who is Downtown RAK best for?", `Professionals, RAKEZ business owners, and medical and education staff. It is the working city around Al Nakheel, Julphar and the corniche, with the shortest commutes to RAKEZ, the hospitals and government, and suits investors who care about net yield over sea view.`],
+  ["How do I arrange a viewing in Downtown RAK?", `Tell us your budget and whether you want to live, let or hold, and an advisor replies the same day. Viewings are in person, or on video from abroad. Call +971 58 501 5885, email info@rfrrealestate.com or <a class="ulink" href="https://wa.me/971585015885?text=Hello%20RFR%2C%20could%20you%20send%20me%20exact%20figures%20for%20homes%20in%20Downtown%20RAK%3F" target="_blank" rel="noopener">WhatsApp an advisor</a>.`],
+];
+const toText = (html) => html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&rsquo;/g, "’").replace(/&ndash;/g, "–").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
+const faqHtml = faq
+  .map(([q, a]) => `        <details><summary>${q}<span class="pm" aria-hidden="true"></span></summary><p>${a}</p></details>`)
+  .join("\n");
+
+const mainHtml = rawHtml
+  .replace("<!--RFR:SHORT_ANSWER-->", shortAnswer)
+  .replace("<!--RFR:BUY-->", nd(area.buy))
+  .replace("<!--RFR:RENT-->", nd(area.rent))
+  .replace("<!--RFR:YIELD-->", nd(area.yield))
+  .replace("<!--RFR:PRICES_TEXT-->", pricesText)
+  .replace("<!--RFR:LISTINGS-->", listingsHtml)
+  .replace("<!--RFR:COMPARE_ROWS-->", compareRows)
+  .replace("<!--RFR:COMPARE_TEXT-->", compareText)
+  .replace("<!--RFR:FAQ-->", faqHtml);
+if (mainHtml.includes("<!--RFR:")) throw new Error("downtown-ras-al-khaimah: placeholder not replaced");
+
+const listItem = (i, name, url) => ({ "@type": "ListItem", position: i + 1, name, url });
+
+const ldJson = [
+  {"@context":"https://schema.org","@graph":[{"@type":["RealEstateAgent","LocalBusiness","Organization"],"@id":"https://www.rfrrealestate.com/#business","name":"RFR Real Estate & Advisory FZ-LLC","legalName":"RFR Real Estate & Advisory FZ-LLC","slogan":"Wherever you call home.","alternateName":["RFR","RFR Real Estate","RFR Real Estate & Advisory"],"url":"https://www.rfrrealestate.com/","logo":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","image":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","email":"info@rfrrealestate.com","telephone":"+971585015885","address":{"@type":"PostalAddress","addressLocality":"Ras Al Khaimah","addressRegion":"Ras Al Khaimah","addressCountry":"AE"},"areaServed":[{"@type":"AdministrativeArea","name":"Ras Al Khaimah"},{"@type":"Place","name":"Al Marjan Island"},{"@type":"Place","name":"Mina Al Arab"},{"@type":"Place","name":"Al Hamra Village"},{"@type":"Place","name":"Downtown Ras Al Khaimah"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"18:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"10:00","closes":"16:00"}],"priceRange":"AED 65,000/yr - AED 4,060,000","currenciesAccepted":"AED","knowsAbout":["Ras Al Khaimah real estate","Al Marjan Island","Off-plan property","Property management","UAE Golden Visa property investment"],"description":"RFR Real Estate & Advisory FZ-LLC is a licensed real estate brokerage and advisory firm in Ras Al Khaimah, UAE. It works only in Ras Al Khaimah: Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.","disambiguatingDescription":"A Ras Al Khaimah (UAE) real estate agency. Not RFR Holding, the New York real estate company.","sameAs":["https://www.propertyfinder.ae/en/broker/rfr-real-estate-v2-13173-13173"]},{"@type":"WebSite","@id":"https://www.rfrrealestate.com/#website","name":"RFR Real Estate","alternateName":["RFR Real Estate & Advisory","RFR Real Estate & Advisory FZ-LLC","RFR","rfrrealestate.com"],"url":"https://www.rfrrealestate.com/","publisher":{"@id":"https://www.rfrrealestate.com/#business"},"inLanguage":"en"},
+    {"@type":"BreadcrumbList","@id":`${PAGE}#breadcrumb`,"itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":`${SITE}/`},{"@type":"ListItem","position":2,"name":"Areas","item":`${SITE}/areas`},{"@type":"ListItem","position":3,"name":"Downtown Ras Al Khaimah","item":PAGE}]},
+    {"@type":"Place","@id":`${PAGE}#place`,"name":"Downtown Ras Al Khaimah","alternateName":"Downtown RAK","url":PAGE,"description":"The working city of Ras Al Khaimah, around Al Nakheel, Julphar and the corniche, with the shortest commutes to RAKEZ, the hospitals and government. Towers and mid-rise apartments; freehold is limited to designated projects such as Julphar Towers and RAK Central.","geo":{"@type":"GeoCoordinates","latitude":area.lat,"longitude":area.lng},"image":`${SITE}/${area.img}`,"containedInPlace":{"@type":"AdministrativeArea","name":"Ras Al Khaimah","containedInPlace":{"@type":"Country","name":"United Arab Emirates"}}},
+    {"@type":"WebPage","@id":`${PAGE}#webpage`,"url":PAGE,"name":"Downtown Ras Al Khaimah: property guide","description":DESCRIPTION,"isPartOf":{"@id":`${SITE}/#website`},"publisher":{"@id":`${SITE}/#business`},"inLanguage":"en","datePublished":PUBLISHED,"dateModified":MODIFIED,"primaryImageOfPage":{"@type":"ImageObject","url":`${SITE}/${area.img}`},"about":{"@id":`${PAGE}#place`},"breadcrumb":{"@id":`${PAGE}#breadcrumb`}}]},
+  {"@context":"https://schema.org","@type":"FAQPage","@id":`${PAGE}#faq`,"mainEntity":faq.map(([q, a]) => ({"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":toText(a)}}))},
+  ...(listings.length ? [{"@context":"https://schema.org","@type":"ItemList","@id":`${PAGE}#listings`,"name":"Homes listed by RFR in Downtown Ras Al Khaimah","url":`${PAGE}#listings`,"numberOfItems":listings.length,"itemListElement":listings.map((l, i) => listItem(i, `${l.title}, ${area.name}`, `${SITE}/listings#${l.slug}`))}] : []),
+];
+---
+<BaseLayout page="downtown-ras-al-khaimah" title={TITLE} description={DESCRIPTION} path={PATH} ldJson={ldJson}>
+<Fragment set:html={mainHtml} />
+<script slot="pre-script" src="data.js" is:inline></script>
+</BaseLayout>

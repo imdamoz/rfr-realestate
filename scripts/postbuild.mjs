@@ -14,7 +14,7 @@ import path from "node:path";
 import { transform } from "esbuild";
 
 const DIST = path.resolve("dist");
-const PAGES = ["about", "apartments-for-rent-ras-al-khaimah", "apartments-for-sale-ras-al-khaimah", "al-hamra-village", "al-marjan-island", "areas", "buy-sell-lease", "can-foreigners-buy-property-in-ras-al-khaimah", "golden-visa-property-ras-al-khaimah", "listings", "manta-bay", "market", "mina-al-arab", "off-plan", "ras-al-khaimah-property-investment-guide", "services"];
+const PAGES = ["about", "apartments-for-rent-ras-al-khaimah", "apartments-for-sale-ras-al-khaimah", "al-hamra-village", "al-marjan-island", "areas", "buy-sell-lease", "can-foreigners-buy-property-in-ras-al-khaimah", "downtown-ras-al-khaimah", "golden-visa-property-ras-al-khaimah", "listings", "manta-bay", "market", "mina-al-arab", "off-plan", "ras-al-khaimah-property-investment-guide", "services"];
 const pageRe = new RegExp(`href="(?:\\./|/)?(index|${PAGES.join("|")})\\.html(#[^"]*)?"`, "g");
 
 let linkCount = 0;
