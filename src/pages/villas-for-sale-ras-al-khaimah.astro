@@ -1,0 +1,190 @@
+---
+// "Villas for sale in Ras Al Khaimah" answer page, the villa twin of
+// /apartments-for-sale-ras-al-khaimah. Copy lives in
+// ../villas-for-sale-ras-al-khaimah-main.html. The short answer, the
+// villas-by-area table, the area paragraphs, the apartment-or-villa text and
+// the FAQ answers are built here from data.js at build time, so they stay in
+// sync with /areas, the area guides and /listings. Only areas whose data.js
+// "buy" string mentions villas or townhouses get a price; anything data.js
+// does not hold is shown as "Ask RFR", never filled in. The Golden Visa text
+// reuses the wording of /golden-visa-property-ras-al-khaimah; the buying
+// steps and fees are the ones on /buy-sell-lease. Do not add villa prices,
+// yields, listings or developer names that are not in data.js.
+// The FAQ is rendered into the page AND into FAQPage JSON-LD from the same array.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import rawHtml from "../villas-for-sale-ras-al-khaimah-main.html?raw";
+import { RFR as R } from "../data.js";
+
+const SITE = "https://www.rfrrealestate.com";
+const PATH = "/villas-for-sale-ras-al-khaimah";
+const PAGE = `${SITE}${PATH}`;
+const TITLE = "Villas for Sale in Ras Al Khaimah | RFR Real Estate";
+const H1 = "Villas for Sale in Ras Al Khaimah: Areas, Prices and How to Buy";
+const IMAGE = `${SITE}/media/rak/rak-view-island-villas.jpg`;
+const PUBLISHED = "2026-11-27";
+const MODIFIED = "2026-11-27";
+if (TITLE.length > 60) throw new Error("villas-for-sale: title over 60 chars");
+
+// Area guide pages.
+const AREA_PAGES = { "al-marjan-island": "/al-marjan-island", "mina-al-arab": "/mina-al-arab", "al-hamra-village": "/al-hamra-village", "downtown-rak": "/downtown-ras-al-khaimah" };
+// Villa and townhouse homes per area, worded as on /areas and the area guides
+// (data.js has no field for this).
+const HOMES = {
+  "al-hamra-village": "Townhouses and villas, next to apartments; Falcon Island, a private villa enclave, sits within it",
+  "mina-al-arab": "Villas and townhouses, next to lagoon-front apartments",
+};
+// Freehold status per area, worded as on /areas and the foreigners guide.
+const FREEHOLD = {
+  "al-marjan-island": "Yes. Designated freehold area",
+  "al-hamra-village": "Yes. Designated freehold area",
+  "mina-al-arab": "Yes. Designated freehold area",
+  "downtown-rak": "Only in designated projects such as Julphar Towers and RAK Central",
+};
+const ASK = "Ask RFR";
+
+const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const aed = (n) => "AED " + Number(n).toLocaleString("en-US");
+const areaBy = (slug) => R.areas.find((a) => a.slug === slug);
+const listPhrase = (arr) => (arr.length < 2 ? arr.join("") : `${arr.slice(0, -1).join(", ")} and ${arr[arr.length - 1]}`);
+const onIn = (a) => (/island/i.test(a.name) ? "on " : "in ") + a.name;
+const nd = (s) => s.replace(/–/g, "&ndash;");
+const n = (k) => ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"][k] ?? String(k);
+const areaLink = (a, cls = "ulink") => (AREA_PAGES[a.slug] ? `<a class="${cls}" href="${AREA_PAGES[a.slug]}">${esc(a.name)}</a>` : esc(a.name));
+
+// Villa / townhouse segments of the data.js buy and rent strings, e.g.
+// "Townhouses and villas AED 1.5–5M" and "3-bed villa ~AED 110–160K / yr".
+const seg = (s, re) => s.split(" · ").map((x) => x.trim()).find((x) => re.test(x)) || null;
+const VILLA_RE = /villa|townhouse/i;
+function villaArea(a) {
+  const buy = seg(a.buy, VILLA_RE);
+  if (!buy) return null;
+  const m = buy.match(/^(.*?)\s*AED ([\d.]+)–([\d.]+)M$/);
+  if (!m) throw new Error(`villas-for-sale: cannot read the villa price range for ${a.slug} in data.js ("${buy}")`);
+  const rentSeg = seg(a.rent, /villa/i);
+  const r = rentSeg && rentSeg.match(/^3-bed villa ~AED ([\d.]+)–([\d.]+)K \/ yr$/);
+  if (rentSeg && !r) throw new Error(`villas-for-sale: cannot read the villa rent for ${a.slug} in data.js ("${rentSeg}")`);
+  return { area: a, kind: m[1].toLowerCase(), lo: Number(m[2]), hi: Number(m[3]), range: `AED ${m[2]}–${m[3]}M`, rent: r ? { lo: Number(r[1]), hi: Number(r[2]), txt: `AED ${r[1]}–${r[2]}K a year` } : null };
+}
+const villaAreas = R.areas.map(villaArea).filter(Boolean).sort((x, y) => x.lo - y.lo);
+// The page only stands up while data.js has villa prices for at least two areas.
+if (villaAreas.length < 2) throw new Error("villas-for-sale: data.js has villa/townhouse prices for fewer than two areas; the page would no longer be honest");
+const vBy = (slug) => villaAreas.find((v) => v.area.slug === slug);
+const hamra = vBy("al-hamra-village");
+const mina = vBy("mina-al-arab");
+if (!hamra || !mina) throw new Error("villas-for-sale: Al Hamra Village or Mina Al Arab villa prices missing in data.js; update the copy");
+if (villaAreas.some((v) => !HOMES[v.area.slug])) throw new Error("villas-for-sale: villa area without a HOMES description");
+
+// Villa-type units inside off-plan projects (e.g. "sky villas" in a tower).
+const villaProjects = R.projects.filter((p) => /villa/i.test(p.mix));
+const projectArea = areaBy("al-marjan-island"); // every project in data.js is on Al Marjan Island (as on /off-plan)
+
+// Villas / townhouses RFR lists for sale, and to rent.
+const isVilla = (l) => VILLA_RE.test(l.type);
+// "a three-bedroom villa", "a residential plot near the community pool"
+const describe = (l) => (l.beds ? `a ${n(l.beds)}-bedroom ${l.type.toLowerCase()}` : `a ${l.title.charAt(0).toLowerCase()}${l.title.slice(1)}`);
+const villaSale = R.listings.filter((l) => l.cat === "buy" && isVilla(l));
+const villaRent = R.listings.filter((l) => l.cat === "rent" && isVilla(l));
+const saleCell = (slug) => {
+  const ls = villaSale.filter((l) => l.area === slug);
+  return ls.length ? ls.map((l) => `<a href="/listings#${esc(l.slug)}">${esc(l.title)}</a>, ${l.price != null ? aed(l.price) : "price on request"}`).join("; ") : `None listed now. ${ASK}`;
+};
+
+// Table rows.
+const villaRows = villaAreas.map((v) => `              <tr><th scope="row">${areaLink(v.area, "")}</th><td>${esc(HOMES[v.area.slug])}</td><td>${esc(v.area.buy.includes(v.range) ? seg(v.area.buy, VILLA_RE) : v.range)}</td><td>${v.rent ? nd(`~AED ${v.rent.lo}–${v.rent.hi}K / yr`) : ASK}</td><td>${esc(FREEHOLD[v.area.slug] || ASK)}</td><td>${saleCell(v.area.slug)}</td></tr>`);
+const projectRows = villaProjects.map((p) => `              <tr><th scope="row">${areaLink(projectArea, "")}</th><td>Sky villas in an apartment tower: ${esc(p.name)} by ${esc(p.dev)}, off-plan, handover ${esc(p.handover)}, ${esc(String(p.plan).replace(/\s+/g, ""))} plan (unit mix ${esc(p.mix)})</td><td>${ASK}</td><td>${ASK}</td><td>${esc(FREEHOLD[projectArea.slug])}</td><td>${ASK}</td></tr>`);
+const rows = [...villaRows, ...projectRows].join("\n").replace(/<a class="" /g, "<a ");
+
+// Areas we cover with no villa figures in data.js.
+const noVilla = R.areas.filter((a) => !vBy(a.slug) && !(villaProjects.length && a.slug === projectArea.slug));
+const rentListing = villaRent[0];
+const tableNote = `${noVilla.length ? `We publish no villa or townhouse prices for ${listPhrase(noVilla.map((a) => areaLink(a)))}, where our figures cover apartments only. ` : ""}${villaProjects.length ? `On ${esc(projectArea.name)}, the only villa-type homes in our book are the sky villas at ${listPhrase(villaProjects.map((p) => esc(p.name)))}; we don&rsquo;t publish a sky-villa price, so ask us. ` : ""}${rentListing ? `Renting first? We list ${esc(describe(rentListing))} to rent ${onIn(areaBy(rentListing.area))} at <span class="price" data-aed="${rentListing.price}">${aed(rentListing.price)}</span> a year on our <a href="/listings#${esc(rentListing.slug)}">listings</a>.` : ""}`;
+
+// Area paragraphs.
+const listedIn = (slug) => {
+  const sale = R.listings.filter((l) => l.area === slug && l.cat === "buy");
+  const rent = R.listings.filter((l) => l.area === slug && l.cat === "rent" && isVilla(l));
+  const parts = [];
+  if (sale.length) parts.push(`for sale, ${listPhrase(sale.map((l) => `${esc(describe(l))} (${l.price != null ? aed(l.price) : "price on request"})`))}`);
+  if (rent.length) parts.push(`to rent, ${listPhrase(rent.map((l) => `${esc(describe(l))} at ${aed(l.price)} a year`))}`);
+  return parts.length ? `What we list there now: ${parts.join("; ")}.` : "";
+};
+const rentTxt = (v) => (v.rent ? `, and a three-bedroom villa rents for about ${nd(v.rent.txt)}` : "");
+const hamraText = `The Emirate&rsquo;s original master community, with an 18-hole championship golf course, a marina and yacht club and a mall. Falcon Island, a private villa enclave, sits within it. Townhouses and villas run about ${nd(hamra.range)}${rentTxt(hamra)} (indicative). ${listedIn("al-hamra-village")} Full guide: <a class="ulink" href="/al-hamra-village">Al Hamra Village property for sale and rent</a>.`.replace(/\s+Full guide/, " Full guide");
+const minaText = `A low-rise waterfront community built around lagoons and protected mangroves, anchored by the Anantara and InterContinental resorts. Villas run about ${nd(mina.range)}${rentTxt(mina)} (indicative). ${listedIn("mina-al-arab")} Full guide: <a class="ulink" href="/mina-al-arab">Mina Al Arab property for sale</a>.`.replace(/\s+Full guide/, " Full guide");
+
+// Short answer (40–70 words).
+const saleNow = villaSale.length
+  ? `We list ${n(villaSale.length)} villa${villaSale.length === 1 ? "" : "s"} or townhouse${villaSale.length === 1 ? "" : "s"} for sale right now`
+  : "We have no villa or townhouse listed for sale right now";
+const shortAnswer = `In the areas RFR covers, villas and townhouses are in ${villaAreas.map((v) => `${v.area.name}, where ${v.kind} run about ${nd(v.range)}`).join("; and ")} (indicative). ${villaAreas.length === 2 ? "Both" : "All"} are designated freehold areas, so foreigners can buy outright. ${saleNow}; tell us your budget and we shortlist homes, arrange viewings and handle the paperwork.`;
+const words = shortAnswer.replace(/<[^>]+>/g, "").replace(/&ndash;/g, "–").split(/\s+/).filter(Boolean).length;
+if (words < 40 || words > 70) throw new Error(`villas-for-sale: short answer is ${words} words; keep it 40–70`);
+if (villaAreas.some((v) => !/Designated freehold/.test(FREEHOLD[v.area.slug]))) throw new Error("villas-for-sale: short answer says every villa area is freehold; update it");
+
+const DESCRIPTION = `Villas and townhouses for sale in Ras Al Khaimah: ${listPhrase(villaAreas.map((v) => `${v.area.name} ${v.range}`))} (indicative). Who can buy, Golden Visa, how RFR helps.`;
+if (DESCRIPTION.length > 160) throw new Error(`villas-for-sale: meta description is ${DESCRIPTION.length} chars`);
+
+// Golden Visa: compare the published ranges with ICP's AED 2,000,000 total.
+const GV = 2; // AED millions, as on /golden-visa-property-ras-al-khaimah
+const gvPos = (v) => (v.lo >= GV ? "start above that total" : v.hi < GV ? "sit below that total on their own" : "can fall either side of that total");
+const gvText = `On our indicative ranges, ${listPhrase(villaAreas.map((v) => `${v.kind} in ${esc(v.area.name)} (${nd(v.range)}) ${gvPos(v)}`))}, so check the price of the exact home, and tell us at the start if the visa is the goal.`;
+
+// Apartment or villa.
+const aptFrom = R.areas
+  .map((a) => {
+    const m = a.buy.match(/from ~AED ([\d.]+)K/i);
+    return m ? { area: a, k: Number(m[1]) } : null;
+  })
+  .filter(Boolean)
+  .sort((x, y) => x.k - y.k);
+if (!aptFrom.length) throw new Error("villas-for-sale: no apartment 'from' price in data.js");
+const planOf = (p) => String(p.plan).replace(/\s+/g, "");
+const plans = [...new Set(R.projects.map(planOf))].sort((a, b) => parseInt(b, 10) - parseInt(a, 10));
+const planRange = plans.length > 1 ? `from ${plans[plans.length - 1]} to ${plans[0]}` : plans[0];
+const yields = R.areas.flatMap((a) => (a.yield.match(/[\d.]+/g) || []).map(Number));
+const vLo = Math.min(...villaAreas.map((v) => v.lo));
+const vHi = Math.max(...villaAreas.map((v) => v.hi));
+const rents = villaAreas.filter((v) => v.rent);
+const rLo = Math.min(...rents.map((v) => v.rent.lo));
+const rHi = Math.max(...rents.map((v) => v.rent.hi));
+const villaCase = `More space, in the two most family-led areas we cover, with schools, villas and townhouses nearby: ${areaLink(hamra.area)} adds a golf course and marina, and ${areaLink(mina.area)} is a quieter, low-rise lagoon community. Townhouses and villas there run about AED ${vLo}&ndash;${vHi}M (indicative)${rents.length ? `, and a three-bedroom villa rents for about AED ${rLo}&ndash;${rHi}K a year` : ""}.${villaProjects.length ? ` Off-plan, the only villa-type homes in our book are the sky villas at ${listPhrase(villaProjects.map((p) => esc(p.name)))}.` : ""}`;
+const aptCase = `A lower entry price and the most off-plan choice. Apartments start from about AED ${aptFrom[0].k}K ${onIn(aptFrom[0].area)} (indicative), and all ${n(R.projects.length)} off-plan launches in our book are on ${esc(projectArea.name)}, with payment plans ${planRange}. Indicative gross yields across the areas we cover run from ${Math.min(...yields)}% to ${Math.max(...yields)}%.`;
+
+// FAQ. [question, answer HTML]. JSON-LD gets the same answer with tags stripped.
+const faq = [
+  ["How much does a villa cost in Ras Al Khaimah?", `On our indicative figures, ${listPhrase(villaAreas.map((v) => `${v.kind} in ${areaLink(v.area)} run about ${nd(v.range)}`))}. ${villaProjects.length ? `We don&rsquo;t publish a price for the sky villas at ${listPhrase(villaProjects.map((p) => esc(p.name)))} on ${esc(projectArea.name)}; ask us. ` : ""}Ranges are indicative, not a valuation; we send exact figures for any home.`],
+  ["Where can I buy a villa or townhouse in Ras Al Khaimah?", `In the areas we cover, in ${areaLink(hamra.area)} (townhouses and villas, including Falcon Island, a private villa enclave) and ${areaLink(mina.area)} (villas and townhouses by the lagoons)${villaProjects.length ? `, plus off-plan sky villas at ${listPhrase(villaProjects.map((p) => esc(p.name)))} on ${esc(projectArea.name)}` : ""}. ${noVilla.length ? `Our figures for ${listPhrase(noVilla.map((a) => esc(a.name)))} cover apartments only. ` : ""}Compare every area on our <a class="ulink" href="/areas#best-areas">best areas in Ras Al Khaimah</a> guide.`],
+  ["Can foreigners buy a villa in Ras Al Khaimah?", `Yes, in the designated freehold areas. Ras Al Khaimah Municipality lists them as Al Hamra Village, Mina Al Arab, Al Marjan Island, RAK Central, Julphar Towers, Al Maareedh (plots) and the upcoming Beach District. You own the home outright, on a title deed. UAE and GCC nationals can buy anywhere in the Emirate. Full guide: <a class="ulink" href="/can-foreigners-buy-property-in-ras-al-khaimah">can foreigners buy property in Ras Al Khaimah?</a>`],
+  ["Can buying a villa in Ras Al Khaimah get me a UAE Golden Visa?", `It can. You need to own one or more UAE properties worth a total of at least AED 2,000,000, registered in your name (a loan from an approved local bank is allowed), or off-plan units totalling at least AED 2,000,000 bought from an approved local developer, plus health insurance for you and your family. RFR helps you find qualifying property; ICP issues the visa. Full guide: <a class="ulink" href="/golden-visa-property-ras-al-khaimah">Golden Visa through property in Ras Al Khaimah</a>.`],
+  ["How much does it cost to rent a villa in Ras Al Khaimah?", `On our indicative figures, a three-bedroom villa rents for about ${listPhrase(rents.map((v) => `${nd(v.rent.txt)} in ${areaLink(v.area)}`))}.${rentListing ? ` We list ${esc(describe(rentListing))} to rent ${onIn(areaBy(rentListing.area))} at ${aed(rentListing.price)} a year.` : ""} Ranges are indicative, not a valuation.`],
+  ["Does RFR have villas for sale right now?", `${villaSale.length ? `Yes: ${listPhrase(villaSale.map((l) => `${esc(l.title)} ${onIn(areaBy(l.area))} (${l.price != null ? aed(l.price) : "price on request"})`))}.` : "Not on our listings right now."} Plenty of what we sell never gets listed, so send us your budget, the area and the bedrooms you need, and an advisor replies the same day. Call +971 58 501 5885, email info@rfrrealestate.com or <a class="ulink" href="https://wa.me/971585015885?text=Hello%20RFR%2C%20I%27m%20looking%20for%20a%20villa%20to%20buy%20in%20Ras%20Al%20Khaimah." target="_blank" rel="noopener">WhatsApp an advisor</a>.`],
+];
+
+const toText = (html) => html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&rsquo;/g, "’").replace(/&ndash;/g, "–").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
+const faqHtml = faq
+  .map(([q, a]) => `        <details><summary>${q}<span class="pm" aria-hidden="true"></span></summary><p>${a}</p></details>`)
+  .join("\n");
+
+const mainHtml = rawHtml
+  .replace("<!--RFR:SHORT_ANSWER-->", shortAnswer)
+  .replace("<!--RFR:VILLA_ROWS-->", rows)
+  .replace("<!--RFR:TABLE_NOTE-->", tableNote)
+  .replace("<!--RFR:HAMRA_TEXT-->", hamraText)
+  .replace("<!--RFR:MINA_TEXT-->", minaText)
+  .replace("<!--RFR:GV_TEXT-->", gvText)
+  .replace("<!--RFR:VILLA_CASE-->", villaCase)
+  .replace("<!--RFR:APT_CASE-->", aptCase)
+  .replace("<!--RFR:FAQ-->", faqHtml);
+if (mainHtml.includes("<!--RFR:")) throw new Error("villas-for-sale: placeholder not replaced");
+
+const ldJson = [
+  {"@context":"https://schema.org","@graph":[{"@type":["RealEstateAgent","LocalBusiness","Organization"],"@id":"https://www.rfrrealestate.com/#business","name":"RFR Real Estate & Advisory FZ-LLC","legalName":"RFR Real Estate & Advisory FZ-LLC","slogan":"Wherever you call home.","alternateName":["RFR","RFR Real Estate","RFR Real Estate & Advisory"],"url":"https://www.rfrrealestate.com/","logo":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","image":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","email":"info@rfrrealestate.com","telephone":"+971585015885","address":{"@type":"PostalAddress","addressLocality":"Ras Al Khaimah","addressRegion":"Ras Al Khaimah","addressCountry":"AE"},"areaServed":[{"@type":"AdministrativeArea","name":"Ras Al Khaimah"},{"@type":"Place","name":"Al Marjan Island"},{"@type":"Place","name":"Mina Al Arab"},{"@type":"Place","name":"Al Hamra Village"},{"@type":"Place","name":"Downtown Ras Al Khaimah"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"18:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"10:00","closes":"16:00"}],"priceRange":"AED 65,000/yr - AED 4,060,000","currenciesAccepted":"AED","knowsAbout":["Ras Al Khaimah real estate","Al Marjan Island","Off-plan property","Property management","UAE Golden Visa property investment"],"description":"RFR Real Estate & Advisory FZ-LLC is a licensed real estate brokerage and advisory firm in Ras Al Khaimah, UAE. It works only in Ras Al Khaimah: Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.","disambiguatingDescription":"A Ras Al Khaimah (UAE) real estate agency. Not RFR Holding, the New York real estate company.","sameAs":["https://www.propertyfinder.ae/en/broker/rfr-real-estate-v2-13173-13173"]},{"@type":"WebSite","@id":"https://www.rfrrealestate.com/#website","name":"RFR Real Estate","alternateName":["RFR Real Estate & Advisory","RFR Real Estate & Advisory FZ-LLC","RFR","rfrrealestate.com"],"url":"https://www.rfrrealestate.com/","publisher":{"@id":"https://www.rfrrealestate.com/#business"},"inLanguage":"en"},
+    {"@type":"BreadcrumbList","@id":`${PAGE}#breadcrumb`,"itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":`${SITE}/`},{"@type":"ListItem","position":2,"name":"Villas for sale in Ras Al Khaimah","item":PAGE}]},
+    {"@type":"WebPage","@id":`${PAGE}#webpage`,"url":PAGE,"name":H1,"description":DESCRIPTION,"isPartOf":{"@id":`${SITE}/#website`},"publisher":{"@id":`${SITE}/#business`},"inLanguage":"en","datePublished":PUBLISHED,"dateModified":MODIFIED,"primaryImageOfPage":{"@type":"ImageObject","url":IMAGE},"breadcrumb":{"@id":`${PAGE}#breadcrumb`},"about":villaAreas.map((v) => ({"@type":"Place","name":`${v.area.name}, Ras Al Khaimah`,"url":`${SITE}${AREA_PAGES[v.area.slug]}`}))}]},
+  {"@context":"https://schema.org","@type":"FAQPage","@id":`${PAGE}#faq`,"mainEntity":faq.map(([q, a]) => ({"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":toText(a)}}))},
+];
+---
+<BaseLayout page="villas-for-sale-ras-al-khaimah" title={TITLE} description={DESCRIPTION} path={PATH} ldJson={ldJson}>
+<Fragment set:html={mainHtml} />
+<script slot="pre-script" src="data.js" is:inline></script>
+</BaseLayout>
