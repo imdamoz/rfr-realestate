@@ -11,7 +11,7 @@ const { page } = Astro.props;
 const isHome = page === "home";
 const logoHref = isHome ? "#top" : "index.html";
 const listingsCurrent = ["listings", "areas", "market", "off-plan", "manta-bay", "al-marjan-island", "al-hamra-village", "mina-al-arab", "downtown-ras-al-khaimah", "apartments-for-rent-ras-al-khaimah", "apartments-for-sale-ras-al-khaimah", "villas-for-sale-ras-al-khaimah"].includes(page);
-const aboutCurrent = ["about", "services"].includes(page);
+const aboutCurrent = ["about", "services", "real-estate-agency-ras-al-khaimah"].includes(page);
 ---
 <header class="hdr" id="hdr">
   <a class="hdr-logo" href={logoHref} aria-label="RFR Real Estate &amp; Advisory, home"><img src="media/rfr-logo-gold.webp" alt="RFR &mdash; Real Estate &amp; Advisory" width="107" height="44"></a>

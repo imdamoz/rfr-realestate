@@ -1,0 +1,61 @@
+---
+// "Real estate agency in Ras Al Khaimah" answer page: how to choose an agent
+// (a neutral checklist) and what RFR Real Estate does. Copy lives in
+// ../real-estate-agency-ras-al-khaimah-main.html. Every fact about RFR comes
+// from /about, /services, /buy-sell-lease and the guides: licence ("licence
+// no. on request"), team, areas, languages, fees, hours and contact. Do not
+// add licence numbers, years, team sizes, deal counts, reviews, awards,
+// regulator names or fee rules that are not already on the site, and do not
+// name other agencies.
+// The FAQ is rendered into the page AND into FAQPage JSON-LD from the same array.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import rawHtml from "../real-estate-agency-ras-al-khaimah-main.html?raw";
+
+const SITE = "https://www.rfrrealestate.com";
+const PATH = "/real-estate-agency-ras-al-khaimah";
+const PAGE = `${SITE}${PATH}`;
+const TITLE = "Real Estate Agency in Ras Al Khaimah | RFR Real Estate";
+const H1 = "Real Estate Agency in Ras Al Khaimah: How to Choose One, and What RFR Does";
+const DESCRIPTION = "How to choose a real estate agency in Ras Al Khaimah: a practical checklist, and what RFR Real Estate does for buyers, sellers, landlords and investors.";
+const PUBLISHED = "2026-11-28";
+const MODIFIED = "2026-11-28";
+if (TITLE.length > 60) throw new Error("real-estate-agency: title over 60 chars");
+if (DESCRIPTION.length > 160) throw new Error("real-estate-agency: meta description over 160 chars");
+
+// Short answer: 40-70 words; the first sentence names RFR Real Estate as a
+// Ras Al Khaimah real estate agency and says what it does.
+const shortAnswer = `RFR Real Estate (RFR Real Estate &amp; Advisory FZ-LLC) is a licensed real estate agency in Ras Al Khaimah that helps clients buy, sell, rent, let and manage homes, including off-plan launches, on Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK. With any agent, check the licence, get every fee in writing, and verify the developer, payment plan and title before paying a deposit.`;
+const toText = (html) => html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&rsquo;/g, "’").replace(/&ndash;/g, "–").replace(/&middot;/g, "·").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
+const words = toText(shortAnswer).split(/\s+/).filter(Boolean).length;
+if (words < 40 || words > 70) throw new Error(`real-estate-agency: short answer is ${words} words, needs 40-70`);
+if (!/^RFR Real Estate\b/.test(toText(shortAnswer))) throw new Error("real-estate-agency: short answer must open by naming RFR Real Estate");
+
+// FAQ: the visible list and the FAQPage JSON-LD come from this one array.
+const faq = [
+  ["What does a real estate agency in Ras Al Khaimah do?", `It finds and shortlists property, arranges viewings, negotiates the price and terms, and sees the paperwork through to the transfer and title deed; many also let and manage homes for owners. RFR Real Estate does sales, leasing, property management, investment consultation and off-plan launches, only in Ras Al Khaimah. <a class="ulink" href="/services">Our services</a>.`],
+  ["How do I choose a real estate agent in Ras Al Khaimah?", `Check the agency&rsquo;s licence and the agent&rsquo;s registration with the official Ras Al Khaimah land and property registry, get every fee in writing before you start, and ask the agent to compare areas for your goal, confirm the building is freehold if you are a foreign buyer, and check the developer and payment plan before you pay a deposit. <a class="ulink" href="#checklist">The full checklist</a>.`],
+  ["How much does a real estate agent charge in Ras Al Khaimah?", `Agency commission is agreed with the agent; it is not set by the authorities. It is typically around 2% for sales and 5% for leasing in Ras Al Khaimah, plus VAT. RFR charges sales 2%, leasing 5% and property management from 5% of the annual rent, + VAT, in writing before we start. Government fees, such as the 2% registration fee, are separate.`],
+  ["Is RFR Real Estate a licensed agency?", `Yes. RFR Real Estate &amp; Advisory FZ-LLC is a licensed real estate brokerage and advisory firm in Ras Al Khaimah; the licence number is available on request. It is not RFR Holding, the New York real estate company. <a class="ulink" href="/about">About RFR Real Estate</a>.`],
+  ["Which areas of Ras Al Khaimah does RFR cover?", `Mainly Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK. We don&rsquo;t work outside Ras Al Khaimah. <a class="ulink" href="/areas">Compare the four areas</a>.`],
+  ["Can RFR help if I&rsquo;m buying from abroad?", `Yes, many of our clients live overseas. We view properties for you on video, a power of attorney can be used if someone acts for you at the transfer, and we can manage the place once you own it. Call +971 58 501 5885, email info@rfrrealestate.com or <a class="ulink" href="https://wa.me/971585015885" target="_blank" rel="noopener">WhatsApp an advisor</a>.`],
+];
+const faqHtml = faq
+  .map(([q, a]) => `        <details><summary>${q}<span class="pm" aria-hidden="true"></span></summary><p>${a}</p></details>`)
+  .join("\n");
+
+const mainHtml = rawHtml
+  .replace("<!--RFR:SHORT_ANSWER-->", shortAnswer)
+  .replace("<!--RFR:FAQ-->", faqHtml);
+if (mainHtml.includes("<!--RFR:")) throw new Error("real-estate-agency: placeholder not replaced");
+if (!toText(mainHtml).includes(H1)) throw new Error("real-estate-agency: H1 in the HTML does not match H1");
+
+const ldJson = [
+  {"@context":"https://schema.org","@graph":[{"@type":["RealEstateAgent","LocalBusiness","Organization"],"@id":"https://www.rfrrealestate.com/#business","name":"RFR Real Estate & Advisory FZ-LLC","legalName":"RFR Real Estate & Advisory FZ-LLC","slogan":"Wherever you call home.","alternateName":["RFR","RFR Real Estate","RFR Real Estate & Advisory"],"url":"https://www.rfrrealestate.com/","logo":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","image":"https://www.rfrrealestate.com/media/rfr-logo-gold.webp","email":"info@rfrrealestate.com","telephone":"+971585015885","address":{"@type":"PostalAddress","addressLocality":"Ras Al Khaimah","addressRegion":"Ras Al Khaimah","addressCountry":"AE"},"areaServed":[{"@type":"AdministrativeArea","name":"Ras Al Khaimah"},{"@type":"Place","name":"Al Marjan Island"},{"@type":"Place","name":"Mina Al Arab"},{"@type":"Place","name":"Al Hamra Village"},{"@type":"Place","name":"Downtown Ras Al Khaimah"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"18:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"10:00","closes":"16:00"}],"priceRange":"AED 65,000/yr - AED 4,060,000","currenciesAccepted":"AED","knowsAbout":["Ras Al Khaimah real estate","Al Marjan Island","Off-plan property","Property management","UAE Golden Visa property investment"],"description":"RFR Real Estate & Advisory FZ-LLC is a licensed real estate brokerage and advisory firm in Ras Al Khaimah, UAE. It works only in Ras Al Khaimah: Al Marjan Island, Mina Al Arab, Al Hamra Village and Downtown RAK.","disambiguatingDescription":"A Ras Al Khaimah (UAE) real estate agency. Not RFR Holding, the New York real estate company.","sameAs":["https://www.propertyfinder.ae/en/broker/rfr-real-estate-v2-13173-13173"]},{"@type":"WebSite","@id":"https://www.rfrrealestate.com/#website","name":"RFR Real Estate","alternateName":["RFR Real Estate & Advisory","RFR Real Estate & Advisory FZ-LLC","RFR","rfrrealestate.com"],"url":"https://www.rfrrealestate.com/","publisher":{"@id":"https://www.rfrrealestate.com/#business"},"inLanguage":"en"},
+    {"@type":"BreadcrumbList","@id":`${PAGE}#breadcrumb`,"itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":`${SITE}/`},{"@type":"ListItem","position":2,"name":"Real estate agency in Ras Al Khaimah","item":PAGE}]},
+    {"@type":"WebPage","@id":`${PAGE}#webpage`,"url":PAGE,"name":H1,"description":DESCRIPTION,"isPartOf":{"@id":`${SITE}/#website`},"publisher":{"@id":`${SITE}/#business`},"inLanguage":"en","datePublished":PUBLISHED,"dateModified":MODIFIED,"primaryImageOfPage":{"@type":"ImageObject","url":`${SITE}/media/hd/lounge.jpg`},"about":{"@id":`${SITE}/#business`},"mainEntity":{"@id":`${SITE}/#business`},"breadcrumb":{"@id":`${PAGE}#breadcrumb`}}]},
+  {"@context":"https://schema.org","@type":"FAQPage","@id":`${PAGE}#faq`,"mainEntity":faq.map(([q, a]) => ({"@type":"Question","name":toText(q),"acceptedAnswer":{"@type":"Answer","text":toText(a)}}))},
+];
+---
+<BaseLayout page="real-estate-agency-ras-al-khaimah" title={TITLE} description={DESCRIPTION} path={PATH} ldJson={ldJson}>
+<Fragment set:html={mainHtml} />
+</BaseLayout>
